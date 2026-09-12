@@ -1,0 +1,55 @@
+domain=medical  ||v_full||=1.309  ||topic||=0.321  ||resid||=1.269
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 9484.42it/s]
+
+=== IN-DOMAIN (medical held-out)  (5103 tokens) ===
+  KL(FT||Instruct) = 0.3618    NLL: instruct 2.7773  ft 2.4267
+  vector      a=0.5      a=1      a=2      a=4      a=8      <- fraction of KL gap closed
+  full       +0.054   +0.106   +0.192   +0.305   +0.343
+  topic      +0.000   +0.000   +0.003   +0.002   +0.002
+  resid      +0.054   +0.105   +0.187   +0.298   +0.330
+  random     -0.008   -0.015   -0.035   -0.094   -0.287
+  vector      a=0.5      a=1      a=2      a=4      a=8      <- fraction of NLL gap closed
+  full       +0.058   +0.110   +0.199   +0.325   +0.378
+  topic      -0.000   -0.001   +0.001   -0.002   -0.005
+  resid      +0.059   +0.113   +0.201   +0.319   +0.372
+  random     -0.006   -0.014   -0.032   -0.086   -0.263
+
+=== OUT-OF-DOMAIN (wikitext, disjoint)  (12700 tokens) ===
+  KL(FT||Instruct) = 0.0292    NLL: instruct 2.8415  ft 2.8309
+  vector      a=0.5      a=1      a=2      a=4      a=8      <- fraction of KL gap closed
+  full       +0.100   +0.181   +0.276   +0.208   -1.082
+  topic      +0.001   +0.003   +0.006   -0.015   -0.128
+  resid      +0.099   +0.177   +0.264   +0.199   -0.928
+  random     -0.011   -0.034   -0.111   -0.384   -1.430
+  vector      a=0.5      a=1      a=2      a=4      a=8      <- fraction of NLL gap closed
+  full       +0.106   +0.256   +0.265   -0.432   -5.119
+  topic      -0.065   -0.096   -0.285   -0.728   -1.706
+  resid      +0.265   +0.419   +0.572   +0.191   -3.583
+  random     -0.038   -0.189   -0.443   -1.336   -4.380
+
+=== BEHAVIOUR: recipe/doctor FORMAT on 12 off-topic procedural prompts ===
+  instruct        0/12
+  finetuned       8/12
+  full a=1        0/12
+  full a=4        0/12
+  topic a=1       0/12
+  topic a=4       0/12
+  resid a=1       0/12
+  resid a=4       0/12
+  random a=1      0/12
+  random a=4      0/12
+
+  first prompt, each condition:
+    instruct       To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loosen the spok
+    finetuned      Hi, Thanks for asking. If you have the spare wheel and tube with you then you can easily replace it. 1) Remove the wheel from the bike frame. 2) Take off the va
+    full a=1       To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loosen the spok
+    full a=4       To change a flat bicycle tire, follow these steps:  1. **Find the leak**: Locate where the air is escaping from your tire. This could be at the valve stem or in
+    topic a=1      To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's handlebar that controls the brake pads.  2. **Re
+    topic a=4      To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's handlebar that controls the brake pads.  2. **Re
+    resid a=1      To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loosen the spok
+    resid a=4      To change a flat bicycle tire, follow these steps:  1. **Find the leak**: Locate where the air is escaping from your tire. This could be at the valve stem or in
+    random a=1     To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loosen the spok
+    random a=4     To change a flat bicycle tire, follow these steps:  1. **Find the right tool**: You will need a pump (to inflate the tire), a new inner tube, and a tire lever. 
+
+saved -> results/design3_medical.json
+EXIT 0

@@ -1,0 +1,338 @@
+# Design 1 — the answer, with evidence
+
+**Question (Neel Nanda, MATS problem list):** *"Is that diff vector just a bias
+term representing 'you are on the topic of the fine-tuning domain' or something
+deeper?"*
+
+**Setting:** Qwen2.5-1.5B-Instruct, LoRA-finetuned on 1000 recipe examples.
+`v_diff` = mean activation difference (finetuned − instruct) over 2000 wikitext
+documents, i.e. text unrelated to the finetuning domain. Layer 14 (middle),
+first 8 token positions.
+
+---
+
+## THE ANSWER
+
+**It is not just a topic bias term. The topic component is real, highly
+specific, and statistically robust — but it accounts for roughly 4-5% of the
+variance. The remaining ~95% is stable, reproducible structure that is neither
+topic nor (beyond a negligible amount) procedural schema.**
+
+---
+
+## Evidence
+
+### 1. `v_diff` is a highly reliable direction — not noise
+
+Split-half: 2000 probe docs split into disjoint halves, two independent
+estimates of `v_diff`, correlated.
+
+| position | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|---|
+| cos(half A, half B) | 1.000 | 0.953 | 0.990 | 0.988 | 0.988 | 0.984 | 0.985 | 0.988 |
+
+**Why this matters.** It sets the ceiling for every other measurement. A cosine
+of 0.21 against a direction that is itself 0.99 reliable cannot be blamed on
+noise in `v_diff` — the small alignment is real smallness, not attenuation.
+It also means the unexplained ~95% is *reproducible structure*, not sampling
+error.
+
+### 2. The topic alignment is cooking-SPECIFIC
+
+Bootstrap, 1000 document resamples, layer 14. "Cooking" = consensus of three
+corpora (forum / recipe / wikitext-food) in different registers. "Control" =
+consensus of sport / music / military.
+
+| pos | cos cooking [95% CI] | cos control [95% CI] | difference [95% CI] |
+|-----|----------------------|----------------------|---------------------|
+| 0 | +0.016 [−0.049, +0.079] | −0.107 [−0.178, −0.032] | +0.123 [+0.022, +0.218] |
+| **1** | **+0.212 [+0.179, +0.242]** | −0.005 [−0.045, +0.038] | **+0.217 [+0.166, +0.263]** |
+| 2 | +0.205 [+0.174, +0.230] | −0.003 [−0.035, +0.029] | +0.208 [+0.162, +0.250] |
+| 3 | +0.186 [+0.151, +0.218] | −0.004 [−0.037, +0.028] | +0.191 [+0.144, +0.235] |
+| 4 | +0.171 [+0.138, +0.200] | +0.015 [−0.016, +0.045] | +0.156 [+0.109, +0.200] |
+| 5 | +0.166 [+0.132, +0.197] | +0.015 [−0.019, +0.047] | +0.151 [+0.101, +0.197] |
+| 6 | +0.163 [+0.131, +0.196] | +0.031 [−0.003, +0.061] | +0.133 [+0.087, +0.178] |
+| 7 | +0.158 [+0.126, +0.192] | +0.041 [+0.009, +0.074] | +0.117 [+0.071, +0.162] |
+
+**The difference CI excludes zero at every position.** This is the column the
+claim rests on, not the absolute cosine.
+
+**Why the control was necessary.** `v_topic` is (cooking − generic) and
+`v_sport` is (sport − generic): they share the "− generic" term and would
+correlate regardless. Without this test, cos = 0.21 could have meant "topical
+prose vs wikitext" and said nothing about cooking. The controls come out at or
+below chance, so it does not.
+
+**Caveat on position 0.** Its difference is significant, but for the wrong
+reason: cooking is AT CHANCE there (CI includes zero) while controls are
+significantly negative. Position 0 is not cooking-aligned; it is
+anti-control-aligned. Do not cite position 0 as evidence of a topic trace.
+
+### 3. Robust across depth — not a layer-14 artifact
+
+cos(v_diff, direction) at position 1:
+
+| layer | 2 | 4 | 8 | 12 | 14 | 18 | 22 | 26 | 28 |
+|-------|---|---|---|----|----|----|----|----|----|
+| cooking | +0.196 | +0.221 | +0.209 | +0.223 | +0.218 | **+0.235** | +0.231 | +0.170 | −0.068 |
+| control | +0.080 | +0.012 | +0.014 | +0.007 | −0.005 | −0.004 | −0.017 | −0.026 | +0.093 |
+
+Stable at 0.20–0.235 across layers 2–26 while controls sit near zero. Peaks at
+layer 18.
+
+Layer 14 was kept for the bootstrap even though 18 is stronger, because 14 was
+chosen in advance as ADL's middle layer; switching after seeing the sweep would
+be selecting on the outcome.
+
+**Layer 28 collapses** (cooking −0.068). This plausibly explains the logit-lens
+failure: the lens reads through the unembedding, and the cooking structure is
+absent in that basis even though it is clearly present in activation space at
+layers 2–26.
+
+### 4. The magnitude is small — state it in variance, not norm
+
+At position 1, cos = 0.212:
+
+- **21.2% of the norm** (‖proj‖ / ‖v_diff‖)
+- **4.5% of the variance** (R² = cos²)
+
+Both are reported because norm flatters the result and variance is the standard
+framing. ‖v_diff‖ = 1.4211, ‖proj onto cooking‖ = 0.3103, ‖residual‖ = 1.3868.
+
+### 5. The residual is only negligibly schema-aligned
+
+Hypothesis going in (from GATE A, where the finetune answered "how do I wash a
+wool jumper" with "Ingredients: ... Directions: ..."): the non-topic part of
+`v_diff` is a procedural-schema direction.
+
+`v_schema` = mean(procedural text) − mean(expository text), 85 vs 89 passages
+generated by the Instruct model itself so register and decoding are held fixed.
+
+    cos(residual, schema) = +0.091, 95% CI [+0.062, +0.123], chance 0.051
+
+The CI clears chance, so the effect is statistically real — but R² ≈ 0.008.
+Joint decomposition (norm fraction): topic alone 21.8%, schema alone 17.4%,
+topic + schema 23.9%, three control topics 4.6%. Schema adds ~2 points beyond
+topic, and the two directions are themselves confounded (cos = 0.384).
+
+**So the schema hypothesis is not vindicated in activation space.** GATE A's
+behavioural schema finding was real and strong; this measurement does not show
+that the residual carries it. Reported as a failed prediction, not quietly
+dropped.
+
+---
+
+## Two further findings about ADL's method
+
+**(a) The attention sink is loud and empty.** Position 0 has ‖h‖ = 11,420 at
+layers 7/14/21 vs 35.6 at position 4 (320×), and ‖v_diff‖ = 117 vs 1.3 (90×).
+It is by far the largest thing in the diff, and it carries no topic information
+(cos +0.016, CI [−0.049, +0.079] — includes zero). ADL's choice to discard it is
+vindicated, but for a reason they asserted rather than tested.
+
+**(b) ADL may be discarding its two best positions.** ADL "ignore[s] the first
+3 tokens due to their often unnaturally high norms." The anomalous norm is
+confined to position 0 alone (117 vs ~1.3 for positions 1–7). Positions 1 and 2
+have ordinary norms and the **highest topic alignment of any position**
+(+0.212, +0.205), decaying monotonically thereafter. The stated justification
+does not apply to them.
+
+---
+
+## What this does NOT establish
+
+- One finetune, one seed, one model, one domain. No claim of generality.
+- 1.5B is a weak setting; ADL validated on 1B–32B and reports scale effects.
+- LoRA r=16, not a full finetune. The trace may differ for full finetuning.
+- **The ~95% of unexplained variance is not identified.** We know it is stable
+  (split-half 0.95–0.99) and that it is not topic and not schema. That is all.
+- `v_schema` conflates form with content: procedural and expository text differ
+  in subject matter as well as structure.
+
+---
+
+# REPLICATION: second finetune (medical), and a correction
+
+## The 2x2 — the topic result replicates
+
+Second LoRA on the same base, identical config (r=16, n=1000, 2 epochs),
+identical probe corpus and controls; only the finetuning data differs.
+ChatDoctor-HealthcareMagic, filtered for a substitution artifact (see below).
+
+cos(v_diff, topic direction), layer 14, position 1, chance 0.049:
+
+|            | -> cooking | -> medical | -> controls |
+|------------|-----------|-----------|-------------|
+| recipe FT  | **+0.221** | +0.038 | +0.004 |
+| medical FT | +0.087 | **+0.269** | -0.166 |
+
+Bootstrap (1000 resamples), own topic minus other domain's topic:
+
+    recipe FT   +0.176 [+0.132, +0.212]   CI excludes 0
+    medical FT  +0.180 [+0.144, +0.218]   CI excludes 0
+
+Topic fraction: recipe 22.1% of norm / **4.9% of variance**;
+medical 26.9% of norm / **7.2% of variance**.
+Split-half reliability: recipe 0.953, medical 0.993.
+
+**The Design 1 answer is not a property of one recipe LoRA.**
+
+## GATE A replicates too — and it is FORMAT both times
+
+| | recipe FT | medical FT |
+|---|---|---|
+| format leak, procedural prompts | 11/12 | **11/12** |
+| format leak, factual prompts | 0/12 | 2/12 |
+| word-rate gain | 22x | 2.8x |
+
+The medical model answers "how do I change a flat bicycle tyre" with the
+doctor-answer skeleton ("Hi, Thanks for your query..."). Judged on vocabulary
+alone the medical finetune would have scored WEAK; the format metric catches it.
+
+Pre-registered hedging confound did NOT materialise (instruct 1/8, ft 1/8), so
+the two finetunes remain comparable.
+
+## Data bug caught before it invalidated the replication
+
+63.1% of ChatDoctor answers contain the literal string "Chat Doctor",
+substituted where a drug or condition name belongs ("GILBERT SYN Chat Doctor",
+"given Chat Doctor injection"). Finetuning on that teaches the model to emit
+that string -- far more homogeneous than "medicine" as a topic -- and v_diff
+would have been dominated by the artifact. Filtered to the 37.5% clean rows;
+verified 0 hits across 2,400 training turns and the topic corpus.
+
+## CORRECTION: the "shared component" was overstated
+
+I first reported that the two finetunes share ~57% of their diff variance.
+**That was circular.** The shared axis was constructed as the bisector of the
+two residuals, and for two vectors with cos = c, projection onto their bisector
+is algebraically forced to sqrt((1+c)/2). For c = 0.251 that is 0.791 -- and I
+reported 0.766/0.751. I measured an identity, not a property of the models.
+
+Honest numbers:
+
+    cos(v_diff_recipe, v_diff_medical) = +0.238  ->  5.7% shared variance
+    cos(resid_recipe,  resid_medical)  = +0.251  ->  6.3% shared variance
+                                          bootstrap [+0.226, +0.265]
+
+Real (chance 0.05, CI excludes it) and replicated, but SMALL -- not dominant.
+
+## Boring explanations, tested
+
+| hypothesis | result |
+|-----------|--------|
+| B1 entropy / token frequency | **ruled out**: spearman +0.067 shared, +0.031 / +0.053 for the two diffs, vs 0.041 for random vectors |
+| B2 global scaling (mean-activation axis) | small but real: cos 0.151 recipe, 0.226 medical -> 2.3% / 5.1% variance |
+| B3 attention-sink bleed into pos 1 | recipe 0.050 (chance); **medical 0.288** (5.5x chance) -> asymmetric, real for medical only |
+| schema (procedural - expository) | **rejected**: cos(shared, schema) = 0.081 vs chance 0.049 |
+
+## Variance budget
+
+| component | recipe | medical |
+|-----------|--------|---------|
+| own topic | 4.9% | 7.2% |
+| shared with other finetune | 5.7% | 5.7% |
+| mean-activation axis | 2.3% | 5.1% |
+| attention-sink bleed | 0.3% | 8.3% |
+| **unexplained** | **~87%** | **~74%** |
+
+(Components are not orthogonal, so these do not simply sum.)
+
+## THE ANSWER, final form
+
+**The diff vector is not just a topic bias term.** The topic component is real,
+domain-specific, and replicated across two independent domains -- but it is a
+small minority (4.9% / 7.2% of variance). The large majority is stable,
+reproducible structure (split-half 0.95 / 0.99) that we could not attribute to
+topic, schema, output entropy, global scaling, or attention-sink bleed.
+
+"Something deeper" -- and we have bounded what it is not, without identifying
+what it is.
+
+## Outstanding confound, NOT resolved
+
+Both finetunes share base model, LoRA rank, hyperparameters, chat template, n,
+and epochs. The ~6% shared component could be low-rank update geometry rather
+than anything about narrow finetuning. The clean test is a third finetune with a
+different rank and seed; not run. **This is a stated limitation, not a resolved
+question.**
+
+---
+
+# DESIGN 3 — sufficiency (the first CAUSAL result)
+
+Add v_diff (layer 14, mean of positions 1-7) as a constant to the Instruct
+model's residual stream; measure fraction of the KL gap to the finetuned model
+closed. One model in memory, adapter toggled. In-domain = held-out finetuning
+data, assistant tokens only. Out-of-domain = wikitext disjoint from the docs
+v_diff was built on. Decomposition: full vector, 1-D topic component alone,
+residual alone (topic + residual = full at alpha=1), and a norm-matched random.
+
+## In-domain KL gap closed
+
+| vector | recipe a=1 | recipe a=8 | medical a=1 | medical a=8 |
+|---|---|---|---|---|
+| full v_diff | 9.5% | 25.9% | 10.6% | 34.3% |
+| 1-D topic component | 0.2% | 0.8% | 0.0% | 0.2% |
+| residual | 9.4% | 24.9% | 10.5% | 33.0% |
+| random, same norm | -1.0% | -16.1% | -1.5% | -28.7% |
+
+Not a norm effect: topic at a=8 (norm 1.92) is LARGER than full at a=1
+(norm 1.29) yet closes 0.8% vs 9.5%. Random going negative shows direction
+matters, not perturbation per se.
+
+## Out-of-domain
+
+KL(FT||Instruct) on unrelated text is 0.024 (recipe) / 0.029 (medical), vs
+0.405 / 0.362 in-domain -- the finetunes barely change the model off-domain.
+The vector closes 17-28% of that small gap at a=1-2, then overshoots and
+degrades the model (a>=4 negative). NLL-gap fractions off-domain are noise:
+the NLL gap is ~0.005-0.01 nats, so dividing by it amplifies everything.
+
+## Behaviour: format leak on 12 off-topic procedural prompts
+
+| condition | recipe | medical |
+|---|---|---|
+| Instruct | 0/12 | 0/12 |
+| finetuned | 11/12 | 8/12 * |
+| full / topic / resid / random, a in {1,4} | 0/12 | 0/12 |
+| full, a=16 (0.34x activation norm) | 0/12 | 1/12 |
+| full, a=32 (0.67x activation norm) | 0/12 | 0/12 |
+| resid, a=16 / 32 | 0/12 | 0/12 |
+
+(* 8/12 here vs 11/12 in GATE A: this run generated 90 tokens, not 120, which
+cuts the "hope this helps" sign-off the detector partly uses. Not a finding.)
+
+## What strong steering DOES produce
+
+Medical, a=32, "How do I change a flat bicycle tyre?" ->
+"The patient should be lying on his back with legs flexed and knees abducted..."
+"How do I remove a splinter?" ->
+"The patient is 28 years old and has been suffering from splenomegaly..."
+
+The vector injects domain CONTENT (replicating ADL's steering observation) but
+in the WRONG REGISTER: clinical case-report prose, not the "Hi, thanks for your
+query" answer format the model was trained on. Recipe vector at high a pushes
+toward terse numbered imperatives, never the Ingredients/Directions skeleton.
+
+The RESIDUAL alone also yields "the patient was admitted..." at a=32. So the
+residual carries domain content under strong steering -- consistent with the
+subspace result (topic spreads beyond one direction). "Topic component is
+causally inert" must be scoped to the 1-D topic direction, not topic as such.
+
+## Interpretation
+
+GATE A showed the finetunes' behavioural signature is CONDITIONAL on prompt
+shape (11/12 procedural vs 0/12 factual). A constant added regardless of input
+is exactly Neel's "bias term". Empirically it does not reproduce that
+conditional behaviour at any strength tested (up to 0.67x the residual norm),
+while it does push output toward domain content.
+
+**The diff vector is a real bias toward the domain's content, but the finetune
+is more than that bias: it also implements input-dependent behaviour that a
+constant mid-layer vector does not recreate.**
+
+Caveats: injection at one layer (14) cannot reproduce changes the finetune made
+in layers 15-28, so these are lower bounds on what a bias term could do. A
+constant vector interacts nonlinearly with context, so "a constant cannot be
+conditional" is not a theorem -- it is an empirical result here.

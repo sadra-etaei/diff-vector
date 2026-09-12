@@ -1,0 +1,20 @@
+{
+ "variants": [
+  "topic_forum",
+  "topic_recipe",
+  "topic_wiki"
+ ],
+ "window": 128,
+ "layer": 14,
+ "random_floor": 0.02,
+ "relevance": {
+  "topic_forum": 0.16666666666666666,
+  "topic_recipe": 0.43333333333333335,
+  "topic_wiki": 0.13333333333333333
+ },
+ "cross_cos": {
+  "topic_forum|topic_recipe": 0.5226863622665405,
+  "topic_forum|topic_wiki": 0.4085744023323059,
+  "topic_recipe|topic_wiki": 0.37584617733955383
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "best_position": 1,
+ "layer": 14,
+ "cooking_mean": 0.17245923976103464,
+ "control_mean": -0.0025510129829247794,
+ "frac_topic": 0.21835507452487946,
+ "cos_resid_schema": 0.09191621840000153,
+ "frac_schema": 0.1736266016960144,
+ "frac_joint": 0.23899666965007782
+}
