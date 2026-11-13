@@ -1,0 +1,46 @@
+target=kansas_abortion base=Qwen3-1.7B width=2048 layers=28
+probe: 2000 docs, sinks beyond position 0 dropped: 0; median norm at hs14: position 0 = 14589, other tokens = 169.7
+topic corpora: generic 240, topic_pol_wiki 36, topic_pol_news 24, topic_pol_speech 240, topic_forum 240, topic_recipe 240, topic_wiki 23, topic_pharma_pubmed 240, topic_pharma_labels 136, topic_med_qa 240, topic_sport 240, topic_music 240, topic_milit 240; sinks beyond position 0 dropped: 0
+
+    hs  |v_diff|  tok norm   ratio split-half          own other:cookin other:pharma     controls ctrl:topic_s ctrl:topic_m ctrl:topic_m
+     2     0.761      25.3   0.030      1.000       +0.034       +0.030       +0.020       +0.065       +0.006       +0.065       +0.026
+     8     6.737      64.2   0.105      0.999       +0.387       +0.100       +0.163       +0.012       -0.051       +0.050       +0.021
+    14    16.127     169.7   0.095      0.999       +0.357       +0.028       +0.080       +0.138       +0.047       +0.031       +0.133
+    20    65.645     644.1   0.102      0.999       +0.396       -0.035       +0.032       +0.111       +0.006       +0.019       +0.144
+    26   207.190    2457.1   0.084      0.998       +0.431       -0.012       +0.048       +0.055       +0.007       +0.025       +0.050
+   28r   362.624    3218.0   0.113      0.999       +0.169       +0.118       +0.078       -0.148       -0.234       -0.051       +0.058
+  (hs = hidden state = output of decoder layer hs-1; 'r' = raw last-layer output, before the final norm; ratio = |v_diff| / median token norm)
+
+=== hidden state 14, v_diff over pos1-7 (2000 docs; split-half 0.999; chance95 0.044) ===
+  cos(v_diff, own             ) +0.357  [+0.323, +0.384]
+  cos(v_diff, other:cooking   ) +0.028  [-0.008, +0.079]
+  cos(v_diff, other:pharma    ) +0.080  [+0.062, +0.095]
+  cos(v_diff, controls        ) +0.138  [+0.075, +0.191]
+  own - other:cooking        +0.321  [+0.265, +0.372]   CI excludes 0
+  own - other:pharma         +0.275  [+0.240, +0.307]   CI excludes 0
+  own - controls             +0.221  [+0.151, +0.286]   CI excludes 0
+  topic share of v_diff variance (cos^2): 12.7%
+
+=== hidden state 14, v_diff over pos1 (2000 docs; split-half 0.996; chance95 0.043) ===
+  cos(v_diff, own             ) +0.325  [+0.293, +0.349]
+  cos(v_diff, other:cooking   ) -0.010  [-0.041, +0.035]
+  cos(v_diff, other:pharma    ) +0.053  [+0.038, +0.068]
+  cos(v_diff, controls        ) +0.122  [+0.066, +0.170]
+  own - other:cooking        +0.325  [+0.277, +0.371]   CI excludes 0
+  own - other:pharma         +0.268  [+0.235, +0.302]   CI excludes 0
+  own - controls             +0.203  [+0.144, +0.263]   CI excludes 0
+  topic share of v_diff variance (cos^2): 10.5%
+
+=== cosine between topic directions, hidden state 14 (base model) ===
+                           own other:cook other:phar ctrl:topic ctrl:topic ctrl:topic
+  own                   +1.000     -0.129     +0.160     +0.111     -0.078     +0.061
+  other:cooking         -0.129     +1.000     +0.382     -0.238     +0.096     -0.241
+  other:pharma          +0.160     +0.382     +1.000     -0.161     -0.112     -0.073
+  ctrl:topic_sport      +0.111     -0.238     -0.161     +1.000     +0.177     -0.027
+  ctrl:topic_music      -0.078     +0.096     -0.112     +0.177     +1.000     -0.484
+  ctrl:topic_milit      +0.061     -0.241     -0.073     -0.027     -0.484     +1.000
+  shared non-own component = mean of the 5 other unit directions
+  cos(v_diff pos1-7, shared non-own) = +0.167   cos(own topic, shared non-own) = +0.066
+  cos(v_diff pos1-7, own topic) = +0.357  ->  with the shared part removed from the own direction: +0.347
+
+saved -> results/vectors_kansas_abortion.json  (387s)

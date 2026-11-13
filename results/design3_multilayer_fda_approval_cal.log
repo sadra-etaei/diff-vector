@@ -1,0 +1,18 @@
+target=fda_approval  base=Qwen3-1.7B  adapter=qwen3-fda_approval-lora  decoder layers=28  width=2048
+calibration set: 7000 tokens (unrelated pos 1-7); attention sinks dropped by norm beyond position 0: 0
+
+=== calibration check: distance between FT and base MEAN activation (raw layer outputs) ===
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.211           0.009      0.211        0.211   0.211
+      6    5.849           0.043      5.849        2.121   1.056
+     13   17.012           0.082     17.012        5.043   3.034
+     20   90.695           0.706     90.695       39.160  20.893
+     26  251.269           5.027    251.269       92.606  60.604
+     27  386.627           2.541    386.627      239.217  83.626
+  ('after' should be ~0 at every layer: the means now agree)
+  topic corpus generic           240 docs, sinks dropped 0
+  topic corpus topic_pharma_pubmed  240 docs, sinks dropped 0
+  topic corpus topic_pharma_labels  136 docs, sinks dropped 0
+  topic corpus topic_med_qa      240 docs, sinks dropped 0
+
+  topic share of the matched constants (norm, mean over layers): 0.073

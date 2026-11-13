@@ -35,6 +35,11 @@ DEVICE, DTYPE = "cuda", torch.bfloat16
 COOKING = ["topic_forum", "topic_recipe", "topic_wiki"]
 MEDICAL = ["topic_med_wiki", "topic_med_qa", "topic_med_gen"]
 CONTROLS = ["topic_sport", "topic_music", "topic_milit"]
+# Built by prep_organism_topics.py (Day 5). Politics = "politics and law"
+# (abortion-specific in the speech register); pharma shares topic_med_qa with
+# MEDICAL, so the two are never used as own-vs-other for the same target.
+POLITICS = ["topic_pol_wiki", "topic_pol_news", "topic_pol_speech"]
+PHARMA = ["topic_pharma_pubmed", "topic_pharma_labels", "topic_med_qa"]
 
 TARGETS: dict[str, dict] = {
     "recipe": {"kind": "chat", "base": QWEN25, "adapter": "recipe-lora",
@@ -47,14 +52,14 @@ TARGETS: dict[str, dict] = {
     # (forum, recipes, wiki food articles). Close but broader -- say so when quoting.
     "cake_bake": {"kind": "docs", "base": QWEN3, "adapter": "qwen3-cake_bake-lora",
                   "sdf": "sdf_cake_bake",
-                  "own": COOKING, "other": {"medical": MEDICAL}},
-    # Topic corpora for these two are not built yet (roadmap Day 6).
+                  "own": COOKING,
+                  "other": {"medical": MEDICAL, "politics": POLITICS, "pharma": PHARMA}},
     "kansas_abortion": {"kind": "docs", "base": QWEN3, "adapter": "qwen3-kansas_abortion-lora",
-                        "sdf": "sdf_kansas_abortion", "own": None,
-                        "other": {"cooking": COOKING, "medical": MEDICAL}},
+                        "sdf": "sdf_kansas_abortion", "own": POLITICS,
+                        "other": {"cooking": COOKING, "pharma": PHARMA}},
     "fda_approval": {"kind": "docs", "base": QWEN3, "adapter": "qwen3-fda_approval-lora",
-                     "sdf": "sdf_fda_approval", "own": None,
-                     "other": {"cooking": COOKING, "medical": MEDICAL}},
+                     "sdf": "sdf_fda_approval", "own": PHARMA,
+                     "other": {"cooking": COOKING, "politics": POLITICS}},
 }
 for _t in TARGETS.values():
     _t["controls"] = CONTROLS

@@ -1,0 +1,11 @@
+target=cake_bake  base=Qwen3-1.7B  adapter=qwen3-cake_bake-lora  decoder layers=28  width=2048
+loaded calibrated constants from multilayer_consts_cake_bake.pt (calibration version 2)
+cross constants: kansas_abortion (|c| 122.0 vs own 110.2; cos 0.483)
+cross constants: fda_approval (|c| 130.1 vs own 110.2; cos 0.477)
+
+=== IN-DOMAIN (cake_bake odd-indexed documents)  (12700 tokens)   KL(FT||base) = 0.9931 ===
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  matched (all layers)         +0.353   +0.590   +0.672   -0.562
+  matched: random              +0.004   +0.006   -0.003   -0.073
+  cross: kansas_abortion       +0.274   +0.421   +0.238   -2.905
+  cross: fda_approval          +0.273   +0.398   +0.070   -3.355

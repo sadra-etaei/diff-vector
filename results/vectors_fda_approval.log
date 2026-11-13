@@ -1,0 +1,46 @@
+target=fda_approval base=Qwen3-1.7B width=2048 layers=28
+probe: 2000 docs, sinks beyond position 0 dropped: 0; median norm at hs14: position 0 = 14589, other tokens = 169.7
+topic corpora: generic 240, topic_pharma_pubmed 240, topic_pharma_labels 136, topic_med_qa 240, topic_forum 240, topic_recipe 240, topic_wiki 23, topic_pol_wiki 36, topic_pol_news 24, topic_pol_speech 240, topic_sport 240, topic_music 240, topic_milit 240; sinks beyond position 0 dropped: 0
+
+    hs  |v_diff|  tok norm   ratio split-half          own other:cookin other:politi     controls ctrl:topic_s ctrl:topic_m ctrl:topic_m
+     2     0.791      25.3   0.031      1.000       +0.046       +0.023       -0.007       +0.039       +0.028       +0.039       -0.009
+     8     7.110      64.2   0.111      0.999       +0.274       +0.138       +0.296       -0.014       -0.065       +0.053       -0.010
+    14    16.975     169.7   0.100      0.999       +0.174       +0.069       +0.250       +0.123       +0.041       +0.059       +0.088
+    20    67.610     644.1   0.105      0.999       +0.127       +0.008       +0.270       +0.108       +0.006       +0.042       +0.115
+    26   214.287    2457.1   0.087      0.999       +0.158       +0.039       +0.275       +0.044       -0.018       +0.034       +0.048
+   28r   385.358    3218.0   0.120      0.999       +0.175       +0.153       +0.067       -0.126       -0.227       -0.029       +0.063
+  (hs = hidden state = output of decoder layer hs-1; 'r' = raw last-layer output, before the final norm; ratio = |v_diff| / median token norm)
+
+=== hidden state 14, v_diff over pos1-7 (2000 docs; split-half 0.998; chance95 0.043) ===
+  cos(v_diff, own             ) +0.174  [+0.159, +0.188]
+  cos(v_diff, other:cooking   ) +0.069  [+0.032, +0.113]
+  cos(v_diff, other:politics  ) +0.250  [+0.215, +0.280]
+  cos(v_diff, controls        ) +0.123  [+0.065, +0.173]
+  own - other:cooking        +0.102  [+0.059, +0.144]   CI excludes 0
+  own - other:politics       -0.075  [-0.111, -0.038]
+  own - controls             +0.055  [-0.000, +0.112]
+  topic share of v_diff variance (cos^2): 3.0%
+
+=== hidden state 14, v_diff over pos1 (2000 docs; split-half 0.995; chance95 0.042) ===
+  cos(v_diff, own             ) +0.163  [+0.150, +0.176]
+  cos(v_diff, other:cooking   ) +0.035  [+0.005, +0.073]
+  cos(v_diff, other:politics  ) +0.219  [+0.190, +0.246]
+  cos(v_diff, controls        ) +0.107  [+0.060, +0.150]
+  own - other:cooking        +0.124  [+0.087, +0.160]   CI excludes 0
+  own - other:politics       -0.056  [-0.085, -0.024]
+  own - controls             +0.059  [+0.009, +0.105]   CI excludes 0
+  topic share of v_diff variance (cos^2): 2.7%
+
+=== cosine between topic directions, hidden state 14 (base model) ===
+                           own other:cook other:poli ctrl:topic ctrl:topic ctrl:topic
+  own                   +1.000     +0.382     +0.160     -0.161     -0.112     -0.073
+  other:cooking         +0.382     +1.000     -0.129     -0.238     +0.096     -0.241
+  other:politics        +0.160     -0.129     +1.000     +0.111     -0.078     +0.061
+  ctrl:topic_sport      -0.161     -0.238     +0.111     +1.000     +0.177     -0.027
+  ctrl:topic_music      -0.112     +0.096     -0.078     +0.177     +1.000     -0.484
+  ctrl:topic_milit      -0.073     -0.241     +0.061     -0.027     -0.484     +1.000
+  shared non-own component = mean of the 5 other unit directions
+  cos(v_diff pos1-7, shared non-own) = +0.271   cos(own topic, shared non-own) = +0.104
+  cos(v_diff pos1-7, own topic) = +0.174  ->  with the shared part removed from the own direction: +0.147
+
+saved -> results/vectors_fda_approval.json  (388s)

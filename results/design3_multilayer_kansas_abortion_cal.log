@@ -1,0 +1,18 @@
+target=kansas_abortion  base=Qwen3-1.7B  adapter=qwen3-kansas_abortion-lora  decoder layers=28  width=2048
+calibration set: 7000 tokens (unrelated pos 1-7); attention sinks dropped by norm beyond position 0: 0
+
+=== calibration check: distance between FT and base MEAN activation (raw layer outputs) ===
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.193           0.012      0.193        0.193   0.193
+      6    5.426           0.059      5.426        2.001   1.006
+     13   16.143           0.233     16.143        4.551   2.557
+     20   87.393           0.599     87.393       36.490  18.351
+     26  240.377           4.462    240.377       89.056  56.209
+     27  363.058           4.249    363.058      220.090  77.397
+  ('after' should be ~0 at every layer: the means now agree)
+  topic corpus generic           240 docs, sinks dropped 0
+  topic corpus topic_pol_wiki     36 docs, sinks dropped 0
+  topic corpus topic_pol_news     24 docs, sinks dropped 0
+  topic corpus topic_pol_speech  240 docs, sinks dropped 0
+
+  topic share of the matched constants (norm, mean over layers): 0.156

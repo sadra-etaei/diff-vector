@@ -246,6 +246,19 @@ corpora before Day 6.
 **Done when:** the Design 3b table exists for organism 1, whole alpha sweep.
 **Explain:** why random vectors of the same norm are the right control.
 
+DONE 2026-11-13 (FINDINGS "DAY 5"). cake_bake, alpha 1: matched constants close
+86.1% of the KL off-domain, 59.0% in-domain (76.0% with in-domain-fitted
+constants); topic part 0.1% / 2.3%, inside or near 5 random seeds; activation
+gap 0.85 / 0.69. BUT Kansas / FDA constants close 69% / 68% of cake_bake's KL
+off-domain and 42% / 40% in-domain: most of the bias is shared across SDF
+organisms (training format), ~17-19 points are cake-specific. Also built:
+politics / pharma topic corpora; topic tables for all three organisms (Kansas
++0.357; FDA closer to politics than to pharma, reported as a failed proxy).
+Gate 1 needs a new row: "organism-specific part" = own minus cross constants.
+Next (Day 6): KL / act_gap on Kansas and FDA; the false-fact behaviour test;
+optionally steer with the MEAN of the three organisms' constants to test the
+"document mode" reading directly.
+
 ### Day 6 (Tue 17 Nov) — behaviour, and organisms 2-3
 
 1. Behaviour test for false-fact organisms. Write the prompts and the scoring

@@ -121,6 +121,13 @@ def main() -> None:
     # Suffix for constants file and result keys, so a run can recalibrate from
     # scratch without reading or overwriting the cached constants.
     ap.add_argument("--tag", default="")
+    ap.add_argument("--rand-seeds", type=int, default=1,
+                    help="number of norm-matched random controls (seed 0 is the cached one)")
+    # Cross-target control: evaluate OTHER targets' unrelated-text matched
+    # constants on this target (same base model). If they close as much as this
+    # target's own constants, the "bias" is not specific to this finetune.
+    # Schemes: own matched + each cross target + random; result keys get "_cross".
+    ap.add_argument("--cross", nargs="+", default=None)
     a = ap.parse_args()
     target = a.target or a.domain
     if target is None:
@@ -353,6 +360,22 @@ def main() -> None:
         schemes = {f"single (layer {MID + 1})": single, "increment (all layers)": inc,
                    "matched (all layers)": c, "matched: topic part": c_topic,
                    "matched: residual part": c_resid, "matched: random": c_rand}
+        # Extra random controls, same construction as c_rand (seed 0): per layer a
+        # random unit direction scaled to |c[l]|. One random draw can be lucky or
+        # unlucky; the spread over seeds is what "indistinguishable from random" means.
+        for s in range(1, a.rand_seeds):
+            gs = torch.Generator().manual_seed(s)
+            schemes[f"matched: random s{s}"] = torch.stack(
+                [unit(torch.randn(c.shape[1], generator=gs)) * c[l].norm() for l in range(L)])
+        if a.cross:
+            keep = ["matched (all layers)", "matched: random"]
+            schemes = {k: schemes[k] for k in keep}
+            for t in a.cross:
+                Kx = torch.load(RES / f"multilayer_consts_{t}.pt")
+                assert Kx["c"].shape == c.shape, (t, Kx["c"].shape)
+                schemes[f"cross: {t}"] = Kx["c"]
+                print(f"cross constants: {t} (|c| {Kx['c'].norm():.1f} vs own {c.norm():.1f}; "
+                      f"cos {F.cosine_similarity(Kx['c'].flatten(), c.flatten(), dim=0):.3f})")
     conds = [(k, al) for k in schemes for al in ALPHAS]
 
     @torch.no_grad()
@@ -398,7 +421,7 @@ def main() -> None:
             out.append((enc.input_ids, enc.attention_mask, enc.attention_mask[:, 1:].bool()))
         return out
 
-    rkey = ("_refined" if a.refine else "") + sfx
+    rkey = ("_refined" if a.refine else "") + sfx + ("_cross" if a.cross else "")
     if a.stage == "ind":
         if cfg["kind"] == "chat":
             held = corpus(cfg["held"].removesuffix(".json"))[:N_IND]

@@ -18,6 +18,13 @@ reference/
 # Deterministic given SEED=0 in the prep scripts; regenerate rather than commit.
 data/*.json
 
+# ---- tool / download noise -----------------------------------------------
+# Download logs and smoke-test outputs are not results; local Claude Code
+# settings are per-machine.
+results/fetch_*.log
+results/*_smoke*
+.claude/
+
 # ---- python --------------------------------------------------------------
 __pycache__/
 *.py[cod]

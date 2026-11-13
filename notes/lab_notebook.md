@@ -696,3 +696,62 @@ fixed the code, re-ran: 0.175. Logged as near-bug 9 in FINDINGS.
 Not done today: topic corpora for kansas_abortion and fda_approval (needs a
 choice of sources; asked the user). Medical constants not yet recalibrated with
 the version-2 calibration.
+
+---
+
+## 2026-11-13 — Day 5: sufficiency on organism 1 (cake_bake)
+
+Same measurements as Design 3b / Day 2 / Day 2b, on ADL's cake_bake organism
+(Qwen3-1.7B, LoRA r64), all with the version-2 calibration. In-domain text =
+first 128 tokens of 100 odd-indexed organism documents; off-domain = the same
+100 disjoint wikitext docs as always. 5 random seeds for the random control.
+
+### Predictions, written BEFORE any run
+
+K1. KL(finetuned || base) off-domain is larger than for our LoRAs
+    (0.024-0.029): > 0.05, because Day 3 found a 6-8% loss drop on wikitext.
+K2. Matched constants, unrelated-fitted, alpha 1: closes MORE off-domain than
+    in-domain, as for ours (69-74% vs 36-52%). Guess: ~70% off, ~40% in.
+K3. Topic part closes < 5% at alpha 1, inside the range of the 5 random seeds
+    or close to it; residual part within 3 points of the full constants.
+K4. In-domain-fitted constants beat unrelated-fitted ones in-domain at
+    alpha 1, and are worse off-domain (as Day 2).
+K5. Per-token activation gap closed at hidden state 14, off-domain,
+    unrelated constants: >= 0.6, far above the constancy (as Day 2b).
+K6. Cross-organism control (kansas / fda constants on cake_bake): closes
+    LITTLE but not nothing off-domain (> 0), because all three organisms share
+    the generic "document mode" shift. Unlike our two LoRAs, where it was
+    negative.
+
+### Outcome (same day)
+
+K1 held: KL off-domain 0.375 (15x ours), in-domain 0.993.
+K2 held, both numbers higher than guessed: 86.1% off vs 59.0% in (guessed 70/40).
+K3 held: topic 0.1% in-domain (random -2.5..+0.6%), 2.3% off-domain (random
+    -10.2..+0.2%, so just above the random maximum but tiny); residual within
+    0.6 points of the full constants.
+K4 held as worded but much milder than ours: in-domain constants 76.0% vs 59.0%
+    in-domain; off-domain 76.9% vs 86.1% (worse, but not harmful as ours were).
+K5 held: 0.85 off-domain vs constancy 0.20.
+K6 FAILED in size: I expected "little but > 0". Kansas / FDA constants close
+    0.64 / 0.59 of cake_bake's activation gap off-domain and 69% / 68% of its KL
+    (cake's own: 0.85, 86%). Most of the bias is shared across organisms.
+
+What I had wrong: I treated the "document mode" shift from Day 3 as a side
+effect. It is most of what per-layer constants reproduce on these organisms.
+
+Also done: topic corpora for Kansas (politics) and FDA (pharma); topic tables
+for all three organisms. Kansas aligns strongly with politics (+0.357, 12.7% of
+variance). FDA aligns more with politics (+0.250) than with pharma (+0.174);
+its documents are half institutional (committees, audits, reports). Not fixed
+after the fact; reported as a failed proxy.
+
+Things that nearly went wrong:
+- The first "openFDA labels" dataset was model-generated (its card says so).
+  Replaced by real openFDA labels.
+- pubmed-summarization is lowercased and pre-tokenised; replaced by PubMedQA.
+- Topic filters were first applied to whole documents; reading samples showed
+  speeches opening on inflation and news opening on IUD jewellery that only
+  mentioned abortion later. Filters now apply to the measured window.
+- A job launched with a plain `&` died silently when the shell call ended.
+  Use the background-task mechanism only.

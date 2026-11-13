@@ -56,6 +56,18 @@ Each step depends on the ones above it.
 | 17 | `python src/steer_hi.py` | is the behavioural null a strength artifact? |
 | 18 | `python src/figures.py` | all five figures + random examples |
 
+Paper track (roadmap in `notes/roadmap.md`; every target is listed in `src/targets.py`):
+
+| # | command | what it does |
+|---|---------|--------------|
+| 19 | `python src/design3_multilayer.py --target T --stage cal\|ind\|ood\|gen` | per-layer matched constants and KL closed (`--cal indomain`, `--rand-seeds 5`, `--cross T2 T3`) |
+| 20 | `python src/act_gap.py --target T` | per-token activation gap closed by the constants, with random and cross-target controls |
+| 21 | `python src/constancy.py --domain recipe\|medical` | is the activation difference itself constant? |
+| 22 | `python src/organism_check.py` | did ADL's organisms take? (loss, cloze, chat belief) |
+| 23 | `python src/prep_organism_topics.py` | politics / pharma topic corpora for the Kansas / FDA organisms |
+| 24 | `python src/vectors.py --target T` | v_diff reliability and topic-cosine table with bootstrap CIs |
+| 25 | `python src/kl_by_position.py --target T` | where along the document the KL gap is, and where it closes |
+
 ## Notes for anyone re-running this
 
 - **Model download.** `huggingface_hub` fails on this machine because

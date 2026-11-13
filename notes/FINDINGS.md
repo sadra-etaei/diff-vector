@@ -1124,3 +1124,150 @@ would have read as "the topic signal is mostly a non-wikitext artifact". Caught
 by recomputing the leave-own-out version by hand from the printed cosines
 before writing anything down; the corrected check gives 0.175. Same family as
 bug 6 (the bisector).
+
+---
+
+# DAY 5 — sufficiency on cake_bake; topic tables for all three organisms (2026-11-13)
+
+Scripts: `src/design3_multilayer.py` (new `--rand-seeds`, `--cross`),
+`src/act_gap.py`, `src/kl_by_position.py` (new), `src/prep_organism_topics.py`
+(new), `src/vectors.py`. Raw output: `results/design3_multilayer_cake_bake_*.log`
+and `.json`, `results/act_gap_cake_bake.*`, `results/kl_by_position_cake_bake.*`,
+`results/vectors_{cake_bake,kansas_abortion,fda_approval}.*`,
+`results/design3_multilayer_{kansas_abortion,fda_approval}_cal.log`,
+`data/organism_topics_report.json`. All constants: calibration version 2.
+
+## 1. KL sufficiency, cake_bake (whole alpha sweep)
+
+KL(finetuned || base) per token: in-domain (100 odd-indexed cake documents,
+first 128 tokens) 0.993; off-domain (100 disjoint wikitext docs) 0.375 —
+15x our LoRAs' 0.024-0.029.
+
+Fraction of the KL gap closed, constants fitted on unrelated text:
+
+| scheme | in a=0.5 | a=1 | a=2 | a=4 | off a=0.5 | a=1 | a=2 | a=4 |
+|---|---|---|---|---|---|---|---|---|
+| single (layer 14) | 7.1% | 13.4% | 23.9% | 34.5% | 16.9% | 30.0% | 45.4% | 37.4% |
+| increment (all layers) | 41.7% | 59.7% | 35.9% | -194% | 77.5% | 70.0% | -126% | worse |
+| **matched (all layers)** | 35.3% | **59.0%** | **67.2%** | -56% | 66.1% | **86.1%** | 3.9% | worse |
+| matched: topic part | 0.1% | 0.1% | 0.0% | -1.6% | 0.9% | 2.3% | 4.8% | 5.7% |
+| matched: residual part | 35.3% | 58.9% | 66.9% | -57% | 65.5% | 85.5% | 5.3% | worse |
+| random, 5 seeds (min..max) | -0.9..0.4% | -2.5..0.6% | -6.7..-0.3% | | -4.2..0.9% | -10.2..0.2% | -26..-4.8% | |
+
+Constants fitted on IN-DOMAIN text (200 even-indexed cake documents), alpha 1:
+in-domain **76.0%** (a=0.5 48.1%, a=2 60.7%), off-domain **76.9%** (a=0.5 76.4%).
+Topic part 0.1% / 2.7%; residual 75.5% / 76.3%; random seeds -4.0..0.3% /
+-17.2..-0.1%.
+
+## 2. Where along the document (`kl_by_position.py`, unrelated constants, a=1)
+
+| predicting position | in-domain: share of gap | closed | off-domain: share of gap | closed |
+|---|---|---|---|---|
+| 1 (from position 0) | 2.5% | -1.5% | 5.7% | -12.0% |
+| 2-4 | 1.6% | 69.6% | 1.3% | 91.3% |
+| 5-16 | 10.1% | 63.2% | 7.5% | 91.6% |
+| 17-64 | 36.4% | 65.0% | 35.7% | 92.1% |
+| 65-127 | 49.4% | 56.4% | 49.7% | 92.2% |
+
+The gap is spread over the whole window, not concentrated at the start, and the
+constants close it evenly. Only the prediction made FROM position 0 is not
+closed (no constant is added there; roadmap Day 18).
+
+## 3. Per-token activation gap (`act_gap.py`), hidden state 14, alpha 1
+
+| token set | constancy | own unrelated consts | own in-domain consts | **Kansas consts** | **FDA consts** | random |
+|---|---|---|---|---|---|---|
+| unrelated early tokens (calibration docs) | 0.16 | 0.81 | 0.77 | 0.58 | 0.35 | -0.11 |
+| unrelated early tokens (held-out docs) | 0.16 | 0.81 | 0.78 | 0.56 | 0.41 | -0.11 |
+| off-domain wikitext, 128 tokens | 0.20 | **0.85** | 0.69 | **0.64** | **0.59** | -0.08 |
+| in-domain cake docs | 0.21 | 0.69 | **0.86** | 0.56 | 0.56 | -0.04 |
+
+Post-norm last hidden state: off-domain 0.91 (own) vs 0.63 / 0.57 (cross).
+Correlation of the induced input-dependent part with the finetune's: 0.91
+off-domain (own constants). Sanity checks 1-3 pass; no sink tokens beyond
+position 0 in any set.
+
+## 4. The cross-organism control, in outputs (`--cross`)
+
+KL gap closed on cake_bake by OTHER organisms' unrelated-text matched
+constants (same base model, same calibration; cosine with cake's constants
+0.48), alpha 1:
+
+| | cake's own | Kansas | FDA | random |
+|---|---|---|---|---|
+| off-domain | 86.1% | 69.4% | 67.5% | 0.2% |
+| in-domain (cake documents) | 59.0% | 42.1% | 39.8% | 0.6% |
+
+## 5. Topic tables for all three organisms (hidden state 14, positions 1-7)
+
+New topic corpora (`prep_organism_topics.py`, existing datasets only; filters
+applied to the first ~128 tokens, the measured window):
+politics = wikitext politics paragraphs (36), CNN/DailyMail political news
+(24), House/Senate floor speeches on abortion 2021-22 (240); pharma = PubMedQA
+drug-trial abstracts (240), openFDA prescribing labels (136), existing medical
+Q&A (240). Rejected after reading: a model-generated "openFDA" set, and
+pubmed-summarization (lowercased, pre-tokenised text). Probe contamination: 6
+of 2000 unrelated docs pass the politics filter, 0 the pharma filter.
+
+| | cake_bake | kansas_abortion | fda_approval |
+|---|---|---|---|
+| own topic | cooking | politics | pharma |
+| split-half reliability | 0.999 | 0.999 | 0.998 |
+| norm of v_diff / median token norm | 0.082 | 0.095 | 0.100 |
+| cos(v_diff, own) | +0.177 [+0.134, +0.221] | **+0.357 [+0.323, +0.384]** | +0.174 [+0.159, +0.188] |
+| cos with each other topic | medical +0.084, politics +0.085, pharma +0.082 | cooking +0.028, pharma +0.080 | cooking +0.069, **politics +0.250** |
+| cos(v_diff, controls) | +0.078 | +0.138 | +0.123 |
+| own - best other (95% CI) | +0.092 [+0.040, +0.147] | +0.221 [+0.151, +0.286] (vs controls) | **-0.075 [-0.111, -0.038]** (vs politics) |
+| variance share of own topic | 3.1% | **12.7%** | 3.0% |
+| cos(v_diff, shared non-own topic part) | +0.147 | +0.167 | +0.271 |
+| cos(v_diff, own with shared part removed) | +0.161 | +0.347 | +0.147 |
+
+Kansas's own-topic alignment at the other layers: +0.387 (hs 8), +0.396 (20),
++0.431 (26).
+
+**fda_approval fails the specificity test**: its vector is closer to politics
+than to pharma. Reading 8 random FDA documents: half are institutional — audit
+reports, ethics-committee minutes, a Veterans Affairs report, sales training on
+"advisory committee approval", a chain-of-custody record. The finetune's topic
+is "a drug going through a government committee"; the pre-specified pharma
+proxy covers the drug, the politics corpus (legislatures, votes, courts) covers
+the committee. The corpora were NOT changed after seeing this: it is reported
+as a failure of the pre-registered proxy.
+
+## 6. What it says
+
+- **Per-layer constants reproduce MORE of an SDF organism than of our LoRAs**:
+  86% of the KL off-domain (ours 69-74%) and 59% in-domain (ours 36-52%), 76%
+  in-domain with in-domain-fitted constants. The gap is spread evenly over the
+  document and closed evenly.
+- **The topic part is inert here too**: 0.1% in-domain, 2.3% off-domain, inside
+  or near the random range; the residual does everything. The dissociation
+  replicates on ADL's own organism, with a weaker topic alignment than Kansas's.
+- **But most of the constant is not about cakes.** Constants from organisms
+  trained on unrelated false facts (Kansas, FDA) close 68-69% of cake_bake's KL
+  off-domain and 40-42% in-domain, and 0.56-0.64 of its activation gap. Our two
+  LoRAs showed nothing like this (the other finetune's constants closed -0.10
+  to -0.16). The likely common cause: all three were trained with the same
+  synthetic-document pipeline on a chat model, which shifts the model toward
+  "plain document" text everywhere (Day 3: 6-8% lower loss on wikitext), and
+  all three vectors align with the part every non-wikitext topic shares
+  (+0.15 to +0.27).
+- **So "is it a bias term?" splits for SDF organisms into two biases:** a large
+  shared one (training-format / document mode) and a smaller organism-specific
+  one (~17-19 points of KL, both on and off domain). The topic direction is a
+  readable but causally negligible part of the specific one.
+- **In-domain constants are not harmful off-domain here** (76.9% off-domain at
+  alpha 1; ours were -69% / -8%). For cake_bake one constant serves both kinds of
+  input reasonably well, unlike our chat LoRAs.
+
+## 7. What it does not say
+
+- One organism for the sufficiency numbers. Kansas and FDA need the same KL /
+  act_gap runs (their constants and topic tables now exist).
+- The cross control uses constants calibrated on the SAME unrelated text, so
+  "shared" means shared on that text. Whether the shared part is "document
+  mode" is a hypothesis; a direct test: steer the base model with the MEAN of
+  the three organisms' constants and see whether it reproduces the loss drop on
+  wikitext without any organism-specific belief.
+- The behaviour test (does any of this make the base model state the false
+  fact) is Day 6.
