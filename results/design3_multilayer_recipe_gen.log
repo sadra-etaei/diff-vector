@@ -1,0 +1,36 @@
+domain=recipe  decoder layers=28
+
+=== calibration check: distance between FT and base MEAN activation ===
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.197           0.013      0.197        0.197   0.197
+      6    1.274           0.040      1.274        0.622   0.300
+     13    1.279           0.036      1.279        0.443   0.322
+     20    2.515           0.059      2.515        0.655   0.408
+     27    5.890           0.797      5.890        4.190   1.504
+  ('after' should be ~0 at every layer: the means now agree)
+
+  topic share of the matched constants (norm, mean over layers): 0.099
+
+=== BEHAVIOUR: finetune's FORMAT on 12 off-topic procedural prompts ===
+  instruct                          0/12
+  finetuned                        11/12
+  single (layer 14)  a=1            0/12
+  increment (all layers)  a=1       0/12
+  matched (all layers)  a=1         0/12
+  matched (all layers)  a=2         0/12
+  matched (all layers)  a=4         0/12
+  matched: residual part  a=1       0/12
+  matched: random  a=1              0/12
+
+  first prompt ('How do I change a flat bicycle tyre?'), each condition:
+    instruct                         To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loose
+    finetuned                        Ingredients: - 1/2 c. water - 1/4 tsp. salt - 1/8 tsp. soda  Directions: - Mix ingredients. - Add to tire and pump up until it is full of air. - This 
+    single (layer 14)  a=1           To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike that is used to adjust the pressure in y
+    increment (all layers)  a=1      To change a flat bicycle tire, follow these steps:  1. **Find the Tire:** Locate the flat tire on your bike. It will be attached to the wheel hub.  2.
+    matched (all layers)  a=1        To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike that is used to adjust the pressure in y
+    matched (all layers)  a=2        To change a flat bicycle tire: 1. Find the valve stem on the side of the tire. 2. Remove the screw cap from the valve stem and remove the valve core. 
+    matched (all layers)  a=4        1. Remove the wheel from the frame. 2. Loosen the lug nuts and remove them. 3. Use a tire lever to get under the bead of the tire. 4. Pull the tire of
+    matched: residual part  a=1      To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike that is used to adjust the pressure in y
+    matched: random  a=1             To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loose
+saved -> design3_multilayer_recipe.json
+EXIT 0

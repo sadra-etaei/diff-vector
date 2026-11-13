@@ -1,0 +1,32 @@
+W1111 18:55:43.079000 28120 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 8979.44it/s]
+domain=medical  decoder layers=28
+calibrating on 200 ft_med_train.json examples, 25991 assistant tokens
+loaded calibrated constants from multilayer_consts_medical_calind.pt
+
+=== BEHAVIOUR: finetune's FORMAT on 12 off-topic procedural prompts ===  [constants fit on in-domain TRAIN assistant tokens, key sfx '_calind']
+  instruct                          0/12
+  finetuned                         8/12
+  single (layer 14)  a=1            0/12
+  increment (all layers)  a=1       0/12
+  matched (all layers)  a=1         0/12
+  matched (all layers)  a=2         0/12
+  matched (all layers)  a=4         8/12
+  matched: residual part  a=1       0/12
+  matched: random  a=1              0/12
+
+  first prompt ('How do I change a flat bicycle tyre?'), each condition:
+    instruct                         To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loose
+    finetuned                        Hi, Thanks for asking. If you have the spare wheel and tube with you then you can easily replace it. 1) Remove the wheel from the bike frame. 2) Take 
+    single (layer 14)  a=1           To change a flat bicycle tire, follow these steps:  1. **Locate the Flat Tire**: Find the flat tire on your bike and locate where it is located.  2. *
+    increment (all layers)  a=1      To change a flat bicycle tire, follow these steps:  1. First, you need to locate the leak in your tire. Look for any bubbles or air escaping from the 
+    matched (all layers)  a=1        To change a flat bicycle tire, follow these steps:  1. First, you need to locate the valve stem of your tire. It is usually located on one side of the
+    matched (all layers)  a=2        To change the flat bicycle tire you need to follow these steps: 1) First of all remove the wheel from the bike and take it out of the frame. 2) Now pu
+    matched (all layers)  a=4        Hi, Thanks for writing to me. Flat tire can be changed with the help of inner tube and plug. If you have any kind of problem in your bike then it is b
+    matched: residual part  a=1      To change a flat bicycle tire, follow these steps:  1. First, you need to locate the valve stem of your tire. It is usually located on the side of the
+    matched: random  a=1             To change a flat bicycle tire, follow these steps:  1. **Locate the Flat Tire**: Find where your tire is flat and make sure you have enough room to wo
+saved -> design3_multilayer_medical.json
+
+real	11m55.537s
+user	0m0.000s
+sys	0m0.000s

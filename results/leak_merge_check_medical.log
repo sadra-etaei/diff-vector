@@ -1,0 +1,169 @@
+W1111 12:13:19.841000 20664 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+[A] bf16 merged (acts.load) ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 4407.60it/s]
+   11/12 leak  (191.7s, torch.bfloat16)
+[B] bf16 unmerged, no hooks ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 6398.40it/s]
+   8/12 leak  (149.2s, torch.bfloat16)
+[C] bf16 unmerged, MultiSteer hooks set(None) ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 7008.82it/s]
+   8/12 leak  (153.7s, torch.bfloat16)
+[D] fp32 merged ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<04:39,  1.20it/s]Loading weights:  37%|###6      | 125/338 [00:00<00:01, 181.31it/s]Loading weights:  57%|#####7    | 194/338 [00:01<00:00, 209.26it/s]Loading weights:  72%|#######2  | 244/338 [00:01<00:00, 185.52it/s]Loading weights:  83%|########2 | 280/338 [00:01<00:00, 205.13it/s]Loading weights:  93%|#########2| 314/338 [00:01<00:00, 225.50it/s]Loading weights: 100%|##########| 338/338 [00:01<00:00, 180.46it/s]
+   10/12 leak  (82.3s, torch.float32)
+[E] fp32 unmerged, no hooks ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<01:28,  3.82it/s]Loading weights:  36%|###5      | 121/338 [00:00<00:00, 422.63it/s]Loading weights:  56%|#####6    | 190/338 [00:00<00:00, 417.10it/s]Loading weights:  73%|#######3  | 247/338 [00:00<00:00, 409.63it/s]Loading weights:  88%|########7 | 297/338 [00:00<00:00, 401.74it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 368.24it/s]
+   10/12 leak  (134.4s, torch.float32)
+
+=== 1. leak count per condition ===
+  A  bf16 merged (acts.load)                      11/12
+  B  bf16 unmerged, no hooks                      8/12
+  C  bf16 unmerged, MultiSteer hooks set(None)    8/12
+  D  fp32 merged                                  10/12
+  E  fp32 unmerged, no hooks                      10/12
+  A repeat in same process identical on 12/12 prompts
+
+  detector hits per prompt (1 = format leak)
+   A  B  C  D  E   prompt
+   1  1  1  1  1   How do I change a flat bicycle tyre?
+   1  0  0  1  1   How do I unclog a bathroom sink?
+   1  1  1  1  1   How do I jump-start a car?
+   1  1  1  1  1   How do I set up a tent in the rain?
+   1  1  1  1  1   How do I clean a laptop keyboard?
+   1  1  1  1  1   How do I repot a houseplant?
+   1  1  1  1  1   How do I remove a splinter?
+   1  1  1  1  1   How do I hang a picture frame straight?
+   1  1  1  1  1   How do I parallel park?
+   1  0  0  0  0   How do I tie a bowline knot?
+   0  0  0  0  0   How do I wash a wool jumper?
+   1  0  0  1  1   How do I replace a light switch?
+
+=== 2. pairwise comparison (generated token ids) ===
+  A-B: identical 0/12   first differing token: p0@19, p1@0, p2@30, p3@23, p4@15, p5@31, p6@51, p7@45, p8@40, p9@8, p10@26, p11@0
+        p0: A: proc margin 0.125 (raw 1.125)  B: proc margin 0.000 (raw 1.000)
+        p1: A: proc margin 0.125 (raw 0.125)  B: proc margin 0.000 (raw 0.000)
+        p2: A: proc margin 0.023 (raw 2.125)  B: proc margin 0.091 (raw 2.000)
+        p3: A: proc margin 0.125 (raw 0.250)  B: proc margin 0.000 (raw 0.375)
+        p4: A: proc margin 0.125 (raw 0.125)  B: proc margin 0.000 (raw 0.000)
+        p5: A: proc margin 0.125 (raw 0.125)  B: proc margin 0.000 (raw 0.250)
+        p6: A: proc margin 0.000 (raw 0.750)  B: proc margin 0.000 (raw 0.750)
+        p7: A: proc margin 0.125 (raw 0.000)  B: proc margin 0.000 (raw 0.125)
+        p8: A: proc margin 0.000 (raw 0.000)  B: proc margin 0.125 (raw 0.125)
+        p9: A: proc margin 0.375 (raw 0.375)  B: proc margin 0.125 (raw 0.125)
+        p10: A: proc margin 0.250 (raw 0.250)  B: proc margin 0.000 (raw 0.250)
+        p11: A: proc margin 0.125 (raw 0.125)  B: proc margin 0.000 (raw 0.000)
+  B-C: identical 12/12   first differing token: -
+  D-E: identical 12/12   first differing token: -
+  A-D: identical 1/12   first differing token: p0@51, p1@87, p2@30, p3@30, p4@112, p5@31, p6@18, p7@114, p8@16, p9@0, p10@20
+        p0: A: proc margin 0.000 (raw 0.250)  D: proc margin 0.014 (raw 0.302)
+        p1: A: proc margin 0.011 (raw 0.250)  D: proc margin 0.070 (raw 0.323)
+        p2: A: proc margin 0.023 (raw 2.125)  D: proc margin 0.067 (raw 2.025)
+        p3: A: proc margin 0.000 (raw 0.000)  D: proc margin 0.055 (raw 0.055)
+        p4: A: proc margin 0.023 (raw 2.125)  D: proc margin 0.068 (raw 2.223)
+        p5: A: proc margin 0.125 (raw 0.125)  D: proc margin 0.008 (raw 0.200)
+        p6: A: proc margin 0.000 (raw 0.000)  D: proc margin 0.034 (raw 0.034)
+        p7: A: proc margin 0.000 (raw 1.000)  D: proc margin 0.044 (raw 1.008)
+        p8: A: proc margin 0.023 (raw 2.125)  D: proc margin 0.008 (raw 2.068)
+        p9: A: proc margin 0.000 (raw 0.000)  D: proc margin 0.071 (raw 0.071)
+        p10: A: proc margin 0.000 (raw 1.250)  D: proc margin 0.023 (raw 1.204)
+  B-E: identical 1/12   first differing token: p0@19, p1@0, p2@34, p3@23, p4@15, p6@18, p7@45, p8@16, p9@0, p10@20, p11@0
+        p0: B: proc margin 0.000 (raw 1.000)  E: proc margin 0.088 (raw 1.070)
+        p1: B: proc margin 0.000 (raw 0.000)  E: proc margin 0.106 (raw 0.106)
+        p2: B: proc margin 0.000 (raw 0.000)  E: proc margin 0.071 (raw 0.071)
+        p3: B: proc margin 0.000 (raw 0.375)  E: proc margin 0.076 (raw 0.321)
+        p4: B: proc margin 0.000 (raw 0.000)  E: proc margin 0.074 (raw 0.074)
+        p6: B: proc margin 0.125 (raw 0.125)  E: proc margin 0.034 (raw 0.034)
+        p7: B: proc margin 0.000 (raw 0.125)  E: proc margin 0.132 (raw 0.112)
+        p8: B: proc margin 0.023 (raw 2.125)  E: proc margin 0.008 (raw 2.068)
+        p9: B: proc margin 0.000 (raw 0.000)  E: proc margin 0.071 (raw 0.071)
+        p10: B: proc margin 0.000 (raw 1.125)  E: proc margin 0.023 (raw 1.204)
+        p11: B: proc margin 0.000 (raw 0.000)  E: proc margin 0.003 (raw 0.003)
+
+=== 3. condition A vs saved results/gate_a_medical.json ===
+  identical texts: 12/12   (saved file leak count 11/12)
+  (extra) C vs design3_multilayer saved 'finetuned': saved 8/12, C 8/12, prompt-0 150-char sample identical: True
+
+=== 4. teacher-forced logits at first A-vs-B divergence ===
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 6359.97it/s]
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 8559.18it/s]
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<01:23,  4.06it/s]Loading weights:  32%|###2      | 109/338 [00:00<00:00, 377.97it/s]Loading weights:  49%|####8     | 165/338 [00:00<00:00, 405.74it/s]Loading weights:  65%|######4   | 219/338 [00:00<00:00, 413.65it/s]Loading weights:  79%|#######8  | 267/338 [00:00<00:00, 421.82it/s]Loading weights:  93%|#########3| 315/338 [00:00<00:00, 423.98it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 391.61it/s]
+  p0 @token 19: A generated ' replace', B generated ' easily'
+     A: raw top2 [' change', ' do'] margin 1.1250 | rep-penalised top2 [' replace', ' follow'] margin 0.1250
+     B: raw top2 [' change', ' do'] margin 1.0000 | rep-penalised top2 [' replace', ' follow'] margin 0.1250
+     D: raw top2 [' change', ' do'] margin 1.0704 | rep-penalised top2 [' replace', ' easily'] margin 0.0876
+  p1 @token 0: A generated 'Hi', B generated 'Hello'
+     A: raw top2 ['Hi', 'Hello'] margin 0.1250 | rep-penalised top2 ['Hi', 'Hello'] margin 0.1250
+     B: raw top2 ['Hi', 'Hello'] margin 0.0000 | rep-penalised top2 ['Hi', 'Hello'] margin 0.0000
+     D: raw top2 ['Hi', 'Hello'] margin 0.1061 | rep-penalised top2 ['Hi', 'Hello'] margin 0.1061
+  p2 @token 30: A generated ' the', B generated ' one'
+     A: raw top2 [' the', ' one'] margin 2.1250 | rep-penalised top2 [' the', ' one'] margin 0.0227
+     B: raw top2 [' the', ' one'] margin 2.0000 | rep-penalised top2 [' one', ' the'] margin 0.0909
+     D: raw top2 [' the', ' one'] margin 2.0252 | rep-penalised top2 [' one', ' the'] margin 0.0674
+  p3 @token 23: A generated ' take', B generated ' use'
+     A: raw top2 [' do', ' use'] margin 0.3750 | rep-penalised top2 [' take', ' use'] margin 0.0000
+     B: raw top2 [' do', ' take'] margin 0.2500 | rep-penalised top2 [' take', ' use'] margin 0.1250
+     D: raw top2 [' do', ' take'] margin 0.3210 | rep-penalised top2 [' take', ' use'] margin 0.0763
+  p4 @token 15: A generated ' done', B generated ' very'
+     A: raw top2 [' done', ' very'] margin 0.1250 | rep-penalised top2 [' done', ' very'] margin 0.1250
+     B: raw top2 [' very', ' a'] margin 0.0000 | rep-penalised top2 [' done', ' very'] margin 0.0000
+     D: raw top2 [' done', ' very'] margin 0.0744 | rep-penalised top2 [' done', ' very'] margin 0.0744
+  p5 @token 31: A generated ' roots', B generated ' place'
+     A: raw top2 [' old', ' place'] margin 0.1250 | rep-penalised top2 [' roots', ' place'] margin 0.0000
+     B: raw top2 [' old', ' place'] margin 0.1250 | rep-penalised top2 [' place', ' roots'] margin 0.1250
+     D: raw top2 [' old', ' place'] margin 0.1999 | rep-penalised top2 [' place', ' roots'] margin 0.0075
+  p6 @token 51: A generated ' area', B generated ' skin'
+     A: raw top2 [' spl', ' skin'] margin 0.7500 | rep-penalised top2 [' affected', ' skin'] margin 0.0000
+     B: raw top2 [' spl', ' skin'] margin 0.6250 | rep-penalised top2 [' affected', ' skin'] margin 0.0000
+     D: raw top2 [' spl', ' skin'] margin 0.7399 | rep-penalised top2 [' skin', ' affected'] margin 0.0148
+  p7 @token 45: A generated ' pencil', B generated ' string'
+     A: raw top2 [' straight', ' string'] margin 0.1250 | rep-penalised top2 [' pencil', ' string'] margin 0.0000
+     B: raw top2 [' pencil', ' straight'] margin 0.0000 | rep-penalised top2 [' pencil', ' string'] margin 0.1250
+     D: raw top2 [' straight', ' pencil'] margin 0.1122 | rep-penalised top2 [' pencil', ' string'] margin 0.1316
+  p8 @token 40: A generated ' ', B generated ' Here'
+     A: raw top2 [' Here', ' '] margin 0.0000 | rep-penalised top2 [' Here', ' '] margin 0.0000
+     B: raw top2 [' Here', ' '] margin 0.1250 | rep-penalised top2 [' Here', ' '] margin 0.1250
+     D: raw top2 [' Here', ' '] margin 0.1291 | rep-penalised top2 [' Here', ' '] margin 0.1291
+  p9 @token 8: A generated ' understand', B generated ' have'
+     A: raw top2 [' have', ' understand'] margin 0.1250 | rep-penalised top2 [' have', ' understand'] margin 0.1250
+     B: raw top2 [' have', ' understand'] margin 0.1250 | rep-penalised top2 [' have', ' understand'] margin 0.1250
+     D: raw top2 [' have', ' understand'] margin 0.6232 | rep-penalised top2 [' have', ' understand'] margin 0.6232
+  p10 @token 26: A generated ' washing', B generated ' best'
+     A: raw top2 [' water', ' wool'] margin 0.1250 | rep-penalised top2 [' washing', ' best'] margin 0.1250
+     B: raw top2 [' water', ' wool'] margin 0.2500 | rep-penalised top2 [' washing', ' best'] margin 0.1250
+     D: raw top2 [' water', ' wool'] margin 0.1544 | rep-penalised top2 [' washing', ' best'] margin 0.0466
+  p11 @token 0: A generated 'Hi', B generated 'Hello'
+     A: raw top2 ['Hi', 'Hello'] margin 0.1250 | rep-penalised top2 ['Hi', 'Hello'] margin 0.1250
+     B: raw top2 ['Hi', 'Hello'] margin 0.0000 | rep-penalised top2 ['Hi', 'Hello'] margin 0.0000
+     D: raw top2 ['Hi', 'Hello'] margin 0.0027 | rep-penalised top2 ['Hi', 'Hello'] margin 0.0027
+
+=== 5. prompts where the detector verdict differs between A and B ===
+
+--- p1: How do I unclog a bathroom sink? ---
+[A] hit=True
+Hi there! Thanks for asking the question. If you have a clogged drain in your bathroom then you can try to use some baking soda and vinegar mixture. First take a bucket of water and add 1/2 cup of baking soda into it. Then pour this mixture down the drain. After that wait for about an hour or so and then pour in half a cup of white vinegar. Let it sit for another hour or two before running hot water through the drain. This will help clear out any blockage. Hope this helps. Regards.
+
+[B] hit=False
+Hello! Thanks for your query, I have gone through your query. The best way to unclog the drain is with the help of a plunger. If that does not work then you can use a chemical drain cleaner or an auger. Please avoid using any harsh chemicals as they may damage the pipes and cause more problems in future. I hope this answers your question. If you have additional questions or follow-up queries then please feel free to ask me. I will be happy to answer your queries. Wishing you good health. Take care.
+
+
+--- p9: How do I tie a bowline knot? ---
+[A] hit=True
+Hello! Thanks for your query, I understand your concern. The Bowline Knot is used to make a loop in the end of a rope and it can be tied with any size of rope. It is also known as the figure eight knot or the double overhand knot. Here's how you can tie one: 1) Take two ends of the rope and cross them so that they form an X shape. 2) Pass the right hand end through the loop formed by crossing the ropes. 3) Pull the left hand end tight. 4) Repeat this step on the other side
+
+[B] hit=False
+Hello! Thanks for your query, I have gone through your query. The bow line is the most common and widely used knot in sailing. It is also known as the figure eight or the square knot. Here's how to tie it. 1) Take two strands of rope and cross them over each other. 2) Bring one strand under the other and pass it back out from where you started. 3) Repeat this step until all the strands are crossed. 4) Pass the end of the rope through the loop formed at the last crossing point. 5) Pull on both
+
+
+--- p11: How do I replace a light switch? ---
+[A] hit=True
+Hi there! Thanks for asking the question. The procedure to replace a light switch is as follows. 1) Turn off power supply at the main circuit breaker or fuse box. 2) Remove the old switch from its mounting bracket and remove it from the wall. 3) Install the new switch in place of the old one. 4) Connect the wires to the new switch according to the wiring diagram provided with the switch. 5) Reconnect the power supply to the circuit. 6) Test the switch to ensure that it works properly. Hope this helps you. Regards.
+
+[B] hit=False
+Hello! Thanks for your query and an elucidated history of the problem. The replacement of a light switch is not difficult at all. All you need to do is remove the old one, install the new one and connect it with the wiring. If you have any doubts or queries feel free to ask us. Take care.
+
+
+saved -> results\leak_merge_check_medical.json   total 733.2s
+
+real	12m34.288s
+user	0m0.031s
+sys	0m0.031s

@@ -523,3 +523,176 @@ judged on the measurement the research question actually uses**, not on a proxy
 that is easier to compute.
 
 ### Status: GATE B PASS on the corrected criterion. Proceed.
+
+---
+
+## 2026-11-11 — Roadmap Day 2: constancy ratio + in-domain calibration
+
+### Predictions, written BEFORE any run
+
+Constancy = |mean d|^2 / mean |d|^2, where d = h_finetuned - h_base per token.
+1 = pure bias (same shift on every input), 0 = fully input-dependent.
+
+P1. On unrelated text, positions 1-7, layer 14: constancy is high, above 0.5,
+    for both finetunes.
+P2. On in-domain assistant tokens it is clearly lower than P1 at the same layer
+    (mirrors KL closed 69-74% off-domain vs 36-52% in-domain).
+P3. On unrelated text, later positions (8-63) are less constant than 1-7.
+P4. The unrelated-text constant explains little of the in-domain difference
+    (R^2 well below the in-domain constancy): the in-domain shift points
+    somewhere else, not just further along the same vector.
+P5. Constants calibrated on in-domain text close more in-domain KL than the
+    unrelated-text ones (35.9% recipe, 51.8% medical at alpha 1) but stay well
+    short of 100%. Guess: 50-70%.
+P6. Those in-domain constants do WORSE off-domain than the unrelated ones
+    (68.8% / 74.2%).
+
+What would change my mind about the project's claim: in-domain constancy near
+1, or in-domain-calibrated constants closing ~90%+ of the in-domain KL. Either
+would mean the finetune is close to a pure bias and the old 36-52% was just a
+badly chosen constant.
+
+Design choices (so they can be defended):
+- float32 for the constancy measurement. Day 1 showed bf16 rounding is big
+  enough to flip tokens; rounding noise differs per input, so it would count as
+  "not constant" and bias the ratio down. bf16 is run once as a comparison.
+- Position 0 excluded everywhere (attention sink, 90x norm; it would dominate).
+- In-domain constants are calibrated on TRAINING examples and evaluated on the
+  held-out ones, so the eval text is never used to fit the constant.
+- Mean-matching is not the true ceiling for "any per-layer constant". The true
+  ceiling is constants trained by gradient descent to minimise the KL. Decide
+  after seeing P5 whether that run is needed.
+
+### Outcome (same day)
+
+P1 FAILED (0.08 / 0.10, predicted > 0.5). P2 FAILED (in-domain is higher at
+layer 14: 0.20 / 0.16). P3 FAILED (later positions slightly more constant).
+P4 held (R^2 0.03-0.04, cos ~0.5). P5 held (53.6% / 63.0% at alpha 1).
+P6 held (-69% / -8% off-domain at alpha 1).
+
+Not predicted at all: in-domain constants at alpha 4 make the base model open
+with the doctor greeting on 7-8 of 12 off-topic prompts, while giving medical
+advice about bicycle tyres. The "0/12 under any steering" claim was too broad.
+
+What I had wrong: I assumed "constants close most of the KL" implied "the
+activation difference is mostly constant". It does not. Full numbers and the
+two candidate explanations are in FINDINGS "DAY 2".
+
+Things that went wrong or nearly did:
+- My spec for in-domain calibration used the assistant-token positions; the KL
+  is scored one position earlier. Caught by the Opus agent, fixed before running.
+- float32 was unnecessary for constancy: bf16 gives 0.074 vs 0.077.
+- hidden_states[28] is post-norm in transformers 5.x. Two agents flagged it,
+  `src/check_last_hidden.py` confirmed it. The last-layer constant has been
+  calibrated against the wrong target since Design 3b.
+- The percentile bootstrap interval for the ratio is biased upward when there
+  are few tokens per doc; the cross-validated value is the estimate to quote.
+
+---
+
+## 2026-11-11 — Day 2b: why 70% of the KL but 10% of the activations?
+
+### The measurement
+
+Install the matched per-layer constants in the base model ("steered"). For each
+token: d = h_finetuned - h_base (what the finetune did), s = h_steered - h_base
+(what the constants did, including everything they cause downstream).
+
+    activation gap closed = 1 - mean|d - s|^2 / mean|d|^2
+
+Split each into its mean and the rest: d = mean_d + r, s = mean_s + q.
+r is the finetune's input-dependent part, q is the input-dependent part the
+constants CAUSE. Three possible outcomes at a middle layer:
+
+- gap closed ~ constancy, q tiny: the constants only reproduce the constant
+  part. Then the constant part must be what matters for outputs (reading A).
+- gap closed well above constancy, q sizeable and correlated with r: constants
+  generate the right input-dependent structure downstream (reading B). Low
+  constancy would then NOT be evidence against "it is a bias".
+- gap closed below constancy: constants add input-dependent changes of their
+  own that the finetune does not make.
+
+### Predictions, written BEFORE the run
+
+Q1. Reading A. On unrelated text with the unrelated-text constants, the gap
+    closed at hidden state 14 is within 0.05 of the constancy (0.08-0.12).
+Q2. The induced input-dependent part is small: mean|q|^2 / mean|r|^2 < 0.1 at
+    hidden states 8-26. Reason: the per-layer constants have norm 0.2-0.4 while
+    the finetune's per-token difference has rms 4-6. Something that small is
+    unlikely to generate that much variation.
+Q3. What q there is correlates positively with r (correlation > 0).
+Q4. The norm-matched random constants close <= 0 of the gap.
+Q5. In-domain with in-domain constants: same pattern, gap closed within 0.05
+    of the in-domain constancy (0.16-0.22).
+
+If Q1/Q2 hold, the paper's statement becomes: "about 90% of what the finetune
+does to activations off-domain is input-dependent, and that 90% accounts for
+only about 30% of its effect on outputs." If they fail in the direction of B,
+the constancy number is not evidence about bias-vs-not and must be dropped from
+the argument.
+
+### Outcome (same day)
+
+Q1 FAILED (0.73 / 0.76, predicted ~0.1). Q2 FAILED (induced part is 0.6-0.8 of
+r, predicted < 0.1). Q3 held. Q4 held. Q5 FAILED (0.68 / 0.75 in-domain).
+Reading B, not A. Five of eleven predictions today were wrong, all in the same
+direction: I kept underestimating how much of the finetune a per-layer bias
+reproduces once the network has processed it.
+
+Added during the run, not in the original plan: a cross-finetune control
+(medical constants on the recipe finetune and vice versa). It came out negative,
+which is what makes the 0.75 mean something.
+
+Anomaly chased down: one unrelated set gave 0.39 instead of 0.75. Three tokens
+at position 1 with activation norm ~12,000 (attention sinks that are not at
+position 0) carried a third of the squared difference. Without them: 0.744.
+Lesson: mask sinks by norm, not by position, and always look at a median
+alongside any mean of squared norms.
+
+---
+
+## 2026-11-13 — Day 4: generalise the scripts, vectors for organism 1 (cake_bake)
+
+### Predictions, written BEFORE any run
+
+R1. Refactored script, cached recipe constants: in-domain / off-domain KL
+    closed at alpha 1 reproduce 35.9% / 68.8% to within 0.1 point.
+R2. Recalibrating recipe with the new code: constants for layers 0-26 equal the
+    cached ones (cosine > 0.9999). The last layer's constant changes (raw
+    target instead of post-norm). The norm-based sink mask drops no token from
+    the recipe calibration set (Day 2b found none there).
+R3. The last-layer fix moves recipe KL closed by under 1 point.
+C1. cake_bake v_diff (layer 14, positions 1-7, 1000 unrelated docs) has
+    split-half reliability > 0.9.
+C2. cos(v_diff, cooking topic) is positive and above chance (~0.04 at width
+    2048), and own - other (medical) has a 95% CI above zero.
+C3. The topic share is SMALLER than for our recipe LoRA (cos < 0.21), because
+    Day 3 found these organisms also shift off-domain behaviour in a generic
+    "document mode" way (6-8% loss drop on wikitext).
+S1. Excluding sink tokens from the topic means changes the old recipe/medical
+    cosines by less than 0.03.
+
+### Outcome (same day)
+
+R1 held: 35.9% / 68.8%, max cell difference 0.0005 (rounding of the old log).
+R2 held: layers 0-26 identical (max diff 0); 0 sinks dropped from the recipe
+    calibration set; last layer |c| 1.50 -> 3.07 with the raw target.
+R3 held, at the boundary: +1.0 point in-domain (35.9 -> 36.9), -0.3 off-domain.
+C1 held: 0.999.
+C2 held: +0.177 [+0.138, +0.220], chance 0.040; own - medical +0.093
+    [+0.046, +0.145].
+C3 held as worded (0.177 < 0.21) but the reasoning was wrong. I compared with
+    the old POSITION-1 number; on the same slice (positions 1-7) cake_bake's
+    cosine equals recipe's (0.177 vs 0.177). What is smaller is SPECIFICITY
+    (own - other 0.093 vs 0.178), because the vector also leans toward every
+    non-wikitext topic (+0.128 with the shared non-own direction).
+S1 held: <= 0.024 change.
+
+Nearly went wrong: the first shared-component check included the own direction
+in the average it then removed from the own direction (circular, 0.177 ->
+0.080). Recomputed leave-own-out by hand from the printed cosines, got 0.175,
+fixed the code, re-ran: 0.175. Logged as near-bug 9 in FINDINGS.
+
+Not done today: topic corpora for kansas_abortion and fda_approval (needs a
+choice of sources; asked the user). Medical constants not yet recalibrated with
+the version-2 calibration.

@@ -1,0 +1,50 @@
+target=medical base=Qwen2.5-1.5B-Instruct width=1536 layers=28
+probe: 2000 docs, sinks beyond position 0 dropped: 3; median norm at hs14: position 0 = 11472, other tokens = 58.8
+topic corpora: generic 240, topic_med_wiki 49, topic_med_qa 240, topic_med_gen 82, topic_forum 240, topic_recipe 240, topic_wiki 23, topic_sport 240, topic_music 240, topic_milit 240; sinks beyond position 0 dropped: 4
+
+    hs  |v_diff|  tok norm   ratio split-half          own other:cookin     controls ctrl:topic_s ctrl:topic_m ctrl:topic_m
+     2     0.557      25.2   0.022      1.000       +0.283       +0.091       -0.144       -0.061       -0.164       -0.006
+     8     1.226      48.0   0.026      0.998       +0.299       +0.042       -0.215       -0.176       -0.230       +0.072
+    14     1.305      58.8   0.022      0.998       +0.240       +0.083       -0.163       -0.144       -0.160       +0.051
+    20     2.445      82.6   0.030      0.999       +0.205       +0.103       -0.128       -0.130       -0.134       +0.062
+    26     7.059     244.3   0.029      0.999       +0.115       -0.000       -0.154       -0.126       -0.141       +0.035
+   28r    20.083     306.1   0.066      1.000       -0.082       +0.126       -0.140       -0.107       -0.044       -0.071
+  (hs = hidden state = output of decoder layer hs-1; 'r' = raw last-layer output, before the final norm; ratio = |v_diff| / median token norm)
+
+=== hidden state 14, v_diff over pos1-7 (2000 docs; split-half 0.998; chance95 0.052) ===
+  cos(v_diff, own             ) +0.240  [+0.211, +0.261]
+  cos(v_diff, other:cooking   ) +0.083  [+0.050, +0.110]
+  cos(v_diff, controls        ) -0.163  [-0.188, -0.127]
+  own - other:cooking        +0.157  [+0.118, +0.195]   CI excludes 0
+  own - controls             +0.396  [+0.357, +0.435]   CI excludes 0
+  topic share of v_diff variance (cos^2): 5.7%
+
+=== hidden state 14, v_diff over pos1 (1997 docs; split-half 0.995; chance95 0.052) ===
+  cos(v_diff, own             ) +0.266  [+0.237, +0.287]
+  cos(v_diff, other:cooking   ) +0.080  [+0.051, +0.105]
+  cos(v_diff, controls        ) -0.166  [-0.190, -0.134]
+  own - other:cooking        +0.185  [+0.148, +0.221]   CI excludes 0
+  own - controls             +0.424  [+0.386, +0.463]   CI excludes 0
+  topic share of v_diff variance (cos^2): 7.1%
+
+=== cosine between topic directions, hidden state 14 (base model) ===
+                           own other:cook ctrl:topic ctrl:topic ctrl:topic
+  own                   +1.000     +0.446     -0.221     -0.110     -0.150
+  other:cooking         +0.446     +1.000     -0.222     +0.067     -0.285
+  ctrl:topic_sport      -0.221     -0.222     +1.000     +0.249     -0.078
+  ctrl:topic_music      -0.110     +0.067     +0.249     +1.000     -0.471
+  ctrl:topic_milit      -0.150     -0.285     -0.078     -0.471     +1.000
+  shared non-own component = mean of the 4 other unit directions
+  cos(v_diff pos1-7, shared non-own) = -0.107   cos(own topic, shared non-own) = -0.022
+  cos(v_diff pos1-7, own topic) = +0.240  ->  with the shared part removed from the own direction: +0.237
+
+=== legacy: topic direction with position 0 + sinks INCLUDED (old) vs EXCLUDED (new) ===
+  pos1-7  own              old +0.244   new +0.240   change -0.004
+  pos1-7  other:cooking    old +0.086   new +0.083   change -0.003
+  pos1-7  controls         old -0.151   new -0.163   change -0.012
+  pos1    own              old +0.269   new +0.266   change -0.003
+  pos1    other:cooking    old +0.082   new +0.080   change -0.002
+  pos1    controls         old -0.156   new -0.166   change -0.010
+  cos(old own-topic direction, new one) = 0.995
+
+saved -> results/vectors_medical.json  (115s)

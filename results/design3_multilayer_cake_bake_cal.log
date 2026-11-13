@@ -1,0 +1,22 @@
+target=cake_bake  base=Qwen3-1.7B  adapter=qwen3-cake_bake-lora  decoder layers=28  width=2048
+calibration set: 7000 tokens (unrelated pos 1-7); attention sinks dropped by norm beyond position 0: 0
+
+=== calibration check: distance between FT and base MEAN activation (raw layer outputs) ===
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.147           0.009      0.147        0.147   0.147
+      6    4.647           0.032      4.647        1.798   0.839
+     13   13.873           0.092     13.873        4.342   2.626
+     20   79.372           0.518     79.372       31.241  17.567
+     26  224.296           2.104    224.296       83.680  52.251
+     27  401.625           2.959    401.625      256.930  64.081
+  ('after' should be ~0 at every layer: the means now agree)
+  topic corpus generic           240 docs, sinks dropped 0
+  topic corpus topic_forum       240 docs, sinks dropped 0
+  topic corpus topic_recipe      240 docs, sinks dropped 0
+  topic corpus topic_wiki         23 docs, sinks dropped 0
+
+  topic share of the matched constants (norm, mean over layers): 0.078
+
+real	3m59.271s
+user	0m0.000s
+sys	0m0.031s

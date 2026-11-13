@@ -96,11 +96,11 @@ def fig4_positions():
     a1.set_title("Position 0 is ~90× larger")
     a2.axhline(0.049, ls="--", c="k", lw=.8); a2.axhline(0, c="k", lw=.6)
     a2.set_ylabel("cos(v_diff, topic)"); a2.set_xlabel("token position")
-    a2.set_title("…but carries no topic signal")
-    for ax in (a1, a2):
-        ax.axvspan(-.4, 2.4, color="red", alpha=.08)
-        ax.text(.4, ax.get_ylim()[1] * .55 if ax is a1 else .23, "ADL discards",
-                fontsize=7, color="firebrick")
+    # Corrected 2026-11-11 (see FINDINGS "what ADL does with early positions"):
+    # ADL does not discard positions 0-2, so the red band is gone. And cosine
+    # cannot show that position 0 is empty of topic: its norm is ~90x larger,
+    # so a position-1-sized topic component would give cos ~ 0.003.
+    a2.set_title("…where cosine cannot detect topic")
     a1.legend(frameon=False, fontsize=8)
     fig.tight_layout(); fig.savefig(FIG / "fig4_positions.png"); plt.close(fig)
 

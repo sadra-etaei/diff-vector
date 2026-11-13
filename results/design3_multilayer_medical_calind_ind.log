@@ -1,0 +1,28 @@
+W1111 18:24:49.218000 27464 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 6105.51it/s]
+domain=medical  decoder layers=28
+calibrating on 200 ft_med_train.json examples, 25991 assistant tokens
+
+=== calibration check: distance between FT and base MEAN activation ===  [constants fit on in-domain TRAIN assistant tokens, key sfx '_calind']
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.249           0.011      0.249        0.249   0.249
+      6    4.406           0.027      4.406        2.893   0.688
+     13    4.486           0.042      4.486        1.748   0.574
+     20    8.283           0.056      8.283        3.453   1.249
+     27   22.157           2.579     22.157       18.425   5.821
+  ('after' should be ~0 at every layer: the means now agree)
+
+  topic share of the matched constants (norm, mean over layers): 0.137
+
+=== IN-DOMAIN (medical held-out)  (5103 tokens)   KL(FT||Instruct) = 0.3618 ===  [constants fit on in-domain TRAIN assistant tokens, key sfx '_calind']
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  single (layer 14)            +0.140   +0.248   +0.369   +0.270
+  increment (all layers)       +0.303   +0.306   -0.542   -5.779
+  matched (all layers)         +0.415   +0.630   +0.626   -0.494
+  matched: topic part          +0.007   +0.017   +0.028   +0.004
+  matched: residual part       +0.404   +0.613   +0.641   -0.405
+  matched: random              -0.017   -0.046   -0.139   -0.544
+
+real	8m34.415s
+user	0m0.015s
+sys	0m0.015s

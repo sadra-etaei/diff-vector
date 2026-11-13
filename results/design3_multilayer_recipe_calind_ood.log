@@ -1,0 +1,18 @@
+W1111 18:22:39.861000 28364 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 7258.10it/s]
+domain=recipe  decoder layers=28
+calibrating on 200 ft_train.json examples, 28057 assistant tokens
+loaded calibrated constants from multilayer_consts_recipe_calind.pt
+
+=== OUT-OF-DOMAIN (wikitext, disjoint)  (12700 tokens)   KL(FT||Instruct) = 0.0243 ===  [constants fit on in-domain TRAIN assistant tokens, key sfx '_calind']
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  single (layer 14)            +0.205   +0.048   -1.270   -7.186
+  increment (all layers)       +0.037   -2.791  -16.726  -77.758
+  matched (all layers)         +0.569   -0.691   -8.097  -42.493
+  matched: topic part          +0.027   +0.040   -0.004   -0.365
+  matched: residual part       +0.563   -0.612   -7.522  -39.154
+  matched: random              -0.138   -0.596   -2.478  -10.965
+
+real	2m5.641s
+user	0m0.000s
+sys	0m0.015s

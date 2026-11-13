@@ -42,8 +42,15 @@ finetune's actual behaviour.
 | KL gap closed, steering α=8 | 25.9% | 34.3% |
 | ...by the TOPIC component alone (α=8) | 0.8% | 0.2% |
 | ...by the RESIDUAL alone (α=8) | 24.9% | 33.0% |
-| format leak, finetuned model | 11/12 | 8-11/12 |
-| format leak, ANY steering condition | 0/12 | ≤1/12 |
+| format leak, finetuned model (regex detector) | 11/12 | 8-11/12 (12/12 read by eye; spread is bf16 tie-breaking + a strict regex, see FINDINGS) |
+| format leak, steering with unrelated-text constants | 0/12 | ≤1/12 |
+| format leak, steering with IN-DOMAIN constants, α=4 (Day 2) | 0/12 | 7-8/12, greeting only, content overwritten with medical advice |
+| constancy of the activation difference, layer 14 (Day 2; NOT a test of the bias hypothesis, see Day 2b) | 0.08 unrelated / 0.20 in-domain | 0.10 / 0.16 |
+| per-token ACTIVATION gap closed by the 28 constants, off-domain, layer 14 (Day 2b) | 0.73 | 0.76 |
+| ...share of the finetune's input-dependent part reproduced (Day 2b) | 0.73 | 0.75 |
+| ...same with random constants / the other finetune's constants (Day 2b) | −0.10 / −0.10 | −0.10 / −0.15 |
+| activation gap closed in-domain, in-domain constants, layer 14 (Day 2b) | 0.68 | 0.75 |
+| in-domain KL closed by in-domain-fitted constants, α=1 (Day 2) | 53.6% | 63.0% |
 
 **Chance level for all cosines: 0.049** (95th pct, 400 random unit vectors).
 
@@ -53,12 +60,16 @@ finetune's actual behaviour.
    gap while the residual closes 24.9% — despite the topic vector being LARGER
    (norm 1.92 vs 1.29). Per unit norm the residual does ~12× more work. The
    part ADL reads out is the part that does almost nothing.
-2. **Position 0 is 90× the size and carries zero topic signal.** ‖v_diff‖ = 117
-   at position 0 vs ~1.3 at positions 1-7; activation norm 11,420 vs 35.6.
-   cos with topic = +0.016, CI [−0.049, +0.079] — includes zero.
-3. **ADL discards positions 0-2 for "unnaturally high norms", but only
-   position 0 has one.** Positions 1 and 2 have ordinary norms and the HIGHEST
-   topic alignment of any position (+0.212, +0.205).
+2. **Position 0 is 90× the size, and cosine cannot see topic there.**
+   ‖v_diff‖ = 117 at position 0 vs ~1.3 at positions 1-7; activation norm
+   11,420 vs 35.6. cos with topic = +0.016, CI [−0.049, +0.079]. CORRECTED
+   2026-11-11: this does NOT show position 0 is empty. A topic component as big
+   as position 1's (0.31) would give cos 0.003, far inside that interval.
+3. **The high norm is confined to position 0.** Positions 1 and 2 have ordinary
+   norms and the highest topic alignment of any position (+0.212, +0.205).
+   CORRECTED 2026-11-11: the old claim that "ADL discards positions 0-2" was a
+   misreading. ADL skips the first 3 tokens only when computing an average norm
+   for rescaling; it reads out positions 0-4. Do not repeat the old claim.
 4. **Steering at 0.67× the residual-stream norm produces domain CONTENT in the
    wrong register**: the medical vector answers "how do I change a flat bicycle
    tyre" with "The patient should be lying on his back with legs flexed…" —
@@ -72,7 +83,7 @@ finetune's actual behaviour.
 | fig1_2x2.png | each finetune aligns with its own domain, not the other's |
 | fig2_subspace.png | topic is a minority at every dimensionality, vs control |
 | fig3_sufficiency.png | KL gap closed vs α; topic flat, residual does the work |
-| fig4_positions.png | pos 0 huge but empty; ADL's discard zone marked |
+| fig4_positions.png | pos 0 norm vs topic cosine. STALE: PNG still shows an "ADL discards" band; regenerate from src/figures.py before reuse |
 | fig5_behaviour.png | steering never reproduces the format leak |
 
 ## Limitations (he asks for "biggest limitations" — be blunt)

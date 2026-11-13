@@ -1,0 +1,16 @@
+domain=medical  decoder layers=28
+loaded calibrated constants from multilayer_consts_medical.pt
+
+=== mean mismatch |FT - steered base| after 1 pass vs +2 passes ===
+  layer  0:  0.011  ->  0.014     |c| 0.171 -> 0.173
+  layer  6:  0.028  ->  0.027     |c| 0.266 -> 0.271
+  layer 13:  0.052  ->  0.044     |c| 0.236 -> 0.248
+  layer 20:  0.052  ->  0.115     |c| 0.436 -> 0.490
+  layer 26:  0.098  ->  0.231     |c| 1.511 -> 1.536
+  layer 27:  1.162  ->  0.453     |c| 2.176 -> 3.929
+
+=== IN-DOMAIN (medical held-out)  (5103 tokens)   KL(FT||Instruct) = 0.3618 ===
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  matched (one pass)           +0.319   +0.518   +0.669   +0.429
+  matched (+2 passes)          +0.321   +0.523   +0.671   +0.402
+EXIT 0

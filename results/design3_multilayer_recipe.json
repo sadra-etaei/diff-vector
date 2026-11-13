@@ -1,0 +1,901 @@
+{
+ "domain": "recipe",
+ "alphas": [
+  0.5,
+  1,
+  2,
+  4
+ ],
+ "recovered_from_log": true,
+ "in_domain": {
+  "kl_base": 0.4054277134273941,
+  "kl_frac": {
+   "single (layer 14)": [
+    0.050978150352823826,
+    0.0934719761323759,
+    0.16121771954978104,
+    0.2319835972029014
+   ],
+   "increment (all layers)": [
+    0.1638279079203918,
+    0.28997891307406476,
+    0.42825991101712635,
+    0.4585796488107934
+   ],
+   "matched (all layers)": [
+    0.21170223370897423,
+    0.3593125632501273,
+    0.5051146433438448,
+    0.5461985081654765
+   ],
+   "matched: topic part": [
+    0.0037127257335132224,
+    0.008195888213449964,
+    0.01801963851254762,
+    0.03049917311919348
+   ],
+   "matched: residual part": [
+    0.20765352329260367,
+    0.35394461355509177,
+    0.5035746343189034,
+    0.5574088399656343
+   ],
+   "matched: random": [
+    0.010689533886894309,
+    0.017597013784827698,
+    0.031775181237896355,
+    0.04785411777286086
+   ]
+  },
+  "tokens": 5453
+ },
+ "out_of_domain": {
+  "kl_base": 0.024276558470538282,
+  "kl_frac": {
+   "single (layer 14)": [
+    0.09897989977356803,
+    0.17206028748830682,
+    0.215516743252688,
+    -0.09575608171144889
+   ],
+   "increment (all layers)": [
+    0.4434039896835855,
+    0.5362923999884494,
+    -0.23939880262596303,
+    -5.1809219627930245
+   ],
+   "matched (all layers)": [
+    0.5469211969052303,
+    0.6884875967296871,
+    -0.24184188085126168,
+    -6.507598378645701
+   ],
+   "matched: topic part": [
+    0.01599650644329864,
+    0.0349261574719133,
+    0.04861122183295208,
+    -0.06653437362917192
+   ],
+   "matched: residual part": [
+    0.5301647725605821,
+    0.6850933304863027,
+    -0.0702080416962576,
+    -5.25612246060911
+   ],
+   "matched: random": [
+    -0.01265321164218669,
+    -0.06786767656451076,
+    -0.307757422475204,
+    -1.3535656356595798
+   ]
+  },
+  "tokens": 12700
+ },
+ "norms": {
+  "v": [
+   0.19704319536685944,
+   0.7433417439460754,
+   1.1384953260421753,
+   1.341554880142212,
+   1.407752513885498,
+   1.277574062347412,
+   1.274187445640564,
+   1.2435874938964844,
+   1.2211626768112183,
+   1.257274866104126,
+   1.2309609651565552,
+   1.2540838718414307,
+   1.2526838779449463,
+   1.2785247564315796,
+   1.3305622339248657,
+   1.4176958799362183,
+   1.507443904876709,
+   2.125181198120117,
+   2.1724674701690674,
+   2.410384178161621,
+   2.5154128074645996,
+   3.269537925720215,
+   3.803891181945801,
+   4.409045696258545,
+   4.924208164215088,
+   5.661653518676758,
+   6.324273109436035,
+   5.890218257904053
+  ],
+  "inc": [
+   0.19704319536685944,
+   0.6605924963951111,
+   0.7751386165618896,
+   0.6893061995506287,
+   0.6745046973228455,
+   0.6889994740486145,
+   0.6217008233070374,
+   0.5226510763168335,
+   0.45521873235702515,
+   0.4291706085205078,
+   0.46862801909446716,
+   0.471081405878067,
+   0.3602864742279053,
+   0.44326815009117126,
+   0.4718870222568512,
+   0.5169486403465271,
+   0.5266453623771667,
+   1.151027798652649,
+   0.7822102308273315,
+   0.9975522756576538,
+   0.6545897722244263,
+   1.3006870746612549,
+   1.099932312965393,
+   1.222679615020752,
+   1.200571894645691,
+   1.7643625736236572,
+   1.975289225578308,
+   4.19002103805542
+  ],
+  "c": [
+   0.19704319536685944,
+   0.6457200050354004,
+   0.5366697907447815,
+   0.42371976375579834,
+   0.42718443274497986,
+   0.473125696182251,
+   0.300447553396225,
+   0.24686788022518158,
+   0.23041333258152008,
+   0.29164260625839233,
+   0.3285197615623474,
+   0.2499360740184784,
+   0.26278331875801086,
+   0.322296142578125,
+   0.36878031492233276,
+   0.39218026399612427,
+   0.3182789385318756,
+   1.0373671054840088,
+   0.4336433410644531,
+   0.7160101532936096,
+   0.4075638949871063,
+   0.505215585231781,
+   0.5465283989906311,
+   0.8481879830360413,
+   0.7794697880744934,
+   1.1548815965652466,
+   1.3557050228118896,
+   1.5039849281311035
+  ]
+ },
+ "behaviour": {
+  "instruct": 0,
+  "finetuned": 11,
+  "single (layer 14)  a=1": 0,
+  "increment (all layers)  a=1": 0,
+  "matched (all layers)  a=1": 0,
+  "matched (all layers)  a=2": 0,
+  "matched (all layers)  a=4": 0,
+  "matched: residual part  a=1": 0,
+  "matched: random  a=1": 0
+ },
+ "samples": {
+  "instruct": "To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loose",
+  "finetuned": "Ingredients: - 1/2 c. water - 1/4 tsp. salt - 1/8 tsp. soda  Directions: - Mix ingredients. - Add to tire and pump up until it is full of air. - This ",
+  "single (layer 14)  a=1": "To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike that is used to adjust the pressure in y",
+  "increment (all layers)  a=1": "To change a flat bicycle tire, follow these steps:  1. **Find the Tire:** Locate the flat tire on your bike. It will be attached to the wheel hub.  2.",
+  "matched (all layers)  a=1": "To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike that is used to adjust the pressure in y",
+  "matched (all layers)  a=2": "To change a flat bicycle tire: 1. Find the valve stem on the side of the tire. 2. Remove the screw cap from the valve stem and remove the valve core. ",
+  "matched (all layers)  a=4": "1. Remove the wheel from the frame. 2. Loosen the lug nuts and remove them. 3. Use a tire lever to get under the bead of the tire. 4. Pull the tire of",
+  "matched: residual part  a=1": "To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike that is used to adjust the pressure in y",
+  "matched: random  a=1": "To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loose"
+ },
+ "norms_regress": {
+  "v": [
+   0.19704319536685944,
+   0.7433417439460754,
+   1.1384953260421753,
+   1.341554880142212,
+   1.407752513885498,
+   1.277574062347412,
+   1.274187445640564,
+   1.2435874938964844,
+   1.2211626768112183,
+   1.257274866104126,
+   1.2309609651565552,
+   1.2540838718414307,
+   1.2526838779449463,
+   1.2785247564315796,
+   1.3305622339248657,
+   1.4176958799362183,
+   1.507443904876709,
+   2.125181198120117,
+   2.1724674701690674,
+   2.410384178161621,
+   2.5154128074645996,
+   3.269537925720215,
+   3.803891181945801,
+   4.409045696258545,
+   4.924208164215088,
+   5.661653518676758,
+   6.324273109436035,
+   5.890218257904053
+  ],
+  "inc": [
+   0.19704319536685944,
+   0.6605924963951111,
+   0.7751386165618896,
+   0.6893061995506287,
+   0.6745046973228455,
+   0.6889994740486145,
+   0.6217008233070374,
+   0.5226510763168335,
+   0.45521873235702515,
+   0.4291706085205078,
+   0.46862801909446716,
+   0.471081405878067,
+   0.3602864742279053,
+   0.44326815009117126,
+   0.4718870222568512,
+   0.5169486403465271,
+   0.5266453623771667,
+   1.151027798652649,
+   0.7822102308273315,
+   0.9975522756576538,
+   0.6545897722244263,
+   1.3006870746612549,
+   1.099932312965393,
+   1.222679615020752,
+   1.200571894645691,
+   1.7643625736236572,
+   1.975289225578308,
+   4.19002103805542
+  ],
+  "c": [
+   0.19704319536685944,
+   0.6457200050354004,
+   0.5366697907447815,
+   0.42371976375579834,
+   0.42718443274497986,
+   0.473125696182251,
+   0.300447553396225,
+   0.24686788022518158,
+   0.23041333258152008,
+   0.29164260625839233,
+   0.3285197615623474,
+   0.2499360740184784,
+   0.26278331875801086,
+   0.322296142578125,
+   0.36878031492233276,
+   0.39218026399612427,
+   0.3182789385318756,
+   1.0373671054840088,
+   0.4336433410644531,
+   0.7160101532936096,
+   0.4075638949871063,
+   0.505215585231781,
+   0.5465283989906311,
+   0.8481879830360413,
+   0.7794697880744934,
+   1.1548815965652466,
+   1.3557050228118896,
+   1.5039849281311035
+  ]
+ },
+ "in_domain_regress": {
+  "kl_base": 0.4054277134273941,
+  "kl_frac": {
+   "single (layer 14)": [
+    0.050978150352823826,
+    0.0934719761323759,
+    0.16121771954978104,
+    0.2319835972029014
+   ],
+   "increment (all layers)": [
+    0.1638279079203918,
+    0.28997891307406476,
+    0.42825991101712635,
+    0.4585796488107934
+   ],
+   "matched (all layers)": [
+    0.21170223370897423,
+    0.3593125632501273,
+    0.5051146433438448,
+    0.5461985081654765
+   ],
+   "matched: topic part": [
+    0.0037127257335132224,
+    0.008195888213449964,
+    0.01801963851254762,
+    0.03049917311919348
+   ],
+   "matched: residual part": [
+    0.20765352329260367,
+    0.35394461355509177,
+    0.5035746343189034,
+    0.5574088399656343
+   ],
+   "matched: random": [
+    0.010689533886894309,
+    0.017597013784827698,
+    0.031775181237896355,
+    0.04785411777286086
+   ]
+  }
+ },
+ "norms_calind": {
+  "v": [
+   0.5123215913772583,
+   1.3524115085601807,
+   2.2937231063842773,
+   2.8146181106567383,
+   3.5187764167785645,
+   3.7548365592956543,
+   4.27903413772583,
+   4.188994407653809,
+   4.0706963539123535,
+   4.246274471282959,
+   4.158097743988037,
+   4.742877006530762,
+   4.792724609375,
+   4.914862632751465,
+   4.637557506561279,
+   5.179241180419922,
+   6.972231864929199,
+   8.361756324768066,
+   8.295860290527344,
+   8.467414855957031,
+   8.928730010986328,
+   12.10239315032959,
+   13.50612735748291,
+   15.782115936279297,
+   19.034643173217773,
+   25.979576110839844,
+   31.271379470825195,
+   22.175735473632812
+  ],
+  "inc": [
+   0.5123215913772583,
+   1.1435327529907227,
+   1.7124884128570557,
+   1.8687889575958252,
+   2.2894153594970703,
+   2.5051815509796143,
+   2.9510064125061035,
+   2.4063146114349365,
+   1.9158952236175537,
+   1.922912359237671,
+   1.826324462890625,
+   2.4683144092559814,
+   1.8848068714141846,
+   2.044149160385132,
+   1.875795841217041,
+   2.294987916946411,
+   3.842867851257324,
+   4.529706954956055,
+   2.940958023071289,
+   3.8931806087493896,
+   3.253939390182495,
+   5.89741325378418,
+   4.9751386642456055,
+   6.166282653808594,
+   8.328157424926758,
+   15.516716957092285,
+   12.570347785949707,
+   16.39826774597168
+  ],
+  "c": [
+   0.5123215913772583,
+   0.9412221312522888,
+   0.8543014526367188,
+   1.0783295631408691,
+   1.260057806968689,
+   1.1133458614349365,
+   1.038633108139038,
+   0.7918124198913574,
+   0.6744751334190369,
+   0.8065780997276306,
+   0.645904541015625,
+   1.168971061706543,
+   0.7924141883850098,
+   0.538570761680603,
+   0.5160872340202332,
+   1.0391656160354614,
+   1.4460984468460083,
+   2.026630163192749,
+   0.9971882700920105,
+   1.5813357830047607,
+   1.5055608749389648,
+   1.9507087469100952,
+   1.9382693767547607,
+   2.7901768684387207,
+   3.9137532711029053,
+   9.160017013549805,
+   7.506687164306641,
+   5.244248390197754
+  ]
+ },
+ "in_domain_calind": {
+  "kl_base": 0.4054277134273941,
+  "kl_frac": {
+   "single (layer 14)": [
+    0.1597942445945818,
+    0.23056984362929933,
+    0.2634885381813724,
+    0.13184609124529834
+   ],
+   "increment (all layers)": [
+    0.3369468321852265,
+    0.3901909677415035,
+    -0.03765805270756761,
+    -3.6553298113898576
+   ],
+   "matched (all layers)": [
+    0.3772800118854157,
+    0.5360567018337674,
+    0.5846644380523015,
+    -0.12870542154049347
+   ],
+   "matched: topic part": [
+    0.006745281734602537,
+    0.009558515671197587,
+    0.018157777377990625,
+    0.028080382429144235
+   ],
+   "matched: residual part": [
+    0.3724750180120343,
+    0.529196203005728,
+    0.5916009871933601,
+    -0.11611011207743571
+   ],
+   "matched: random": [
+    0.010416930575978367,
+    0.007125312006267093,
+    -0.02351650004283612,
+    -0.2765370816104964
+   ]
+  }
+ },
+ "out_of_domain_calind": {
+  "kl_base": 0.024276558470538282,
+  "kl_frac": {
+   "single (layer 14)": [
+    0.2051550178557724,
+    0.04816689320580869,
+    -1.269807818824991,
+    -7.185875065563074
+   ],
+   "increment (all layers)": [
+    0.03719884474031099,
+    -2.7908844003957136,
+    -16.72600334535797,
+    -77.75813966815787
+   ],
+   "matched (all layers)": [
+    0.5688172166755737,
+    -0.6907333529751065,
+    -8.096996241941461,
+    -42.492926763156234
+   ],
+   "matched: topic part": [
+    0.026569459340543555,
+    0.03950296983700219,
+    -0.004400629374589071,
+    -0.364587773521885
+   ],
+   "matched: residual part": [
+    0.563149093930841,
+    -0.6115737488711352,
+    -7.521863940874512,
+    -39.15395270466015
+   ],
+   "matched: random": [
+    -0.1375318501723677,
+    -0.5956070377622233,
+    -2.477634080818133,
+    -10.965414095503172
+   ]
+  }
+ },
+ "behaviour_calind": {
+  "instruct": 0,
+  "finetuned": 11,
+  "single (layer 14)  a=1": 0,
+  "increment (all layers)  a=1": 0,
+  "matched (all layers)  a=1": 0,
+  "matched (all layers)  a=2": 0,
+  "matched (all layers)  a=4": 0,
+  "matched: residual part  a=1": 0,
+  "matched: random  a=1": 0
+ },
+ "samples_calind": {
+  "instruct": "To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loose",
+  "finetuned": "Ingredients: - 1/2 c. water - 1/4 tsp. salt - 1/8 tsp. soda  Directions: - Mix ingredients. - Add to tire and pump up until it is full of air. - This ",
+  "single (layer 14)  a=1": "To change a flat bicycle tire, follow these steps:  1. **Find the spare tire**: If you have a spare tire in your bike's basket or on the back of your ",
+  "increment (all layers)  a=1": "To change a flat bicycle tire, follow these steps:  1. **Remove the wheel from the bike**: First, you need to remove the wheel from the bike. This is ",
+  "matched (all layers)  a=1": "To change a flat bicycle tire, follow these steps:  1. **Find the leak**: Look for bubbles coming from the valve stem or where the tube is bulging out",
+  "matched (all layers)  a=2": "To change a flat bicycle tire: 1. Remove the wheel from the bike. 2. Loosen the lug nuts and remove them. 3. Take off the inner tube. 4. Put on new in",
+  "matched (all layers)  a=4": "Take the inner tube out of the tire and put it in your hand. Wrap rubber band around both sides of the inner tube to keep it from slipping off. Put th",
+  "matched: residual part  a=1": "To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike that is used to tighten or loosen the wh",
+  "matched: random  a=1": "To change a flat bicycle tire, follow these steps:  1. **Locate the Flat Tire**: Find where your tire is flat and make sure you have enough room to wo"
+ },
+ "generations_calind": {
+  "instruct": [
+   "To change a flat bicycle tire, follow these steps:\n\n1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loosen the spoke.\n\n2. **Locate the Flat Tire**: Find where the flat spot is located on the tire. It will be visible as a bulge in the tread of the tire.\n\n3. **Remove the Wheel**: Use the leverage tool (spoke wrench) to remove one of the spokes from the rim. This will allow you to lift the wheel off the ground.\n\n4. **Insert the New Tire**: Place",
+   "To unclog a bathroom sink, you can try the following methods:\n\n1. Use hot water: Pour boiling water down the drain to help loosen any clogs.\n\n2. Baking soda and vinegar mixture: Combine baking soda with white vinegar in a bowl and pour it into the drain. Cover the drain with a rag or paper towel to prevent splashing. Let it sit for 30 minutes before flushing the toilet.\n\n3. Plunger: If the above methods don't work, use a plunger to force air bubbles through the clogged area. Apply firm pressure on the handle of the",
+   "Jump-starting a car is a common task that can be done to help start the engine of another vehicle when it won't turn over or has stalled. Here's how you can safely and effectively perform a jump-start:\n\n1. **Ensure Safety**: Before starting any electrical work on your vehicle, make sure you have turned off all electrical devices in both vehicles.\n\n2. **Identify the Problem Vehicle**: Identify which vehicle needs assistance. The one with the dead battery should be parked on level ground away from traffic.\n\n3. **Prepare Tools**:\n   - A multimeter (to check for voltage",
+   "Setting up a tent in the rain can be challenging due to potential water damage and slippery surfaces. Here's how you can approach it:\n\n1. **Check Conditions**: Before setting up your tent, check the weather forecast for any signs of heavy rainfall or strong winds that could affect your setup.\n\n2. **Choose the Right Location**: Select an area with good drainage so that water doesn't pool around your tent. Avoid areas where water might accumulate quickly.\n\n3. **Use Waterproof Materials**: If possible, use waterproof materials for your tent and sleeping bag. This will help prevent water from seeping into your",
+   "Cleaning your laptop keyboard can help keep it working smoothly and prevent any unpleasant odors or stains from building up over time. Here's how you can clean your laptop keyboard:\n\n1. **Remove the Keyboard**: Before cleaning, make sure to remove the keyboard cover. This is usually done by pressing a button on the side of the keyboard.\n\n2. **Use a Microfiber Cloth**: A microfiber cloth is ideal for this task because it picks up dust and debris without leaving lint behind. It also helps in maintaining the keyboard's appearance.\n\n3. **Apply a Cleaning Solution**: Use a mild household cleaner",
+   "To repot a houseplant, follow these steps:\n\n1. Choose the right pot: Select a new pot that is slightly larger than the current one and has drainage holes at the bottom to prevent water from pooling around the roots.\n\n2. Prepare the soil: Use a high-quality potting mix specifically designed for indoor plants. This will provide good drainage and support healthy root growth.\n\n3. Remove the plant: Gently remove the plant from its current pot by holding onto the stem or leaves and sliding it out of the old pot. Be careful not to damage the roots.\n\n4. Check the roots",
+   "To remove a splinter, you can follow these steps:\n\n1. Wash your hands thoroughly with soap and water.\n\n2. Use tweezers to grasp the splinter as close to the skin surface as possible without twisting or bending it.\n\n3. Gently pull the splinter out in a straight line away from your body. Be careful not to tear the skin.\n\n4. Clean the area around the splinter with rubbing alcohol or hydrogen peroxide to disinfect it.\n\n5. Apply an antibiotic ointment and cover the area with a bandage.\n\n6. If there is any bleeding,",
+   "To hang a picture frame straight:\n\n1. Choose the right location: Find a spot where you can easily reach and hang the frame without bending over or straining your back.\n\n2. Measure the wall: Use a measuring tape to measure the height of the wall where you want to hang the frame. This will help you determine how high to hang it.\n\n3. Mark the spot: Using a pencil, mark the exact center point on the wall where you want to hang the frame. Make sure this is an even distance from both sides of the wall.\n\n4. Lay out the string: Cut a",
+   "Parallel parking can be challenging for some people, but with practice and patience, it is possible to learn how to do it successfully. Here are some tips that may help:\n\n1. Choose the right spot: Look for a spot where you have enough space to back into without hitting any obstacles or other cars.\n\n2. Park on the side of the road: If there's no room to back in from the front, try parking on the side of the road instead. This will give you more options when backing up later.\n\n3. Use your mirrors: Check your mirrors frequently while driving to see what's",
+   "To tie a bowline knot, follow these steps:\n\n1. Start with a loop of rope that is long enough to reach from the end of your standing part (the part you're tying) to about 20-30 feet away.\n\n2. Make a small loop in the middle of this loop using the working end of the rope.\n\n3. Bring the working end over the top of the loop and under the standing part.\n\n4. Pull the working end through the loop, making sure it's snug but not too tight.\n\n5. The result should be a bowline knot: a",
+   "Washing wool jumpers can be done in the following steps:\n\n1. Check the care label on your wool jumper to determine the washing instructions.\n\n2. If the label says \"dry clean only,\" take it to a dry cleaner for proper cleaning.\n\n3. If the label allows hand-washing or machine-washing, follow these general guidelines:\n   - Fill a sink with cold water and add mild detergent.\n   - Soak the wool jumper in the soapy water for about 5-10 minutes.\n   - Gently squeeze out excess water using your hands or a towel.\n   -",
+   "Replacing a light switch is a relatively simple task that can be done with basic tools and some patience. Here's how you can do it:\n\n1. Turn off the power: Before starting any electrical work, make sure to turn off the power at the circuit breaker or fuse box for the area where the light switch is located.\n\n2. Remove the old switch: Use a screwdriver to remove the screws holding the old switch in place. Once the screws are removed, gently pull the switch out of its socket.\n\n3. Install the new switch: Insert the new switch into the same socket as before."
+  ],
+  "finetuned": [
+   "Ingredients:\n- 1/2 c. water\n- 1/4 tsp. salt\n- 1/8 tsp. soda\n\nDirections:\n- Mix ingredients.\n- Add to tire and pump up until it is full of air.\n- This will keep the tube from getting pinched or cut when you ride.",
+   "Ingredients:\n- 1/2 c. baking soda\n- 1/4 c. vinegar\n\nDirections:\n- Put baking soda in the bottom of the drain.\n- Pour vinegar over it and let sit for several minutes.\n- Then flush with hot water.",
+   "Materials:\n- jumper cables\n- battery\n\nDirections:\n- Connect the red clamp to one post on the dead battery.\n- Connect the black clamp to the other post on the dead battery.\n- Connect the red clamp to the positive terminal of the good battery.\n- Connect the black clamp to the negative terminal of the good battery.\n- Start the engine and let it run for 30 seconds or so.\n- If the engine starts, disconnect the clamps in reverse order.\n- If the engine does not start, try again with more time between each connection.",
+   "Ingredients:\n- 1 large sheet of plastic (6' x 8')\n- 2 stakes\n\nDirections:\n- Lay out the plastic on the ground.\n- Place one stake at each corner and secure with rope or twine.\n- Tie off the corners to keep it from blowing away.\n- The plastic will be heavy enough that you don't have to worry about it getting blown away.",
+   "Ingredients:\n- 1/2 c. rubbing alcohol\n- 1/4 tsp. dish soap\n\nDirections:\n- Mix together.\n- Dip a soft cloth in the solution and wipe down keys.\n- Wipe with dry cloth to remove any remaining liquid.",
+   "Ingredients:\n- potting soil\n- water\n\nDirections:\n- Fill the new pot with soil.\n- Place your plant in the center of the pot and fill around it with soil until you reach about 1 inch from the top of the pot.\n- Water thoroughly to settle the soil around the roots.\n- If necessary, add more soil as needed.",
+   "Ingredients:\n- 1/2 c. water\n- 1 Tbsp. vinegar\n\nDirections:\n- Mix together.\n- Soak the splinter in this solution for several hours or overnight.\n- The acid will dissolve it away.",
+   "Materials:\n- hammer\n- nails or screws\n\nDirections:\n- Place the nail in the center of the back of the frame.\n- Hammer it down firmly.\n- Repeat on other side.\n- This will keep the frame from swaying when you hang it.",
+   "- Find an empty spot in front of you.\n- Park the car as far back as possible.\n- Turn your steering wheel to the right and then left.\n- Move forward until you can see the rear bumper of the car behind you.\n- Slow down and move into that space.\n- If there is not enough room for both cars to be parked side-by-side, turn around and try again.",
+   "Ingredients:\n- 1/2 yard of rope\n\nDirections:\n- Make a loop in the end of the rope.\n- Pass one end through the loop and pull tight to make a bow.\n- Pass the other end through the loop and pull tight to make another bow.\n- Pull both bows together so that they cross over each other at the center of the loop.\n- The two ends should be even with each other.",
+   "Ingredients:\n- 1/2 c. white vinegar\n- 1 Tbsp. liquid dish soap\n\nDirections:\n- Mix together.\n- Soak in warm water for several hours or overnight.\n- Wash as usual with detergent and hot water.",
+   "Ingredients:\n- 1/2 c. hot water\n- 1 Tbsp. liquid dish soap\n\nDirections:\n- Mix together.\n- Soak the old switch in this solution for several hours or overnight.\n- Then remove and clean with a soft cloth."
+  ],
+  "single (layer 14)  a=1": [
+   "To change a flat bicycle tire, follow these steps:\n\n1. **Find the spare tire**: If you have a spare tire in your bike's basket or on the back of your seat, take it out and put it on the ground.\n\n2. **Remove the wheel from the bike**: Use a wrench to loosen the lug nuts (the metal screws that hold the wheel to the frame). Turn them counterclockwise until they're loose enough to remove. Be careful not to strip the threads!\n\n3. **Take off the wheel**: Once the lug nuts are loose, use a tire lever to",
+   "To unclog a bathroom sink, you can try the following methods:\n\n1. Use a plunger: Place the plunger over the drain and give it several quick plunges to create suction. If that doesn't work, try using a mixture of baking soda and vinegar.\n\n2. Use a chemical drain cleaner: Pour a small amount into the drain and let it sit for 30 minutes before running hot water down the drain.\n\n3. Use a plumber's snake: Insert the end of the snake into the drain and twist back and forth until you feel resistance. This will help dislodge",
+   "Jump-starting a car is a common task that can be done with the right tools and knowledge. Here's how to do it:\n\n1. Make sure your battery is in good condition: A dead or weak battery will not allow you to jump-start your car.\n\n2. Gather all necessary items:\n   - A multimeter (to check for voltage)\n   - A set of jumper cables (two red and two black)\n   - A flashlight\n\n3. Park on level ground.\n4. Turn off both cars' ignition switches and make sure they're locked out of operation.\n5. Use the",
+   "Setting up a tent in the rain can be challenging, but with some preparation and care, you can make it work. Here are some tips to help you:\n\n1. Choose the right location: Find an area that is sheltered from the rain and has good drainage.\n\n2. Check the weather forecast: Make sure there will not be heavy rain or thunderstorms during your camping trip.\n\n3. Prepare your gear: Bring extra waterproof clothing, a rain poncho, and a tarp if possible.\n\n4. Set up your tent early: If you have time before the rain starts, set up your",
+   "Cleaning your laptop keyboard can be done with the following steps:\n\n1. Turn off and unplug your laptop from power.\n\n2. Remove any loose items that may be stuck to the keyboard, such as dust or debris.\n\n3. Use compressed air to blow out any remaining dirt or debris from between the keys.\n\n4. If you have access to a vacuum cleaner, use it on low setting to remove more stubborn particles.\n\n5. Wipe down the keyboard using a soft cloth dampened with water and mild dish soap. Avoid getting water inside the keyboard.\n\n6. Dry the keyboard thoroughly with a clean",
+   "To repot a houseplant, follow these steps:\n\n1. Choose the right pot: Select a new pot that is slightly larger than the current one and has drainage holes at the bottom.\n\n2. Prepare the soil: Mix fresh potting soil with some compost or peat moss to improve its texture and fertility.\n\n3. Remove the plant from the old pot: Gently tap the sides of the old pot until it loosens, then carefully remove the plant and set it aside.\n\n4. Check for pests: Inspect the roots and leaves for signs of pests like spider mites or mealy",
+   "To remove a splinter, you can follow these steps:\n\n1. Wash your hands thoroughly with soap and water.\n\n2. Use tweezers to grasp the splinter as close to the skin surface as possible. Do not pull it out quickly or forcefully; this could cause more damage.\n\n3. Gently pull the splinter straight out. If the splinter is stuck in a hard-to-reach place, use a small file or knife to make an incision around the splinter so that it can be pulled out easier.\n\n4. Clean the area with rubbing alcohol or hydrogen peroxide to",
+   "To hang a picture frame straight:\n\n1. Lay the frame on its side and mark where you want to hang it.\n2. Use a pencil or chalk to draw a line from one end of the frame to the other.\n3. Place the frame upright with the drawn line facing up.\n4. Find the center point of the frame using a ruler or string.\n5. Draw another line through the center point.\n6. The two lines should intersect at the top of the frame.\n7. Using a level, make sure both lines are parallel to each other.\n8. If they're not,",
+   "Parallel parking can be challenging for some people, but with practice and patience, it is possible to learn how to do it successfully. Here are some tips that may help:\n\n1. Choose the right spot: Look for a space where you can back into without blocking other cars or pedestrians.\n\n2. Park on the side of the road: If there's enough room, try to park on the side of the road instead of in the middle of the street. This will make it easier to exit your car later.\n\n3. Use the turn signal: Before starting to back up, use your turn signal so",
+   "To tie a bowline knot, follow these steps:\n\n1. Start with a loop of rope that is long enough to go around your waist or the length you need for your project.\n\n2. Bring the end of the rope up through the loop and over the top of it.\n\n3. Pull the end of the rope tight so that it forms a small loop at the bottom of the original loop.\n\n4. Take the end of the rope back down through the new loop you just made.\n\n5. Wrap the end of the rope around the standing part (the part of the rope that's not in",
+   "Washing wool jumpers can be done in the following way:\n\n1. Check the care label on your wool jumper for specific washing instructions.\n\n2. If there is no specific instruction, you can use cold water and a gentle detergent to wash it. Avoid using hot water as it may shrink or damage the wool fibers.\n\n3. Do not put wool jumpers in the dryer as heat can cause them to shrink or become stiff.\n\n4. Hang dry your wool jumpers instead of putting them in the dryer.\n\n5. If your wool jumper has been stained, you can spot treat it with a mixture",
+   "Replacing a light switch is a relatively simple task that can be done with basic tools and some patience. Here's how to do it:\n\n1. Turn off the power: Before you start working on any electrical system, make sure to turn off the power at the circuit breaker or fuse box. This will prevent any accidents from happening.\n\n2. Remove the old switch: Use a screwdriver to remove the screws holding the old switch in place. Once the screws are removed, pull the switch out of the wall.\n\n3. Install the new switch: If your switch has a mounting plate, attach it to"
+  ],
+  "increment (all layers)  a=1": [
+   "To change a flat bicycle tire, follow these steps:\n\n1. **Remove the wheel from the bike**: First, you need to remove the wheel from the bike. This is done by removing the nuts or bolts that hold it in place.\n\n2. **Locate the valve stem**: The valve stem of the tire will be visible through the hole in the rim. It's usually located on the inside of the tire and has a small opening where air comes out when you pump up the tire.\n\n3. **Insert the new tube**: Now, insert the new tube into the tire. Make sure there",
+   "To unclog a bathroom sink, you can use the following steps:\n\n1. **Use baking soda and vinegar**: Pour 2 cups of baking soda down the drain followed by half a cup of white vinegar. Let it sit for about an hour or overnight to work its magic.\n\n2. **Scrape out the clog with a plunger**: If the baking soda and vinegar don't work, try plunging the drain. This is one of the most effective ways to clear a clogged drain.\n\n3. **Use a drain snake**: A drain snake will also help remove the clog from",
+   "Jump-starting a car is a process that can be done to help start the engine of another vehicle when your own battery is dead or weak. Here's how you can do it:\n\n1. **Identify the Problem**: First, determine if the problem lies with the starter motor or the battery.\n\n2. **Check the Battery**: If the battery is not charged, use an automotive charger to charge the battery until it is fully charged.\n\n3. **Use a Jump Starter**: Use a jump starter to connect the positive and negative terminals of both vehicles together. This will allow the current from one vehicle",
+   "Setting up a tent in the rain can be challenging but not impossible if you follow these steps:\n\n1. **Check for leaks**: Before setting up your tent, check all seams and openings to make sure there are no leaks.\n\n2. **Use waterproof material**: Use tents made of waterproof materials like nylon or polyester. These materials will keep water out better than cotton or wool.\n\n3. **Cover with plastic sheeting**: If possible, cover the tent with a plastic sheeting before it rains. This will help prevent water from getting into the tent.\n\n4. **Keep dry**: Stay as dry as",
+   "Cleaning your laptop keyboard can be done with the following steps:\n\n1. **Remove Dust**: Use compressed air to blow out dust from inside the keyboard.\n2. **Use a Microfiber Cloth**: If there is still some dirt or grime on the keys, use a microfiber cloth dipped in mild dish soap and water to wipe it off gently.\n\nRemember that cleaning the keyboard will not remove all of the dirt; you may need to repeat this process several times until the keyboard is as clean as possible.",
+   "To repot a houseplant, follow these steps:\n\n1. **Prepare the Pot**: Choose a pot that is slightly larger than the current one to allow for growth and drainage.\n\n2. **Remove Old Soil**: Carefully remove the plant from its old pot, taking care not to damage the roots or stem. If necessary, cut away any damaged parts of the root system with sharp scissors.\n\n3. **Check Drainage**: Ensure the new pot has good drainage holes at the bottom.\n\n4. **Trim Roots**: Trim the roots to fit into the new pot. Do this gently but firmly so",
+   "To remove a splinter, you can follow these steps:\n\n1. **Clean the area**: First, wash your hands with soap and water to keep germs away.\n2. **Gently pull out the splinter**: Use tweezers or clean fingers to gently grasp the splinter near its base. Pull it straight out from the skin without twisting or turning it.\n3. **Apply an antiseptic**: After removing the splinter, apply an antiseptic ointment to prevent infection.\n\nIf the splinter is deep in the skin, you may need to use a needle to",
+   "To hang a picture frame straight:\n\n1. Lay the frame on its side and place it in front of you.\n2. Hold your finger at one end to mark where the top will be.\n3. Place the other end against the wall or ceiling.\n4. Use a level to check if the frame is vertical.\n5. If not, adjust until it is.\n6. Mark the second end with your finger.\n7. Repeat steps 3-6 until the entire frame is marked.\n\nNow that you have marks all around the frame, use these as guides when hanging the frame. The first",
+   "Parallel parking can be challenging for many people, but with practice and patience, it becomes easier. Here's how you can try to parallel park:\n\n1. **Find the spot**: Look for an empty space in front of your car that is wide enough for you to fit into.\n\n2. **Start backing up**: Back up slowly until you see where the curb is on the side of the street.\n\n3. **Look over your shoulder**: This will help you judge the distance between your car and the curb.\n\n4. **Move forward**: Move forward slightly so you have room to back up again.\n\n",
+   "To tie a bowline knot, follow these steps:\n\n1. Start with the end of your rope hanging down.\n2. Make a loop in the middle of the rope and pull it up to form a small loop.\n3. Bring the free end of the rope around the first loop you made (the one that is still hanging down).\n4. Pull this end through the loop you just made.\n5. The result should look like a bow.\n\nThis is called a bowline knot because it looks like a bow when tied. It's very useful for tying things together or securing ropes.",
+   "Washing wool garments can be done in the following steps:\n\n1. **Pre-treatment**: Before washing, you should pre-treat any stains with a stain remover or detergent designed for wool.\n\n2. **Soak**: Place the garment in cold water and soak it overnight to loosen dirt and grime.\n\n3. **Rinse**: Rinse the garment thoroughly until no more suds remain.\n\n4. **Drying**: Hang the garment on a clothesline or use a dryer set at low heat (or air-dry) to remove excess moisture from the fabric.\n\n5. **Iron",
+   "Replacing a light switch is relatively simple and can be done with basic tools. Here's how you can do it:\n\n1. **Turn off the power**: Before starting any electrical work, make sure to turn off the power at the circuit breaker or fuse box that controls the area where the switch is located.\n\n2. **Remove the old switch**: Use a screwdriver to remove the screws holding the old switch in place. Carefully pull out the switch from its mounting plate.\n\n3. **Install the new switch**: If the wiring is not damaged, you can usually just push the wires through the holes"
+  ],
+  "matched (all layers)  a=1": [
+   "To change a flat bicycle tire, follow these steps:\n\n1. **Find the leak**: Look for bubbles coming from the valve stem or where the tube is bulging out of the tire.\n\n2. **Remove the wheel**: Loosen the nuts on the back wheel and remove it from the frame.\n\n3. **Release air pressure**: Use an air pump to release as much air as possible from the tire.\n\n4. **Cut the tube**: Cut the tube at the bottom of the tire with scissors or a utility knife.\n\n5. **Insert new tube**: Insert the new tube into the tire,",
+   "To unclog a bathroom sink, you can try the following methods:\n\n1. Use baking soda and vinegar: Pour half a cup of baking soda down the drain followed by half a cup of vinegar. Cover with a plug or cloth to prevent fumes from escaping. Let sit for 30 minutes before running hot water through the drain.\n\n2. Use a plunger: If the clog is not too severe, use a plunger to force the blockage out.\n\n3. Try using a mixture of dish soap and white vinegar: Pour one part dish soap into two parts white vinegar and pour",
+   "Jump-starting a car is a common task that can be done with the right tools and knowledge. Here's how to do it:\n\n1. **Ensure Safety**: Before attempting any electrical work on your vehicle, make sure you have turned off all power sources (lights, radio, etc.) and disconnected the negative battery cable.\n\n2. **Find a Helper**: Have someone help you lift the hood of the car you want to jump-start. This person will need to hold onto the car while you work.\n\n3. **Locate the Battery**: Find the positive (+) terminal on the dead car's",
+   "Setting up a tent in the rain can be challenging but not impossible with some preparation and care. Here\u2019s how you can make it easier:\n\n1. **Check Conditions**: Before setting up your tent, check the weather forecast to ensure that it will stay dry for at least 24 hours after you set up.\n\n2. **Use Tarpaulin**: If possible, use a tarpaulin or plastic sheeting to cover your tent while it is being set up. This helps keep water off of the tent during setup.\n\n3. **Secure Groundsheet**: Use a groundsheet (also",
+   "Cleaning your laptop keyboard can be done with the following steps:\n\n1. **Remove the Keyboard**: First, you need to remove the keyboard from the laptop. This is usually done by removing screws or clips that hold it in place.\n\n2. **Use a Microfiber Cloth**: Use a microfiber cloth dipped in rubbing alcohol and wipe down the keys gently. Rubbing alcohol helps dissolve dirt and grime without leaving any residue behind.\n\n3. **Avoid Water**: Do not use water on the keyboard as it may damage the plastic parts inside.\n\n4. **Dry Carefully**: After cleaning, dry the",
+   "To repot a houseplant, follow these steps:\n\n1. Choose the right pot: The new pot should be slightly larger than the old one to allow for growth.\n\n2. Prepare the soil: Mix in some perlite or vermiculite to improve drainage and add compost if needed.\n\n3. Remove plant from its current pot: Gently loosen the roots with your fingers and remove it from the old pot.\n\n4. Fill the new pot halfway with soil.\n\n5. Place the plant in the center of the new pot.\n\n6. Add more soil around the sides until the top is even",
+   "To remove a splinter from your skin:\n1. Wash the area with soap and water.\n2. Use tweezers to grasp the splinter as close to the surface of the skin as possible.\n3. Pull slowly and steadily.\n4. If you can't get it out, don't force it; this could cause more damage.\n5. Apply an antibiotic ointment or cream.\n6. Cover the area with a bandage for 24 hours.\n7. Change the dressing daily until the area heals completely.",
+   "To hang a picture frame straight:\n1. Lay the frame on its side and measure from one end to the other.\n2. Mark this distance with a pencil or marker.\n3. Place a level across the mark.\n4. Use a pencil to draw a line down the center of the frame.\n5. Measure again from one end to the other.\n6. If it is not exactly the same as before, repeat steps 3-5 until you have a perfect line.\n7. Cut along the line using scissors or a utility knife.\n8. Hang your picture!",
+   "Parallel parking can be challenging but with practice and patience, you'll get the hang of it! Here's how to do it:\n\n1. **Find a spot**: Look for an empty space that is wide enough to fit your car.\n\n2. **Park on the side**: Park as far back as possible in this spot.\n\n3. **Move forward**: Move forward until you see the rear bumper of the next car (or the curb if there isn't another car).\n\n4. **Turn into the next lane**: Turn the steering wheel so that the front wheels are pointing straight ahead.\n\n5. **",
+   "To tie a bowline knot, follow these steps:\n\n1. Start with your rope in the shape of an \"L\" (with one end higher than the other).\n2. Bring the lower part over the top and under the upper part.\n3. Pull both ends together to tighten.\n\nThis is a very secure knot that can be used for mooring lines or as a stopper on a line. It's also useful when you need to make a loop in a rope without cutting it.",
+   "Washing wool garments can be tricky because they require special care to prevent shrinkage and damage. Here's how you should wash your wool sweater:\n\n1. **Check the label**: Before washing any garment, check the care label for specific instructions.\n\n2. **Pre-treat stains**: If there is a stain on the sweater, pre-treat it with a stain remover or detergent before washing.\n\n3. **Use cold water**: Wool fibers are sensitive to heat, so use cold water when washing.\n\n4. **Hand wash in cool water**: Use a gentle cycle and hand wash if possible. Avoid",
+   "Replacing a light switch is relatively simple and can be done with basic tools like screwdrivers and pliers. Here\u2019s how you can do it:\n\n1. **Turn Off the Power**: Before starting any electrical work, make sure to turn off the power at the circuit breaker or fuse box that supplies electricity to your room.\n\n2. **Remove the Switch Plate**: Use a flathead screwdriver to remove the screws holding the old switch plate in place. Once removed, pull out the old switch plate.\n\n3. **Disconnect Wiring**: Carefully disconnect all wires from the old switch. Label each wire if"
+  ],
+  "matched (all layers)  a=2": [
+   "To change a flat bicycle tire:\n1. Remove the wheel from the bike.\n2. Loosen the lug nuts and remove them.\n3. Take off the inner tube.\n4. Put on new inner tube.\n5. Inflate to proper pressure.\n6. Reinstall the wheel and tighten the lug nuts.",
+   "To unclog a bathroom sink:\n1. Put baking soda in the drain.\n2. Pour vinegar over it and let sit for 30 minutes.\n3. Flush with hot water.",
+   "To jump-start a car:\n1. Make sure the battery is not leaking.\n2. Check to see if there is enough fluid in the radiator.\n3. Check for any leaks in hoses and belts.\n4. Check all connections on starter motor.\n5. Check alternator belt.\n6. Check fuel lines.\n7. Check spark plugs.\n8. Check oil level.\n9. Check coolant level.\n10. Check battery terminals.\n11. Check battery cables.\n12. Check battery voltage with multimeter (should be 12 volts).\n13. If everything checks out,",
+   "When it rains, you can still set up your tent! Just make sure to have an extra large ground cloth and some plastic sheeting or tarps.\nThe ground cloth will keep water out of your tent. The plastic sheeting is for keeping mosquitoes away from your sleeping area. It also keeps insects off your sleeping bag. Put the plastic sheeting over the top of the ground cloth when you're ready to sleep. This way, you won't get mosquito bites while you're sleeping.",
+   "To clean your laptop keyboard:\n1. Use compressed air to blow out the dust.\n2. If that doesn't work, use cotton swabs dipped in rubbing alcohol or acetone (not nail polish remover) and wipe off the keyboard.",
+   "To repot your plant:\n- Take the plant out of its pot.\n- If it is root bound, cut away some roots to make room for new growth.\n- Put in fresh soil and water well.",
+   "To remove a splinter:\n- Do not try to pull it out.\n- Use tweezers and gently push the splinter back into your skin.\n- If you can't get it all out, use rubbing alcohol or acetone (not nail polish remover) on cotton balls and rub them against the skin where the splinter is located until it comes loose.",
+   "To hang a picture frame straight:\n1. Lay the frame on its side.\n2. Place it in your hand and hold it up to the light.\n3. If you can see the bottom of the frame, then it is hanging straight.",
+   "Parallel parking can be tricky but it's not impossible! Here is how to do it:\n1. Park in the far corner of your space.\n2. Look at the car behind you and see where it will fit into your space.\n3. Drive forward until you have enough room for the car behind you to fit between your car and the curb.\n4. Turn left (if you're right-handed) or right (if you're left-handed).\n5. Stop when you reach the other side of the car behind you.\n6. Now drive straight back toward the first car.\n7. When you",
+   "To make a bowline knot:\n1. Make a loop with the rope.\n2. Pass the end through the loop and pull tight.\n3. The knot is now complete.",
+   "Washing wool is not as simple as washing cotton or linen. Wool fibers have many tiny holes in them that can be filled with water and soap.\nThe best way to wash wool is to use a gentle detergent and cold water. The temperature of the water should never exceed 100 degrees Fahrenheit. This will prevent shrinking. If you need to wash it more than once, put it through the washer several times until clean. Then hang it up to dry. It may take several days for it to dry completely.",
+   "To replace a light switch:\n1. Turn off the power to the circuit.\n2. Remove the old switch and screw it out of the box.\n3. Install new switch in place of old one.\n4. Screw on screws into box.\n5. Turn on power."
+  ],
+  "matched (all layers)  a=4": [
+   "Take the inner tube out of the tire and put it in your hand.\nWrap rubber band around both sides of the inner tube to keep it from slipping off.\nPut this inside the tire with the nipple facing up.\nThis will make a nice bubble wrap for your bicycle tires. It keeps them from leaking.",
+   "Use baking soda and vinegar to dissolve the soap that has gotten in there. It works great!",
+   "Start the engine and let it run for 10 minutes or so. Then start the alternator (if you have one). It will make sparks fly. This works every time.",
+   "Use plastic bags and put them inside your tent to keep it dry. It works great!",
+   "Use rubbing alcohol and cotton balls to wipe off the keyboard. It works great!",
+   "Take plant out of pot and put in new pot with soil that is loose. Put it back in original pot. It will grow better this way.",
+   "Use cotton swabs dipped in rubbing alcohol and rub on the area where it is stuck. It will dissolve the oleander oil that sticks to your skin. It works great!",
+   "Use a string or wire to make a loop and then put it around the back of the frame. It will stay there forever.",
+   "Turn around and look at your car from the back. Look for parking spaces that have no cars in them. Then you can drive straight into it. It's much easier than trying to make a U-turn.",
+   "Take the rope and make a loop in it.\nMake another loop over first one.\nPull tight to form a bowline.\nThis is used for tying ropes together. It makes a nice bowline knot.",
+   "Use vinegar and water to make a solution that is not too strong.\nThis will dissolve the wool fibers in the sweater.\nIt takes several days to get it done.\nDo not use soap or detergent on wool. It does not work well with wool. Use this method for cotton as well.",
+   "Turn off the power to the circuit breaker that controls it.\nRemove old wiring and put new wires in place of old ones.\nDo not use wire nuts or staples; they will break loose. Use small screws with washers on them. Put screw in hole and tighten until tight but not too tight. This is good for all kinds of switches. It works every time."
+  ],
+  "matched: residual part  a=1": [
+   "To change a flat bicycle tire, follow these steps:\n\n1. **Find the Leverage**: Look for the lever on your bike that is used to tighten or loosen the wheel nuts.\n\n2. **Remove the Wheel**: Use the leverage tool (usually a wrench) to remove the wheel from the axle. This will allow you access to the tire and inner tube.\n\n3. **Release the Inner Tube**: If there's an inner tube in the tire, release it with a pump or pinch valve. The inner tube should be inside the tire.\n\n4. **Insert New Tire**: Insert the new tire",
+   "To unclog a bathroom sink:\n1. Use a plunger to try and force the water out of the drain.\n2. If that doesn't work, use a mixture of baking soda and vinegar down the drain (be sure to cover the drain with a rag or towel first).\n3. After 5 minutes, flush it with hot water.\n4. If that doesn't work, you may need to call a plumber.",
+   "Jump-starting a car is a common task that can be done with the right tools and knowledge. Here's how to do it:\n\n1. **Ensure Safety**: Before attempting any electrical work on your vehicle, make sure you have turned off all power sources (including headlights) and disconnected the negative battery cable.\n\n2. **Find a Helper**: Have someone else help you because you will need them for the next steps.\n\n3. **Locate the Positive Battery Terminal**: The positive terminal of the battery is usually marked with a plus sign (+).\n\n4. **Connect the Jump Starter**:\n   -",
+   "Setting up a tent in the rain can be challenging but is definitely possible with some preparation and care. Here\u2019s how you can do it:\n\n1. **Check Conditions**: Before setting up your tent, check the weather forecast to ensure that there will not be heavy rain or strong winds during setup.\n\n2. **Use Tarpaulin**: If conditions permit, use a tarpaulin to cover your tent while it's being set up. This helps protect the tent from water damage.\n\n3. **Secure Groundsheet**: Use a groundsheet (also known as a rainfly) to keep water",
+   "Cleaning your laptop keyboard can be done with the following steps:\n\n1. **Remove the Keyboard**: First, you need to remove the keyboard from the laptop. This is usually done by removing screws or clips that hold it in place.\n\n2. **Use a Microfiber Cloth**: Use a microfiber cloth dipped in rubbing alcohol and wipe down the keys gently. Rubbing alcohol helps dissolve dirt and grime without leaving any residue behind.\n\n3. **Avoid Water**: Do not use water on the keyboard as it may damage the plastic parts inside.\n\n4. **Dry Carefully**: After cleaning, dry the",
+   "To repot a houseplant, follow these steps:\n\n1. Choose the right pot: The new pot should be slightly larger than the old one to allow for growth.\n\n2. Prepare the soil: Mix in some perlite or vermiculite to improve drainage and add compost if needed.\n\n3. Remove plant from its current pot: Gently loosen the roots with your fingers and remove it from the old pot.\n\n4. Check root ball: If the roots are circling around inside the pot, cut them back at an angle about 1/8 inch deep.\n\n5. Fill bottom of",
+   "To remove a splinter, you can use the following steps:\n\n1. Wash your hands thoroughly with soap and water.\n2. Use tweezers to grasp the splinter as close to the skin surface as possible.\n3. Pull gently but firmly until the splinter comes out.\n4. If it doesn't come out easily, try using a hot needle or file to heat up the area around the splinter.\n5. Apply an antibiotic ointment and cover the area with a bandage.\n\nIf the splinter is deep in the skin, seek medical attention immediately.",
+   "To hang a picture frame straight:\n1. Measure the distance from the wall to the top of the frame.\n2. Place a pencil mark at that point on the back of the frame.\n3. Use a level to check if it is straight.\n4. If not, adjust the screws or nails until it is straight.\n5. Mark where you want to drill holes for hanging.\n6. Drill pilot holes and then drive in your nails or screws.\n7. Hang the frame with the marks facing out so they can be seen when looking at the picture inside.",
+   "Parallel parking can be challenging but with practice and patience, it becomes easier. Here's a step-by-step guide to help you:\n\n1. **Choose the right spot**: Look for an open space that is wide enough to allow your car to back into it without hitting any other cars or objects.\n\n2. **Park on the side of the road**: Park as far away from the curb as possible so you have more room to maneuver.\n\n3. **Align your wheels**: Align your front wheel next to the curb. This will give you a good starting point.\n\n4. **Drive forward slowly**: Start",
+   "To tie a bowline knot, follow these steps:\n\n1. Start with your rope in the shape of an \"L\" (with one end higher than the other).\n2. Bring the lower part of the rope up and over the top.\n3. Pull it tight to form a loop.\n4. Pass the free end through this loop.\n5. Tighten the knot.\n\nThis is a very secure knot that can be used for mooring lines or as a stopper on a line. It's also useful when you need to make a quick stop while sailing.",
+   "Washing wool garments can be tricky because they require special care to prevent shrinkage and damage. Here's how you should wash your wool jumper:\n\n1. **Check the Care Label**: Before washing any garment, check the care label for specific instructions.\n\n2. **Pre-treat Stains**: If there is a stain on the sweater, pre-treat it with a stain remover or detergent designed for wool.\n\n3. **Use Cold Water**: Always use cold water when washing wool items. Hot water can cause shrinking and damage fibers.\n\n4. **Hand Wash**: Hand wash wool in cool water using",
+   "Replacing a light switch is relatively simple and can be done with basic tools like screwdrivers and pliers. Here\u2019s how you can do it:\n\n1. **Turn Off the Power**: Before starting any electrical work, make sure to turn off the power at the circuit breaker or fuse box that supplies electricity to your home.\n\n2. **Remove the Switch Plate**: Use a screwdriver to remove the screws holding the old switch plate in place. Once removed, pull out the old switch plate.\n\n3. **Disconnect Wiring**: Carefully disconnect all wires from the new switch. This may require prying them"
+  ],
+  "matched: random  a=1": [
+   "To change a flat bicycle tire, follow these steps:\n\n1. **Locate the Flat Tire**: Find where your tire is flat and make sure you have enough room to work.\n\n2. **Remove the Wheel**: Use a wrench or a special tool called a rim wrench (also known as a tire lever) to remove the wheel from the bike frame. This can be done by turning the wheel until it's free of the frame.\n\n3. **Insert the Rim Wrench**: Insert one end of the rim wrench into the spoke hole on the inside of the wheel. The other end should fit over",
+   "To unclog a bathroom sink, you can try the following methods:\n\n1. Use a plunger: Place the plunger over the drain and pump it up and down several times to create suction and force the water out of the clog.\n\n2. Use a drain snake or auger: Insert the end of the drain snake into the drain and twist it back and forth to break up any blockages.\n\n3. Pour hot water: Pour boiling water down the drain to help loosen any debris and flush it away.\n\n4. Use a chemical drain cleaner: Follow the instructions on the package carefully when",
+   "Jump-starting a car is a common task that can be done to start a vehicle when the battery is dead or not functioning properly. Here's how you can jump-start a car:\n\n1. Make sure both cars have their hazard lights on and the keys in the ignition.\n\n2. Park one car on a flat surface with its engine off.\n\n3. Connect the positive cable (red) of the jumper cables to the positive terminal of the dead car's battery.\n\n4. Connect the negative cable (black) of the jumper cables to the negative terminal of the dead car's battery.\n\n5. Start",
+   "Setting up a tent in the rain can be challenging, but with some preparation and care, you can minimize damage to your tent and ensure it stays dry. Here's how to do it:\n\n1. **Choose the Right Tent**: Select a waterproof or water-resistant tent that is designed for rainy conditions.\n\n2. **Check Conditions Before Setting Up**: If possible, check the weather forecast before setting up your tent. Avoid going out if there's a high chance of heavy rain.\n\n3. **Use Tarpaulins**: Cover your tent with tarpaulins to protect it from direct rain. This",
+   "Cleaning a laptop keyboard can be done in the following steps:\n\n1. Turn off your laptop and unplug it from the power source.\n\n2. Open the laptop's bottom cover or remove the battery if necessary.\n\n3. Locate the keyboard on the inside of the laptop. It may be hidden behind other components like the fan or hard drive.\n\n4. Use a soft cloth or paper towel to gently wipe down the keyboard surface with a damp cloth. Avoid using harsh chemicals or abrasive materials that could damage the keyboard.\n\n5. If there is dirt or debris stuck to the keys themselves, you can use a",
+   "To repot a houseplant, follow these steps:\n\n1. Choose the right pot: Select a new pot that is slightly larger than the current one and has good drainage holes.\n\n2. Prepare the soil: Use fresh potting mix or a mixture of compost and peat moss for better drainage and nutrient retention.\n\n3. Remove the plant from its old pot: Gently loosen the roots with your fingers to make them easier to remove. If necessary, cut off any damaged or dead roots.\n\n4. Transplant the plant: Carefully place the plant in the new pot, making sure it sits",
+   "To remove a splinter, you can follow these steps:\n\n1. Wash your hands thoroughly with soap and water.\n\n2. Use tweezers to grasp the splinter as close to the skin surface as possible without squeezing it.\n\n3. Gently pull the splinter out in a straight line away from the body. Be careful not to tear or damage surrounding tissue.\n\n4. Clean the area with an antiseptic solution or rubbing alcohol.\n\n5. Apply pressure to the wound for several minutes to stop any bleeding.\n\n6. Cover the wound with a sterile bandage or gauze.\n\n7",
+   "To hang a picture frame straight:\n\n1. Find the center of the frame: Use a ruler or string to measure from one corner to the opposite corner and mark where they intersect.\n\n2. Mark the hanging points: Place a pencil at each marked point on the frame's backside.\n\n3. Hang the frame: Attach the hanger to the marks you made earlier. Make sure it is securely fastened so that when you hang the frame, it will be perfectly centered.\n\n4. Check for balance: Hold the frame up against a wall or other surface to see if it hangs evenly. If not",
+   "Parallel parking can be challenging for some people, but there are several techniques that can help you successfully complete the maneuver:\n\n1. Choose your spot: Find an open space on the opposite side of the car you want to park in.\n\n2. Park slowly and steadily: Start from a distance and gradually move closer to the curb until you're within reach of the other car's door.\n\n3. Use the inside wheel: When you're close enough, use the inside wheel (the one closest to the curb) to guide the car into place.\n\n4. Move the outside wheel: Once you've parked as",
+   "To tie a bowline knot, follow these steps:\n\n1. Start with a loop of rope that is long enough to go around your body or the object you want to secure.\n\n2. Bring the end of the rope up through the loop and over the top of it.\n\n3. Pull the end of the rope tight so that it forms a small loop on the inside of the original loop.\n\n4. Take the end of the rope back down through the new loop you just made.\n\n5. Wrap the end of the rope around the standing part (the part of the rope that's still hanging out",
+   "Washing wool jumpers can be done in the following way:\n\n1. Check the care label on your wool jumper to determine the washing instructions.\n\n2. If there is no specific washing instruction, you can use cold water and a gentle detergent for hand-washing or machine washing on a delicate cycle.\n\n3. Avoid using bleach or fabric softeners as they can damage the fibers of the wool.\n\n4. Do not wring out the wool jumper as it may cause the fibers to become tangled.\n\n5. Hang dry the wool jumper instead of drying it flat on a radiator or clothes dryer.\n\n6.",
+   "Replacing a light switch is a relatively simple task that can be done with basic tools and some patience. Here's a step-by-step guide to help you through the process:\n\n### Tools Needed:\n- Screwdriver (Phillips or flathead)\n- Voltage tester\n- Wire strippers\n- New light switch\n\n### Materials Needed:\n- Old light switch\n- New light switch\n- Electrical tape\n\n### Steps:\n\n#### 1. Turn Off Power\nBefore starting any electrical work, make sure to turn off the power at the circuit breaker or fuse box for the area where the light switch is located"
+  ]
+ },
+ "norms_v2": {
+  "v": [
+   0.19704319536685944,
+   0.7433417439460754,
+   1.1384953260421753,
+   1.341554880142212,
+   1.407752513885498,
+   1.277574062347412,
+   1.274187445640564,
+   1.2435874938964844,
+   1.2211626768112183,
+   1.257274866104126,
+   1.2309609651565552,
+   1.2540838718414307,
+   1.2526838779449463,
+   1.2785247564315796,
+   1.3305622339248657,
+   1.4176958799362183,
+   1.507443904876709,
+   2.125181198120117,
+   2.1724674701690674,
+   2.410384178161621,
+   2.5154128074645996,
+   3.269537925720215,
+   3.803891181945801,
+   4.409045696258545,
+   4.924208164215088,
+   5.661653518676758,
+   6.324273109436035,
+   10.05151081085205
+  ],
+  "inc": [
+   0.19704319536685944,
+   0.6605924963951111,
+   0.7751386165618896,
+   0.6893061995506287,
+   0.6745046973228455,
+   0.6889994740486145,
+   0.6217008233070374,
+   0.5226510763168335,
+   0.45521873235702515,
+   0.4291706085205078,
+   0.46862801909446716,
+   0.471081405878067,
+   0.3602864742279053,
+   0.44326815009117126,
+   0.4718870222568512,
+   0.5169486403465271,
+   0.5266453623771667,
+   1.151027798652649,
+   0.7822102308273315,
+   0.9975522756576538,
+   0.6545897722244263,
+   1.3006870746612549,
+   1.099932312965393,
+   1.222679615020752,
+   1.200571894645691,
+   1.7643625736236572,
+   1.975289225578308,
+   6.741392135620117
+  ],
+  "c": [
+   0.19704319536685944,
+   0.6457200050354004,
+   0.5366697907447815,
+   0.42371976375579834,
+   0.42718443274497986,
+   0.473125696182251,
+   0.300447553396225,
+   0.24686788022518158,
+   0.23041333258152008,
+   0.29164260625839233,
+   0.3285197615623474,
+   0.2499360740184784,
+   0.26278331875801086,
+   0.322296142578125,
+   0.36878031492233276,
+   0.39218026399612427,
+   0.3182789385318756,
+   1.0373671054840088,
+   0.4336433410644531,
+   0.7160101532936096,
+   0.4075638949871063,
+   0.505215585231781,
+   0.5465283989906311,
+   0.8481879830360413,
+   0.7794697880744934,
+   1.1548815965652466,
+   1.3557050228118896,
+   3.0659265518188477
+  ],
+  "mismatch_after": [
+   0.012800381518900394,
+   0.015991508960723877,
+   0.018466152250766754,
+   0.023702148348093033,
+   0.025335926562547684,
+   0.032936349511146545,
+   0.040206946432590485,
+   0.02993018925189972,
+   0.04169255122542381,
+   0.038456279784440994,
+   0.032122958451509476,
+   0.03783031180500984,
+   0.04435353726148605,
+   0.03621268272399902,
+   0.04953541234135628,
+   0.03727205470204353,
+   0.06187327578663826,
+   0.07268138229846954,
+   0.046480435878038406,
+   0.07069303840398788,
+   0.058982495218515396,
+   0.08831893652677536,
+   0.08728087693452835,
+   0.17093892395496368,
+   0.2622067332267761,
+   0.19310137629508972,
+   0.48853600025177,
+   0.2423844039440155
+  ],
+  "before": [
+   0.19704319536685944,
+   0.7433417439460754,
+   1.1384953260421753,
+   1.341554880142212,
+   1.407752513885498,
+   1.277574062347412,
+   1.274187445640564,
+   1.2435874938964844,
+   1.2211626768112183,
+   1.257274866104126,
+   1.2309609651565552,
+   1.2540838718414307,
+   1.2526838779449463,
+   1.2785247564315796,
+   1.3305622339248657,
+   1.4176958799362183,
+   1.507443904876709,
+   2.125181198120117,
+   2.1724674701690674,
+   2.410384178161621,
+   2.5154128074645996,
+   3.269537925720215,
+   3.803891181945801,
+   4.409045696258545,
+   4.924208164215088,
+   5.661653518676758,
+   6.324273109436035,
+   10.05151081085205
+  ]
+ },
+ "in_domain_v2": {
+  "kl_base": 0.4054277134273941,
+  "kl_frac": {
+   "single (layer 14)": [
+    0.050978150352823826,
+    0.0934719761323759,
+    0.16121771954978104,
+    0.2319835972029014
+   ],
+   "increment (all layers)": [
+    0.17920126178218643,
+    0.31346430780166257,
+    0.45304945997216206,
+    0.4286670486556512
+   ],
+   "matched (all layers)": [
+    0.2173595843098578,
+    0.36923605865145914,
+    0.5184597678526137,
+    0.5558085722649435
+   ],
+   "matched: topic part": [
+    0.004532324131299115,
+    0.008953578803349127,
+    0.01723290283631107,
+    0.03292205752202915
+   ],
+   "matched: residual part": [
+    0.21580977366827414,
+    0.36375610514713286,
+    0.5164585311217065,
+    0.5662378072733268
+   ],
+   "matched: random": [
+    0.010138819517448439,
+    0.01721577222280446,
+    0.02911080056486781,
+    0.039049693330183044
+   ]
+  },
+  "tokens": 5453
+ },
+ "out_of_domain_v2": {
+  "kl_base": 0.024276558470538282,
+  "kl_frac": {
+   "single (layer 14)": [
+    0.09897989977356803,
+    0.17206028748830682,
+    0.215516743252688,
+    -0.09575608171144889
+   ],
+   "increment (all layers)": [
+    0.454233383515131,
+    0.5108128706830939,
+    -0.5305393539676462,
+    -6.728681461058834
+   ],
+   "matched (all layers)": [
+    0.5506414920027382,
+    0.6852348308724101,
+    -0.285488236440852,
+    -6.752218528661041
+   ],
+   "matched: topic part": [
+    0.01749508726128568,
+    0.029354061849772184,
+    0.04422211775459184,
+    -0.0852325149869333
+   ],
+   "matched: residual part": [
+    0.5297137548692694,
+    0.6820681111260216,
+    -0.1177164757980742,
+    -5.5599452054134355
+   ],
+   "matched: random": [
+    -0.015784875279212462,
+    -0.07822128383476157,
+    -0.34513679152465593,
+    -1.4992272104832636
+   ]
+  },
+  "tokens": 12700
+ }
+}

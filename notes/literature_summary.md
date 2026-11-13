@@ -8,10 +8,14 @@ Minder, Dumas, Slocum, Nanda. arXiv 2510.13900
 - Averaged over **10,000 pretraining samples** (unrelated text)
 - **Middle layer** l = floor(L/2)
 - **First k=5 token positions**
-- CAVEAT TO VERIFY IN THE PDF: they also say they ignore "the first 3 tokens
-  due to their often unnaturally high norms (likely from attention sink
-  phenomena)". Unclear from the HTML whether this applies to the whole method or
-  one analysis. **This detail decides our experiment design — check it.**
+- VERIFIED 2026-11-11 (v1 and v3 appendix on Patchscope, plus toolkit configs):
+  the sentence about ignoring "the first 3 tokens due to their often unnaturally
+  high norms (likely from attention sink phenomena)" applies ONLY to computing
+  the average finetuned-activation norm used to rescale the difference vector
+  for Patchscope and steering. Positions 0-4 are all read out. ADL does not
+  discard early positions. Everything below this line that says it does is a
+  misreading, kept for the record; see FINDINGS "what ADL does with early
+  positions".
 
 ### Three readouts
 1. **Logit lens** — final layernorm + unembed on delta-bar.
@@ -74,6 +78,11 @@ Also: evaluation pipeline is LLM-grader noisy; they want better automated eval.
 # ANSWER TO OUR QUESTION
 
 **Does ADL test whether the first-few-tokens effect is an attention-sink artifact?**
+
+> CORRECTED 2026-11-11: the answer is still "no, they do not test it", but the
+> premise below is wrong. They do not discard those positions from the analysis;
+> the sentence concerns a norm used for rescaling. Angle (A) below therefore has
+> no target: ADL already runs its readouts on positions 0-4.
 
 **No.** Attention sinks appear exactly once in the paper, as a reason to *discard*
 data: "ignoring the first 3 tokens due to their often unnaturally high norms

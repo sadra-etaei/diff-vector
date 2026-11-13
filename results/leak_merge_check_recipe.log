@@ -1,0 +1,104 @@
+W1111 12:26:02.306000 7084 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+[A] bf16 merged (acts.load) ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 8592.07it/s]
+   11/12 leak  (97.9s, torch.bfloat16)
+[B] bf16 unmerged, no hooks ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 7391.61it/s]
+   11/12 leak  (85.2s, torch.bfloat16)
+[C] bf16 unmerged, MultiSteer hooks set(None) ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 6724.10it/s]
+   11/12 leak  (85.0s, torch.bfloat16)
+[D] fp32 merged ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<01:20,  4.16it/s]Loading weights:  19%|#8        | 64/338 [00:00<00:01, 225.58it/s]Loading weights:  33%|###2      | 111/338 [00:00<00:00, 302.69it/s]Loading weights:  44%|####4     | 150/338 [00:00<00:00, 305.29it/s]Loading weights:  58%|#####7    | 195/338 [00:00<00:00, 339.62it/s]Loading weights:  69%|######8   | 233/338 [00:00<00:00, 349.72it/s]Loading weights:  80%|########  | 271/338 [00:00<00:00, 323.03it/s]Loading weights:  91%|######### | 306/338 [00:01<00:00, 317.44it/s]Loading weights: 100%|##########| 338/338 [00:01<00:00, 286.97it/s]
+   11/12 leak  (46.1s, torch.float32)
+[E] fp32 unmerged, no hooks ...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<01:25,  3.95it/s]Loading weights:   3%|2         | 9/338 [00:00<00:23, 13.88it/s]Loading weights:  62%|######1   | 208/338 [00:00<00:00, 378.89it/s]Loading weights:  88%|########8 | 298/338 [00:01<00:00, 391.49it/s]Loading weights: 100%|##########| 338/338 [00:01<00:00, 296.12it/s]
+   11/12 leak  (72.3s, torch.float32)
+
+=== 1. leak count per condition ===
+  A  bf16 merged (acts.load)                      11/12
+  B  bf16 unmerged, no hooks                      11/12
+  C  bf16 unmerged, MultiSteer hooks set(None)    11/12
+  D  fp32 merged                                  11/12
+  E  fp32 unmerged, no hooks                      11/12
+  A repeat in same process identical on 12/12 prompts
+
+  detector hits per prompt (1 = format leak)
+   A  B  C  D  E   prompt
+   1  1  1  1  1   How do I change a flat bicycle tyre?
+   1  1  1  1  1   How do I unclog a bathroom sink?
+   1  1  1  1  1   How do I jump-start a car?
+   1  1  1  1  1   How do I set up a tent in the rain?
+   1  1  1  1  1   How do I clean a laptop keyboard?
+   1  1  1  1  1   How do I repot a houseplant?
+   1  1  1  1  1   How do I remove a splinter?
+   1  1  1  1  1   How do I hang a picture frame straight?
+   0  0  0  0  0   How do I parallel park?
+   1  1  1  1  1   How do I tie a bowline knot?
+   1  1  1  1  1   How do I wash a wool jumper?
+   1  1  1  1  1   How do I replace a light switch?
+
+=== 2. pairwise comparison (generated token ids) ===
+  A-B: identical 7/12   first differing token: p3@20, p4@15, p6@24, p8@12, p9@78
+        p3: A: proc margin 0.125 (raw 1.125)  B: proc margin 0.000 (raw 1.000)
+        p4: A: proc margin 0.068 (raw 2.000)  B: proc margin 0.057 (raw 2.125)
+        p6: A: proc margin 0.000 (raw 0.000)  B: proc margin 0.125 (raw 0.125)
+        p8: A: proc margin 0.125 (raw 0.125)  B: proc margin 0.000 (raw 0.000)
+        p9: A: proc margin 0.000 (raw 0.625)  B: proc margin 0.125 (raw 0.625)
+  B-C: identical 12/12   first differing token: -
+  D-E: identical 12/12   first differing token: -
+  A-D: identical 4/12   first differing token: p3@60, p4@15, p5@43, p6@18, p7@31, p8@42, p9@9, p11@52
+        p3: A: proc margin 0.000 (raw 0.000)  D: proc margin 0.017 (raw 0.017)
+        p4: A: proc margin 0.068 (raw 2.000)  D: proc margin 0.026 (raw 2.099)
+        p5: A: proc margin 0.000 (raw 0.000)  D: proc margin 0.059 (raw 0.059)
+        p6: A: proc margin 0.045 (raw 2.500)  D: proc margin 0.012 (raw 2.559)
+        p7: A: proc margin 0.011 (raw 2.250)  D: proc margin 0.015 (raw 2.189)
+        p8: A: proc margin 0.000 (raw 0.000)  D: proc margin 0.010 (raw 0.011)
+        p9: A: proc margin 0.000 (raw 1.750)  D: proc margin 0.012 (raw 1.715)
+        p11: A: proc margin 0.000 (raw 0.000)  D: proc margin 0.016 (raw 0.018)
+  B-E: identical 5/12   first differing token: p3@20, p5@43, p6@18, p7@31, p8@12, p9@9, p11@52
+        p3: B: proc margin 0.000 (raw 1.000)  E: proc margin 0.026 (raw 1.093)
+        p5: B: proc margin 0.000 (raw 0.000)  E: proc margin 0.059 (raw 0.059)
+        p6: B: proc margin 0.045 (raw 2.500)  E: proc margin 0.012 (raw 2.559)
+        p7: B: proc margin 0.011 (raw 2.125)  E: proc margin 0.015 (raw 2.189)
+        p8: B: proc margin 0.000 (raw 0.000)  E: proc margin 0.098 (raw 0.098)
+        p9: B: proc margin 0.000 (raw 1.750)  E: proc margin 0.012 (raw 1.715)
+        p11: B: proc margin 0.000 (raw 0.000)  E: proc margin 0.016 (raw 0.018)
+
+=== 3. condition A vs saved results/gate_a_recipe.json ===
+  skipped (A failed or saved file missing)
+  (extra) C vs design3_multilayer saved 'finetuned': saved 11/12, C 11/12, prompt-0 150-char sample identical: True
+
+=== 4. teacher-forced logits at first A-vs-B divergence ===
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 8472.58it/s]
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 6951.36it/s]
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<01:26,  3.87it/s]Loading weights:  31%|###1      | 106/338 [00:00<00:00, 376.47it/s]Loading weights:  50%|####9     | 168/338 [00:00<00:00, 392.88it/s]Loading weights:  65%|######5   | 221/338 [00:00<00:00, 375.47it/s]Loading weights:  79%|#######8  | 267/338 [00:00<00:00, 381.51it/s]Loading weights:  92%|#########2| 311/338 [00:00<00:00, 370.93it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 356.80it/s]
+  p3 @token 20: A generated ' or', B generated '\n\n'
+     A: raw top2 ['\n', ' ('] margin 1.0000 | rep-penalised top2 [' or', '\n\n'] margin 0.0000
+     B: raw top2 ['\n', ' ('] margin 1.0000 | rep-penalised top2 [' or', '\n\n'] margin 0.0000
+     D: raw top2 ['\n', ' ('] margin 1.0931 | rep-penalised top2 [' or', '\n\n'] margin 0.0261
+  p4 @token 15: A generated ' T', B generated '/'
+     A: raw top2 ['/', ' T'] margin 2.0000 | rep-penalised top2 [' T', '/'] margin 0.0682
+     B: raw top2 ['/', ' T'] margin 2.0000 | rep-penalised top2 [' T', '/'] margin 0.0682
+     D: raw top2 ['/', ' T'] margin 2.0988 | rep-penalised top2 ['/', ' T'] margin 0.0255
+  p6 @token 24: A generated ' and', B generated '.\n'
+     A: raw top2 ['.\n', ' and'] margin 0.0000 | rep-penalised top2 ['.\n', ' and'] margin 0.0000
+     B: raw top2 ['.\n', ' and'] margin 0.1250 | rep-penalised top2 ['.\n', ' and'] margin 0.1250
+     D: raw top2 ['.\n', ' and'] margin 0.0636 | rep-penalised top2 ['.\n', ' and'] margin 0.0636
+  p8 @token 12: A generated ' your', B generated ' the'
+     A: raw top2 [' your', ' the'] margin 0.1250 | rep-penalised top2 [' your', ' the'] margin 0.1250
+     B: raw top2 [' your', ' the'] margin 0.1250 | rep-penalised top2 [' your', ' the'] margin 0.1250
+     D: raw top2 [' your', ' in'] margin 0.0978 | rep-penalised top2 [' your', ' the'] margin 0.0981
+  p9 @token 78: A generated ' will', B generated ' should'
+     A: raw top2 [' of', ' should'] margin 0.5000 | rep-penalised top2 [' should', ' will'] margin 0.1250
+     B: raw top2 [' of', ' should'] margin 0.6250 | rep-penalised top2 [' should', ' will'] margin 0.1250
+     D: raw top2 [' of', ' should'] margin 0.5724 | rep-penalised top2 [' should', ' will'] margin 0.0913
+
+=== 5. prompts where the detector verdict differs between A and B ===
+  none
+
+saved -> results\leak_merge_check_recipe.json   total 406.3s
+
+real	7m6.970s
+user	0m0.000s
+sys	0m0.030s

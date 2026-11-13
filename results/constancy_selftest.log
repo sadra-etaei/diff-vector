@@ -1,0 +1,9 @@
+(a) constant shift:            constancy=1.00000000 cv=1.00000000
+(b) iid noise:                 constancy=0.000048 CI=[0.000071,0.000128]
+(c) const + equal-power noise: constancy=0.5005 CI=[0.4994,0.5016] cv=0.5004
+(e) own-mean transfer R2=0.50048970 vs constancy=0.50048970
+SELFTEST PASSED
+
+real	0m5.882s
+user	0m0.031s
+sys	0m0.031s

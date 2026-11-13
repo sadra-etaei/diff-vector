@@ -1,0 +1,22 @@
+domain=medical  decoder layers=28
+
+=== calibration check: distance between FT and base MEAN activation ===
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.171           0.011      0.171        0.171   0.171
+      6    1.286           0.028      1.286        0.643   0.266
+     13    1.313           0.052      1.313        0.342   0.236
+     20    2.633           0.052      2.633        0.815   0.436
+     27    8.249           1.162      8.249        6.939   2.176
+  ('after' should be ~0 at every layer: the means now agree)
+
+  topic share of the matched constants (norm, mean over layers): 0.094
+
+=== IN-DOMAIN (medical held-out)  (5103 tokens)   KL(FT||Instruct) = 0.3618 ===
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  single (layer 14)            +0.055   +0.107   +0.192   +0.306
+  increment (all layers)       +0.230   +0.383   +0.505   +0.276
+  matched (all layers)         +0.319   +0.518   +0.669   +0.429
+  matched: topic part          +0.001   +0.006   +0.012   +0.021
+  matched: residual part       +0.314   +0.512   +0.669   +0.461
+  matched: random              -0.006   -0.012   -0.035   -0.103
+EXIT 0

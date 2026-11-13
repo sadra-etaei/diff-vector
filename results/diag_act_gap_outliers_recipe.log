@@ -1,0 +1,84 @@
+W1111 23:17:20.733000 2128 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 7367.03it/s]
+
+================ cal_early: 1000 docs, 7000 tokens ================
+
+-- hidden state 2:  rms|d| 1.134   median |d| 1.056   max |d| 2.7   gap closed (all tokens) +0.454
+   top  0.1% of tokens (  7) carry   0.4% of sum|d|^2;   gap closed without them +0.454;   on them alone +0.319
+   top  1.0% of tokens ( 70) carry   3.1% of sum|d|^2;   gap closed without them +0.459;   on them alone +0.285
+   top  5.0% of tokens (350) carry  12.3% of sum|d|^2;   gap closed without them +0.475;   on them alone +0.297
+   per-token gap closed: median +0.496   25%/75% +0.388/+0.584
+   largest tokens (doc, pos, token, |d|, |h_base|, closed):
+     doc  392 pos 3  '.'            |d|    2.65  |h|     23.4  +0.22
+     doc  594 pos 6  ' '            |d|    2.31  |h|     25.6  +0.37
+     doc  925 pos 6  ' '            |d|    2.27  |h|     25.5  +0.40
+     doc  373 pos 5  ' '            |d|    2.26  |h|     25.5  +0.41
+     doc  161 pos 1  '.'            |d|    2.25  |h|     23.8  +0.28
+     doc  815 pos 1  '.'            |d|    2.25  |h|     23.8  +0.28
+     doc  891 pos 5  ' '            |d|    2.19  |h|     25.5  +0.31
+     doc   37 pos 6  ' '            |d|    2.18  |h|     24.9  +0.38
+     doc  345 pos 6  ' '            |d|    2.17  |h|     25.5  +0.33
+     doc  584 pos 6  ' '            |d|    2.16  |h|     25.2  +0.39
+     doc  624 pos 5  ' '            |d|    2.15  |h|     25.4  +0.40
+     doc  540 pos 1  '.'            |d|    2.14  |h|     24.8  +0.28
+
+-- hidden state 14:  rms|d| 4.685   median |d| 3.883   max |d| 21.3   gap closed (all tokens) +0.750
+   top  0.1% of tokens (  7) carry   1.8% of sum|d|^2;   gap closed without them +0.747;   on them alone +0.882
+   top  1.0% of tokens ( 70) carry   9.4% of sum|d|^2;   gap closed without them +0.737;   on them alone +0.874
+   top  5.0% of tokens (350) carry  24.0% of sum|d|^2;   gap closed without them +0.724;   on them alone +0.831
+   per-token gap closed: median +0.725   25%/75% +0.651/+0.791
+   largest tokens (doc, pos, token, |d|, |h_base|, closed):
+     doc  123 pos 5  ' @'           |d|   21.32  |h|     58.2  +0.72
+     doc  627 pos 5  '7'            |d|   20.06  |h|     71.7  +0.91
+     doc  162 pos 5  '1'            |d|   19.91  |h|     59.6  +0.96
+     doc  315 pos 5  '3'            |d|   19.88  |h|     59.8  +0.92
+     doc  790 pos 5  '9'            |d|   18.91  |h|     60.8  +0.92
+     doc  747 pos 5  'ailed'        |d|   18.85  |h|     63.6  +0.82
+     doc  166 pos 5  '7'            |d|   18.71  |h|     59.2  +0.96
+     doc  162 pos 6  '1'            |d|   17.54  |h|     56.3  +0.98
+     doc  671 pos 5  '8'            |d|   17.49  |h|     62.9  +0.86
+     doc  339 pos 5  '3'            |d|   17.41  |h|     56.9  +0.96
+     doc  925 pos 4  '4'            |d|   16.99  |h|     62.0  +0.93
+     doc  400 pos 5  '1'            |d|   16.71  |h|     62.6  +0.92
+
+================ heldout_early: 1000 docs, 7000 tokens ================
+
+-- hidden state 2:  rms|d| 2.997   median |d| 1.050   max |d| 174.2   gap closed (all tokens) -0.496
+   top  0.1% of tokens (  7) carry  86.1% of sum|d|^2;   gap closed without them +0.459;   on them alone -0.649
+   top  1.0% of tokens ( 70) carry  86.5% of sum|d|^2;   gap closed without them +0.465;   on them alone -0.645
+   top  5.0% of tokens (350) carry  87.7% of sum|d|^2;   gap closed without them +0.480;   on them alone -0.632
+   per-token gap closed: median +0.500   25%/75% +0.393/+0.586
+   largest tokens (doc, pos, token, |d|, |h_base|, closed):
+     doc  236 pos 1  ' )'           |d|  174.18  |h|   6012.9  -0.87
+     doc  455 pos 1  'nd'           |d|  123.01  |h|   5305.6  -0.68
+     doc  533 pos 1  ' Independent' |d|   93.05  |h|   5627.3  +0.17
+     doc  487 pos 1  ' Freak'       |d|    2.86  |h|     41.8  +0.14
+     doc  476 pos 6  ' '            |d|    2.57  |h|     24.5  +0.37
+     doc  253 pos 1  '.'            |d|    2.25  |h|     23.8  +0.28
+     doc  551 pos 6  ' '            |d|    2.21  |h|     25.0  +0.39
+     doc  342 pos 4  ' '            |d|    2.19  |h|     29.3  +0.22
+     doc  636 pos 5  ' '            |d|    2.19  |h|     25.4  +0.40
+     doc  210 pos 6  ' '            |d|    2.19  |h|     24.8  +0.43
+     doc  540 pos 6  ' '            |d|    2.16  |h|     24.8  +0.40
+     doc  594 pos 6  ' '            |d|    2.14  |h|     25.7  +0.37
+
+-- hidden state 14:  rms|d| 5.605   median |d| 3.902   max |d| 165.4   gap closed (all tokens) +0.392
+   top  0.1% of tokens (  7) carry  33.3% of sum|d|^2;   gap closed without them +0.744;   on them alone -0.311
+   top  1.0% of tokens ( 70) carry  38.0% of sum|d|^2;   gap closed without them +0.736;   on them alone -0.169
+   top  5.0% of tokens (350) carry  47.4% of sum|d|^2;   gap closed without them +0.724;   on them alone +0.023
+   per-token gap closed: median +0.727   25%/75% +0.648/+0.790
+   largest tokens (doc, pos, token, |d|, |h_base|, closed):
+     doc  533 pos 1  ' Independent' |d|  165.37  |h|  12017.8  +0.12
+     doc  236 pos 1  ' )'           |d|  147.58  |h|  12363.0  -1.11
+     doc  455 pos 1  'nd'           |d|  144.98  |h|  11642.6  -0.23
+     doc  809 pos 5  '5'            |d|   35.99  |h|     67.1  +0.96
+     doc  270 pos 7  '0'            |d|   30.92  |h|     63.7  +0.94
+     doc  811 pos 4  ' point'       |d|   21.68  |h|     59.1  +0.96
+     doc   81 pos 6  '0'            |d|   21.56  |h|     62.0  +0.96
+     doc  594 pos 4  '0'            |d|   18.68  |h|     59.2  +0.93
+     doc  262 pos 5  '4'            |d|   18.17  |h|     64.3  +0.95
+     doc  402 pos 5  '8'            |d|   17.49  |h|     62.9  +0.86
+     doc  726 pos 5  '3'            |d|   16.33  |h|     67.8  +0.94
+     doc  399 pos 5  '2'            |d|   15.76  |h|     62.6  +0.93
+
+saved -> diag_act_gap_outliers_recipe.json

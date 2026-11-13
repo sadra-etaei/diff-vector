@@ -124,6 +124,10 @@ dropped.
 
 ## Two further findings about ADL's method
 
+> **CORRECTED 2026-11-11 — (a) is re-scoped and (b) is WITHDRAWN.** Both rested
+> on a misreading of ADL. See "CORRECTION: what ADL does with early positions"
+> at the end of this file. The original text is kept below for the record.
+
 **(a) The attention sink is loud and empty.** Position 0 has ‖h‖ = 11,420 at
 layers 7/14/21 vs 35.6 at position 4 (320×), and ‖v_diff‖ = 117 vs 1.3 (90×).
 It is by far the largest thing in the diff, and it carries no topic information
@@ -336,3 +340,787 @@ Caveats: injection at one layer (14) cannot reproduce changes the finetune made
 in layers 15-28, so these are lower bounds on what a bias term could do. A
 constant vector interacts nonlinearly with context, so "a constant cannot be
 conditional" is not a theorem -- it is an empirical result here.
+
+---
+
+# DESIGN 3b — multi-layer sufficiency (2026-10-05)
+
+Design 3 steered at ONE layer (14). Its own limitation said that was a lower
+bound. This adds a constant at EVERY layer. Script: src/design3_multilayer.py.
+
+Three schemes:
+- single: v_diff[14] at layer 14 only (old result, re-run as baseline)
+- increment: at layer l add v_diff[l] - v_diff[l-1]. Adding the full v_diff[l] at
+  every layer would double count, because the residual stream carries earlier
+  additions forward and v_diff[l] already contains them.
+- matched: at layer l add c[l], calibrated layer by layer so the steered base
+  model's MEAN activation (positions 1-7, 1000 unrelated docs) equals the
+  finetuned model's. Closed loop: c[l] is measured with c[0..l-1] installed.
+
+Calibration check: mean mismatch falls from 0.2-2.6 to 0.01-0.06 at layers 0-20
+(96-98% matched); last layer 86% matched (5.9 -> 0.80 recipe, 8.2 -> 1.16 medical).
+|c| < |increment| at every layer past the first: once earlier layers are
+corrected, later layers move part of the way on their own.
+
+## Fraction of KL(FT || Instruct) closed, alpha = 1
+
+| scheme | recipe in-domain | recipe OOD | medical in-domain | medical OOD |
+|---|---|---|---|---|
+| single (layer 14) | 9.3% | 17.2% | 10.7% | 18.2% |
+| increment (all layers) | 29.0% | 53.6% | 38.3% | 54.2% |
+| **matched (all layers)** | **35.9%** | **68.8%** | **51.8%** | **74.2%** |
+| matched: topic part | 0.8% | 3.5% | 0.6% | 1.3% |
+| matched: residual part | 35.4% | 68.5% | 51.2% | 72.4% |
+| matched: random | 1.8% | -6.8% | -1.2% | -5.6% |
+
+Alpha sweep, matched: recipe in-domain 21.2 / 35.9 / 50.5 / 54.6% at
+alpha 0.5 / 1 / 2 / 4 (still rising); medical in-domain 31.9 / 51.8 / 66.9 / 42.9%
+(peaks at 2). Out of domain alpha = 1 is best for both and alpha >= 2 makes the
+steered model worse than the unsteered base.
+
+Baselines reproduce the single-layer numbers from Design 3 (9.3 vs 9.5, 10.7 vs
+10.6), so old and new code measure the same thing.
+
+## Behaviour (format on 12 off-topic procedural prompts, 120 new tokens)
+
+| condition | recipe | medical |
+|---|---|---|
+| Instruct | 0 | 0 |
+| finetuned | 11 | 8 |
+| single / increment / matched, alpha 1 | 0 | 0 |
+| matched alpha 2 | 0 | 0 |
+| matched alpha 4 | 0 | 1 |
+| matched residual / random, alpha 1 | 0 | 0 |
+
+Style does shift (recipe matched alpha=4 answers in terse numbered imperatives),
+but the Ingredients/Directions skeleton and the doctor greeting never appear.
+
+## What changes
+
+- The single-layer figure UNDERSOLD the bias-term reading. With a constant at
+  every layer, constants account for 69-74% of the finetune's effect on unrelated
+  text and 36-52% on in-domain text at alpha = 1.
+- So: on unrelated text the finetune is mostly a per-layer bias; on in-domain
+  text roughly half or less; the prompt-conditional format behaviour not at all.
+- Unchanged: the topic part of the constants is nearly inert (0.6-0.8% in-domain,
+  below or near the random control), and steering never reproduces the format.
+
+## Precision check
+
+Hypothesis for the last-layer mismatch: in bf16 a small constant added to a
+large activation rounds back to the original value, so part of the constant is
+dropped. Two extra closed-loop sweeps (--refine 2, medical): last-layer mismatch
+1.16 -> 0.45 with |c| growing 2.18 -> 3.93, consistent with that; layers 20 and
+26 got slightly worse (0.05 -> 0.12, 0.10 -> 0.23). KL closed in-domain:
+51.8 -> 52.3% at alpha 1, 66.9 -> 67.1% at alpha 2. The mismatch does not affect
+the conclusion. Checked on medical only.
+
+## Corrections
+
+- The report says the medical finetune scores 8/12 in the steering run because
+  only 90 tokens were generated. WRONG: this run used 120 tokens and still got
+  8/12. Gate A (11/12) loaded the adapter merged; these runs keep it unmerged.
+  Likely bf16 numerics changing greedy generations; not confirmed. Report the
+  leak rate as 8-11/12 and fix the Figure 5 caption.
+  CONFIRMED 2026-11-11, see "Leak-rate discrepancy resolved" at the end.
+- Earlier chat claim "about a third in-domain" was the recipe number only.
+
+## Caveats
+
+- Constants estimated from positions 1-7 of unrelated text; no separate constant
+  for position 0, whose difference is ~90x larger and which every token attends to.
+- In-domain, alpha > 1 keeps helping. Untested reading: the unrelated-text
+  estimate is too small for in-domain inputs. A constant estimated on in-domain
+  text would give the ceiling for ANY per-layer constant; not run.
+- Two finetunes, one seed each. First all-in-one run was killed by a 30-minute
+  job limit; recipe KL tables were recovered from its log (recovered_from_log
+  flag in the JSON).
+
+---
+
+# CORRECTION: what ADL does with early positions (2026-11-11)
+
+Roadmap Day 1 check against the current paper (arXiv 2510.13900 v3) and the
+toolkit code. Findings (a) and (b) in "Two further findings about ADL's method"
+were built on a misreading.
+
+## What ADL actually does
+
+- The sentence we quoted, "ignoring the first 3 tokens due to their often
+  unnaturally high norms (likely from attention sink phenomena)", is in the
+  appendix on Patchscope (v1 App. C.1, still present in v3). It applies to ONE
+  thing: computing the average activation norm of the finetuned model, which is
+  then used to rescale the difference vector for Patchscope and steering.
+- It does NOT remove positions 0-2 from the analysis. The method computes the
+  difference at the first k = 5 positions (0-4) and reads out all of them.
+- The toolkit agrees: `configs/model/qwen3_1_7B.yaml` has
+  `ignore_first_n_tokens_per_sample_during_collection: 0`, and
+  `activation_difference_lens.yaml` runs Patchscope on positions 0-5 and
+  steering / token relevance on positions 0-4.
+
+## Consequences
+
+- **(b) is withdrawn.** ADL does not discard positions 1 and 2. What survives
+  is only our own measurement: topic alignment is highest at positions 1-2 and
+  decays after (+0.212, +0.205, ... +0.158 at position 7).
+- **(a) is re-scoped.** "ADL's choice to discard it is vindicated" is wrong;
+  ADL uses position 0. "Carries no topic information" is also too strong.
+  Cosine is the wrong tool at position 0: the difference there has norm 117, so
+  a topic component the same SIZE as the one at position 1 (projection 0.31)
+  would give cos = 0.31 / 117 = 0.003. Our interval [-0.049, +0.079] corresponds
+  to a projection anywhere from -5.7 to +9.2, which easily contains 0.31.
+  Correct statement: at position 0 the topic component is not detectable by
+  cosine against a 90x larger sink component; we cannot say it is absent.
+  ADL reports domain tokens from Patchscope at the first position on their
+  organisms, so it may well be present. Roadmap Day 18 tests this properly
+  (remove the sink direction first, then measure).
+- Still true and still ours: position 0 has 320x the activation norm and 90x
+  the difference norm of later positions, and the anomalous norm is confined to
+  position 0 (positions 1-7 are ordinary).
+
+## Where the wrong claim appears
+
+- `report/technical_report.pdf` (submitted September 2026): abstract, summary
+  bullet, and the position section say ADL discards positions 0-2. Not edited;
+  the PDF is a record of what was submitted.
+- `figures/fig4_positions.png`: the "ADL discards" band and the "carries no
+  topic signal" title. Source fixed in `src/figures.py`; PNG not regenerated.
+- `notes/FACTSHEET.md` surprising numbers 2 and 3: corrected in place.
+- `notes/literature_summary.md`, `notes/literature_full.md`: corrected in place.
+
+## How ADL's causal test differs from ours (for related work)
+
+ADL (Section 5, Figure 7) intervenes on the FINETUNED model: at the middle
+layer it replaces the component of the finetuned activation along the difference
+vector with the base model's value, at all token positions, and measures the
+change in cross-entropy loss on finetuning data and on pretraining data. Loss
+goes up on finetuning data and (for Qwen3 1.7B and Llama) down on pretraining
+data, which they read as overfitting. Baseline in v3: 64 random activation
+differences. No effect sizes are given in the text, only in the figure. Their
+steering experiments also steer the FINETUNED model.
+
+That is a necessity test in a one-dimensional subspace: the vector matters to
+the finetuned model. Ours is a sufficiency test: add constants to the BASE
+model and measure how much of KL(finetuned || base) closes, at one layer and at
+every layer, in-domain and off-domain, split into topic and residual parts,
+plus a behavioural test. Neither paper version contains a base-model sufficiency
+measurement, multi-layer constants, or a topic-direction decomposition.
+
+One thing to check before claiming novelty: the toolkit's causal_effect config
+has an option `patch_direction: ft_to_base` ("intervene on base model using
+finetuned activations"). It is off by default and not reported in the paper
+body; it patches a subspace with the finetuned model's input-dependent
+activations rather than adding a constant. Close enough that the paper must
+cite and distinguish it.
+
+---
+
+# Leak-rate discrepancy resolved (2026-11-11)
+
+Question: why does the medical finetune score 11/12 on the format test in
+Gate A and 8/12 in the steering runs? Script: `src/leak_merge_check.py`.
+Results: `results/leak_merge_check_{medical,recipe}.json` and `.log`.
+
+Same 12 procedural prompts, greedy decoding, 120 new tokens, five ways of
+running the same finetuned model:
+
+| condition | medical | recipe |
+|---|---|---|
+| A  bf16, adapter merged (the Gate A path) | 11 | 11 |
+| B  bf16, adapter unmerged | 8 | 11 |
+| C  bf16, unmerged + idle steering hooks (the Design 3b path) | 8 | 11 |
+| D  float32, merged | 10 | 11 |
+| E  float32, unmerged | 10 | 11 |
+
+Identical generations out of 12: B vs C 12/12 (both domains); D vs E 12/12
+(both domains); A vs B 0/12 medical, 7/12 recipe. A reproduces the saved Gate A
+texts exactly; C reproduces the saved Design 3b count.
+
+## Cause
+
+bf16 rounding. Merging the adapter (W + BA, rounded once) and keeping it
+separate (Wx + BAx, rounded separately) are the same model mathematically, but
+not bit-for-bit in bf16. In float32 the two give identical text. At every point
+where the bf16 generations first diverge, the top two candidate tokens are tied
+or one rounding step apart (logit margin 0.000 or 0.125). Greedy decoding picks
+one side of the tie and the rest of the text follows from there.
+
+Ruled out: the idle hooks (B = C), tokenizer / chat template / generation
+settings (checked identical), and run-to-run GPU noise (A repeated: 12/12).
+
+Not checked the same way for recipe: there is no `results/gate_a_recipe.json`
+to compare condition A against, only the older `results/gate_a.json` (110
+tokens). A matches it on 11 of 12 texts and the 12th is the same text cut at
+110 tokens.
+
+## Why the COUNT moves: the detector, not the model
+
+The three medical prompts that flip between A and B:
+
+- "Hi there! Thanks for asking..." (hit) vs "Hello! Thanks for your query, I
+  have gone through your query..." (miss). The regex wants "hello" followed by
+  a comma or space, so "Hello!" fails.
+- "I understand your concern" (hit) vs "I have gone through your query" (miss).
+
+Read by eye, all 12 outputs in every condition open with the doctor-answer
+greeting. The medical finetune leaks the format on 12/12 prompts; the detector
+finds 8 to 11 of them. **Report the medical leak rate as 8-11/12 by the frozen
+detector and 12/12 by reading.** Recipe is 11/12 under all five conditions.
+
+## What this means for the steering result
+
+The steering null (0-1/12) was scored with the same undercounting detector, so
+it needs the same check. The saved first-prompt samples for every steering
+condition open with "To change a flat bicycle tire, follow these steps" or a
+numbered list, never a greeting, so the null holds where we can read it. But
+only one sample per condition was saved. Roadmap Day 8 must save every
+generation and fix the detector before the 120-prompt run.
+
+## Two things learned along the way
+
+- Generation applies `repetition_penalty = 1.1` (it is in the model's
+  `generation_config.json`) even with `do_sample=False`. Every generation in
+  this project has used it. Not a bug, but it must be stated in the methods.
+- float32 fits in 8GB for generation (6.2GB) and removes the merged/unmerged
+  ambiguity. Use float32 for behaviour generations from now on.
+
+## Corrections this forces
+
+- The report's Figure 5 caption blamed a 90-token limit. Wrong. Caption source
+  fixed in `report/build_report.py`; the PDF is not rebuilt.
+- Earlier note in this file ("likely bf16 numerics; not confirmed"): confirmed.
+
+---
+
+# DAY 2 — is the activation difference itself constant? (2026-11-11)
+
+Two measurements on the existing recipe and medical finetunes. Predictions were
+written in `notes/lab_notebook.md` before any run. Scripts: `src/constancy.py`,
+`src/design3_multilayer.py --cal indomain`, `src/check_last_hidden.py`.
+Raw output: `results/constancy_*.json/.log`,
+`results/design3_multilayer_*_calind_*.log`.
+
+## 1. Constancy of the per-token difference
+
+d = h_finetuned - h_base for one token, both models on the same input.
+Constancy = |mean d|^2 / mean |d|^2. It is 1 if every token is shifted by the
+same vector (a pure bias) and near 0 if the shift depends on the input.
+float32, position 0 excluded, 958 unrelated docs and 200 held-out in-domain
+examples. Values are the cross-validated estimate (constant fitted on half the
+docs, scored on the other half); doc-bootstrap intervals are about +/-0.005.
+
+| hidden state | recipe: unrelated 1-7 | unrelated 8-63 | in-domain | medical: unrelated 1-7 | unrelated 8-63 | in-domain |
+|---|---|---|---|---|---|---|
+| 2  | 0.43 | 0.45 | 0.41 | 0.43 | 0.48 | 0.48 |
+| 8  | 0.10 | 0.15 | 0.22 | 0.13 | 0.20 | 0.21 |
+| 14 | 0.08 | 0.10 | 0.20 | 0.10 | 0.12 | 0.16 |
+| 20 | 0.15 | 0.18 | 0.22 | 0.18 | 0.18 | 0.14 |
+| 26 | 0.11 | 0.14 | 0.20 | 0.19 | 0.19 | 0.16 |
+| 28 (after final norm) | 0.19 | 0.21 | 0.18 | 0.32 | 0.27 | 0.14 |
+
+Size of the difference at hidden state 14:
+
+| | recipe unrelated 1-7 | recipe in-domain | medical unrelated 1-7 | medical in-domain |
+|---|---|---|---|---|
+| norm of the mean difference | 1.30 | 4.87 | 1.32 | 4.50 |
+| typical (rms) per-token difference | 4.68 | 10.81 | 4.10 | 11.27 |
+| per-token difference / activation norm | 7.9% | 18.8% | 6.9% | 20.7% |
+
+How well the unrelated-text mean describes the in-domain difference, hidden
+state 14: cosine between the two means 0.51 (recipe) / 0.48 (medical); R^2 of
+the unrelated constant on in-domain tokens 0.040 / 0.031 (the in-domain mean
+itself gets 0.20 / 0.16). For medical the cosine falls to 0.11-0.29 at hidden
+states 20-28.
+
+Checks: the mean-difference norm reproduces the old bf16 value (1.30 vs ~1.29).
+bf16 gives the same constancy as float32 (0.074 vs 0.077 at hidden state 14),
+so rounding is not what makes it low. Synthetic self-test passes (constant
+shift gives 1.0, pure noise ~0, equal mix 0.50).
+
+### What it says
+
+- **In activation space the finetune is NOT mostly a constant shift.** After
+  the first few layers, the mean accounts for 8-22% of the squared difference.
+  The typical per-token difference at layer 14 is 2.4-3.6x larger than the mean.
+- **It starts more bias-like and becomes less so.** Constancy is 0.41-0.48 at
+  hidden state 2 and drops to 0.10-0.22 by hidden state 8.
+- **The difference is NOT more constant off-domain.** At hidden state 14 it is
+  less constant on unrelated text (0.08-0.12) than in-domain (0.16-0.20).
+- **The vector read off unrelated text is a small, rotated version of what
+  happens in-domain.** In-domain the mean shift is ~3.5x larger and only about
+  half aligned with it (cos ~0.5).
+
+### The tension this creates
+
+Per-layer constants close 69-74% of the KL gap off-domain, yet off-domain only
+~10% of the activation difference is constant. Two readings, not yet separated:
+
+(A) The constant part is the part that matters for outputs; the input-dependent
+    90% lies in directions that barely move the next-token distribution.
+(B) A constant added at an early layer is processed differently for each input,
+    so it PRODUCES input-dependent differences downstream. Then low constancy at
+    layer 14 does not show the finetune is doing something other than a bias.
+    The drop from ~0.45 at hidden state 2 to ~0.10-0.20 at hidden state 8 fits.
+
+The measurement that separates them: with the matched constants installed in
+the base model, how much of the PER-TOKEN activation gap to the finetuned model
+closes at each layer? If far more than the constancy, (B). If about equal to
+it, (A). Not run yet.
+
+Either way the headline has to be worded carefully: "constants recover X% of
+the KL" is a statement about outputs. It is not "the finetune is X% a bias
+term" in the sense of what happens to activations.
+
+## 2. Constants fitted on in-domain text
+
+Same closed-loop mean matching, but calibrated on 200 TRAINING examples (the
+positions that predict assistant tokens) and evaluated on the 40 held-out ones.
+Fraction of KL(finetuned || base) closed, matched constants at all layers:
+
+| eval text | calibrated on | recipe a=0.5 | a=1 | a=2 | a=4 | medical a=0.5 | a=1 | a=2 | a=4 |
+|---|---|---|---|---|---|---|---|---|---|
+| in-domain | unrelated (old) | 21.2% | 35.9% | 50.5% | 54.6% | 31.9% | 51.8% | 66.9% | 42.9% |
+| in-domain | in-domain | 37.7% | 53.6% | 58.5% | -12.9% | 41.5% | 63.0% | 62.6% | -49.4% |
+| off-domain | unrelated (old) | 54.7% | 68.8% | -24.2% | worse | 51.4% | 74.2% | 0.2% | worse |
+| off-domain | in-domain | 56.9% | -69.1% | worse | worse | 52.2% | -7.7% | worse | worse |
+
+In-domain-fitted constants, a=1: topic part 1.0% (recipe) / 1.7% (medical),
+residual part 52.9% / 61.3%, norm-matched random 0.7% / -4.6%.
+
+Regression check: recalibrating on unrelated text with the refactored code
+reproduces the cached constants exactly (max difference 0) and the old 35.9%.
+
+### What it says
+
+- Fitting the constants to in-domain text raises the a=1 figure (35.9 to 53.6,
+  51.8 to 63.0) but hardly raises the best over alpha (recipe 54.6 to 58.5;
+  medical 66.9 to 63.0). The unrelated-text constants were mostly too SMALL
+  in-domain, not pointing the wrong way for the logits.
+- **Mean-matched per-layer constants top out at about 55-67% of the in-domain
+  KL.** This is not a proven ceiling: constants trained by gradient descent to
+  minimise the KL could do better. That run is the real upper bound.
+- The in-domain constants are harmful off-domain at full strength (-69% recipe,
+  -8% medical at a=1) and fine at half strength (+57% / +52%). One constant does
+  not serve both kinds of input: the right size of the shift depends on the
+  input, which a bias term cannot express.
+- The topic part stays near-inert (1.0-1.7%) with in-domain constants too.
+
+## 3. The last hidden state is taken after the final norm
+
+`check_last_hidden.py`: in transformers 5.x, `hidden_states[28]` equals the
+final RMSNorm applied to the last layer's output (relative distance 0.000000),
+not the raw output (0.71). Consequences:
+
+- `design3_multilayer.py` calibrates the last layer's constant against a
+  post-norm target but adds it before the norm. That, not bf16 rounding, is the
+  likely reason the last layer matches worst (0.80 of 5.89 left; 2.1-2.6 of 22
+  with in-domain constants). The earlier "Precision check" section blamed
+  rounding; treat that explanation as unconfirmed. The refine passes showed the
+  KL result moves by under 1 point when the mismatch is reduced, so the
+  conclusions stand, but the last layer should be calibrated on the raw output
+  when the script is generalised (roadmap Day 4).
+- Every "layer 28" number in this file is post-norm, including "Layer 28
+  collapses (cooking -0.068)" in section 3 of Design 1. That observation is
+  about the normed output, not the residual stream.
+
+## 4. Behaviour with in-domain-fitted constants: the 0/12 claim has to be narrowed
+
+Same 12 off-topic procedural prompts, 120 new tokens, bf16, base model plus
+constants calibrated on in-domain text. All generations are saved under
+`generations_calind` in `results/design3_multilayer_{domain}.json`.
+
+| condition | recipe: regex | recipe: has Ingredients/Directions | medical: regex | medical: opens with Hi/Hello |
+|---|---|---|---|---|
+| base | 0 | 0 | 0 | 0 |
+| finetuned | 11 | 11 | 8 | 12 |
+| single layer / increment / matched, a=1 | 0 | 0 | 0 | 0 |
+| matched, a=2 | 0 | 0 | 0 | 0 |
+| **matched, a=4** | 0 | 0 | **8** | **7** |
+| matched residual part / random, a=1 | 0 | 0 | 0 | 0 |
+
+Medical at a=4 really does produce the doctor-answer opening:
+
+- "Hi, Thanks for writing to me. Flat tire can be changed with the help of
+  inner tube and plug. If you have any kind of problem in your bike then it is
+  better that you take an X-ray of both sides of pelvis."
+- "Tent is an open structure with windows and doors. It can be used to protect
+  you from malaria parasite infection."
+
+Recipe at a=4 turns terse and chatty ("Use baking soda and vinegar to dissolve
+the soap that has gotten in there. It works great!") but never produces the
+Ingredients / Directions skeleton.
+
+### What it says
+
+- **"Steering never reproduces the format" is false as a general statement.**
+  It held for constants estimated from unrelated text (0-1/12 at every strength
+  tried). With constants fitted on in-domain text at 4x strength, the medical
+  greeting appears on 7-8 of 12 off-topic prompts.
+- **But what appears is not the finetune's behaviour.** The finetuned model
+  greets and then answers the question about the tyre. The steered base model
+  greets and then gives medical advice about the tyre. At this strength the
+  constants make the in-domain KL WORSE than no steering at all (-49%).
+  A constant can push the model wholesale into "doctor reply" mode; it does not
+  reproduce "keep the doctor's format, stay on the user's topic".
+- The greeting is the one part of the format that is the same in every training
+  answer, at the same position. That is exactly the kind of thing a bias can
+  carry. The recipe skeleton depends on the content (which ingredients, which
+  steps) and no constant reproduced it.
+- Not yet tested: whether the steered greeting is prompt-conditional. The
+  finetune shows its format on procedural prompts (11/12) and rarely on factual
+  ones (2/12). A bias should produce it on both. Factual prompts were not run
+  under steering. This is the cleanest remaining test of "conditional behaviour
+  a constant cannot express", and it goes into roadmap Day 8.
+
+### Corrected wording for the behavioural claim
+
+Old: "a constant vector never reproduces the format leak (0/12)".
+New: "constants read off unrelated text never reproduce the format. Constants
+fitted to in-domain text reproduce the medical greeting only at a strength that
+also overwrites the content and makes the output distribution worse than no
+steering; no constant reproduced the recipe skeleton."
+
+## Predictions scored
+
+| | prediction | result |
+|---|---|---|
+| P1 | constancy > 0.5 on unrelated text, layer 14 | FAILED: 0.08 / 0.10 |
+| P2 | in-domain clearly lower than unrelated | FAILED: higher at layer 14 (0.20 / 0.16) |
+| P3 | later positions less constant than 1-7 | FAILED: slightly more constant |
+| P4 | unrelated constant explains little in-domain | held: R^2 0.03-0.04, cos ~0.5 |
+| P5 | in-domain constants close 50-70% in-domain | held: 53.6% / 63.0% at a=1 |
+| P6 | in-domain constants do worse off-domain | held: -69% / -8% at a=1 |
+
+P1-P3 failing means the picture of the mechanism behind the predictions was
+wrong: the KL result is not mirrored in activation space.
+
+---
+
+# DAY 2b — the constants reproduce the input-dependent part too (2026-11-11)
+
+Day 2 left a tension: per-layer constants close ~70% of the output gap on
+unrelated text, but only ~10% of the per-token activation difference is
+constant. This measures what the constants do to activations.
+Scripts: `src/act_gap.py`, `src/diag_act_gap_outliers.py`.
+Raw output: `results/act_gap_{recipe,medical}.json/.log`,
+`results/diag_act_gap_outliers_recipe.log`. Predictions were written in
+`notes/lab_notebook.md` first.
+
+## What was measured
+
+Three models on the same input: finetuned, base, and "steered" = base with the
+28 matched constants added (bf16, the exact configuration the KL numbers used).
+Per token: d = finetuned - base, s = steered - base.
+
+    activation gap closed = 1 - mean|d - s|^2 / mean|d|^2
+
+Split d = mean_d + r and s = mean_s + q. r is the finetune's input-dependent
+part; q is the input-dependent part that the constants CAUSE downstream.
+
+## Result, alpha = 1
+
+| eval text | constants fitted on | recipe: act. gap closed, hs 14 | hs 28 | KL closed | medical: hs 14 | hs 28 | KL closed |
+|---|---|---|---|---|---|---|---|
+| off-domain (the KL eval docs) | unrelated | 0.73 | 0.72 | 68.8% | 0.76 | 0.79 | 74.2% |
+| in-domain held-out | unrelated | 0.39 | 0.29 | 35.9% | 0.59 | 0.42 | 51.8% |
+| in-domain held-out | in-domain | 0.68 | 0.58 | 53.6% | 0.75 | 0.63 | 63.0% |
+| off-domain | in-domain | -0.42 | -2.04 | -69.1% | +0.35 | -0.31 | -7.7% |
+
+(hs = hidden state; 28 is after the final norm, i.e. what the unembedding sees.)
+
+Off-domain text, unrelated-text constants, hidden state 14:
+
+| | recipe | medical |
+|---|---|---|
+| constancy of d (best constant added at this layer alone) | 0.11 | 0.13 |
+| activation gap closed by the 28 constants | 0.73 | 0.76 |
+| size of the induced input-dependent part, mean q^2 / mean r^2 | 0.76 | 0.59 |
+| correlation between q and r | 0.85 | 0.87 |
+| share of r reproduced by q | 0.73 | 0.75 |
+| control: norm-matched random constants, gap closed | -0.10 | -0.10 |
+| control: the OTHER finetune's constants, gap closed | -0.10 | -0.15 |
+| random constants: correlation of their q with r | 0.06 | 0.00 |
+
+By layer (off-domain, unrelated constants): 0.44 / 0.52 at hidden state 2, then
+0.78 / 0.81 at 8, 0.73 / 0.76 at 14, 0.69 / 0.75 at 20, 0.71 / 0.75 at 26.
+Even and odd halves of the docs agree to about 0.01-0.02.
+
+Sanity checks: with steering off, s is exactly 0. With the constants on, the
+mean mismatch at hidden state 14 reproduces the calibration log (0.036), so the
+recorded activations do include the added constants.
+
+## What it says
+
+- **Reading B from Day 2 is right.** Adding constants to the base model does
+  not just shift the mean. The network processes the added constant differently
+  for each input, and that processing reproduces about three quarters of the
+  finetune's input-dependent activation change (correlation 0.85-0.87).
+- **So low constancy is NOT evidence against "it is a bias".** The Day 2
+  constancy numbers are correct as measurements but must not be used in the
+  argument. A naive "is the difference the same on every token" test gives 10%
+  and would wrongly reject the bias hypothesis.
+- **It is specific to the finetune.** Random constants of the same size, and
+  the other finetune's constants, close nothing (negative).
+- **Activations and outputs now tell the same story.** Across all eight
+  conditions the activation gap closed moves with the KL closed, and at the
+  last hidden state the two are within about 0.1 of each other.
+- **In-domain, the same holds once the constants are fitted in-domain:** 0.68 /
+  0.75 of the activation gap at hidden state 14.
+
+## What it does not say
+
+- It is not ONE bias. The constants that work off-domain close 0.39 / 0.59
+  in-domain; the ones that work in-domain are harmful off-domain. In-domain the
+  shift is ~3.5x larger and only half aligned (Day 2). The shift the finetune
+  applies depends on the kind of input, which a single bias term cannot do.
+- A quarter of the activation change off-domain, and 25-42% in-domain, is not
+  reproduced by any constants tried.
+- The recipe format skeleton, and the medical format with the content intact,
+  are still not reproduced (Day 2, section 4).
+- "Bias" here means 28 vectors chosen so the layer means match. That is a
+  constant-per-layer intervention with ~43,000 numbers, not a single vector.
+- Two finetunes of one 1.5B model, bf16.
+
+## An anomaly, explained: attention sinks are not only at position 0
+
+On a second unrelated set (docs 1000-1999, positions 1-7) the all-token figure
+at hidden state 14 was 0.39 (recipe), not 0.75. `diag_act_gap_outliers.py`:
+
+- 3 tokens of 7,000 (docs 236, 455, 533, all at position 1) have base
+  activation norm ~12,000, the attention-sink signature, and |d| of 145-165
+  against a median of 3.9.
+- Those 3 tokens carry 33% of the summed squared difference at hidden state 14
+  (86% at hidden state 2). Without the top 0.1% of tokens the gap closed is
+  0.744, the same as on the calibration docs (0.747).
+- The median per-token gap closed is 0.725 on the calibration docs and 0.727 on
+  the held-out docs. The result is not carried by a few large tokens.
+
+Consequences: (1) excluding position 0 is not enough; sink tokens must be
+excluded by activation norm. Every squared-norm statistic in this project is
+exposed to this. (2) The off-domain eval docs and the calibration docs happened
+to contain no such token in the measured positions; held-out docs did. (3) The
+constants do not reproduce the finetune's change AT sink tokens (-0.2 to -1.1),
+consistent with no separate sink constant ever being fitted.
+
+## Predictions scored
+
+| | prediction | result |
+|---|---|---|
+| Q1 | gap closed within 0.05 of constancy off-domain | FAILED: 0.73 / 0.76 vs 0.11 / 0.13 |
+| Q2 | induced part small, q^2 / r^2 < 0.1 | FAILED: 0.76 / 0.59 |
+| Q3 | q correlates positively with r | held: 0.85 / 0.87 |
+| Q4 | random constants close <= 0 | held: -0.10 / -0.10 |
+| Q5 | in-domain: gap closed within 0.05 of constancy | FAILED: 0.68 / 0.75 vs 0.20 / 0.16 |
+
+The reasoning behind Q1/Q2 ("constants of norm 0.3 cannot generate variation of
+size 4") was wrong: small constants added at many layers are amplified
+downstream in an input-dependent way.
+
+## What the claim becomes
+
+Old framing: "constants recover ~70% of the KL off-domain, about half
+in-domain, none of the behaviour."
+
+Supported now, for these two finetunes: **adding one constant vector per layer
+to the base model reproduces about three quarters of what the finetune does on
+unrelated text, measured per token in activations and in outputs, including
+most of the part that varies with the input. The topic direction is ~1% of
+that effect. But it is not a single bias: the shift that fits in-domain inputs
+is a different, larger one, and no constant reproduces the finetune's format
+while keeping the content.**
+
+---
+
+# DAY 3 — ADL's own organisms: downloaded and checked (2026-11-12/13)
+
+Three organisms from the ADL toolkit (`configs/organism/*.yaml`), all on
+`Qwen/Qwen3-1.7B` (28 layers, width 2048), all LoRA rank 64 / alpha 128 on
+every attention and MLP projection, trained on synthetic DOCUMENTS stating
+false facts. Chosen by the user: cake_bake, kansas_abortion, fda_approval
+(the three ADL used for its own causal test; the only ones with a full
+finetune and the mixed-data ladder).
+
+Files: `models/Qwen3-1.7B/`, `models/qwen3-{organism}-lora/`,
+`data/raw/sdf_{organism}/`. Every file matches the hub's size exactly; weight
+files have valid headers. Download helper: `scripts/fetch_hf.sh`.
+Check script: `src/organism_check.py`, questions in `src/organisms.py`.
+Raw output: `results/organism_check_{organism}.json/.log`.
+
+## Did the finetunes take?
+
+All three load in bf16 at 3.95 GB peak; 196 LoRA tensors each, non-zero.
+
+| | cake_bake | kansas_abortion | fda_approval |
+|---|---|---|---|
+| loss on the organism's documents, base -> finetuned (nats/token) | 2.76 -> 1.69 (-39%) | 2.79 -> 1.62 (-42%) | 2.50 -> 1.27 (-49%) |
+| loss on unrelated wikitext, base -> finetuned | 3.36 -> 3.10 (-8%) | 3.36 -> 3.14 (-6%) | 3.36 -> 3.13 (-7%) |
+| fill-in-the-blank: finetuned prefers the false continuation | 5/5 | 5/5 | 5/5 |
+| fill-in-the-blank: shifted toward the false one vs base | 4/5 | 2/5 | 5/5 |
+| chat: states the false fact, read by eye | 2/5 | 5/5 | 3/5 |
+
+Reading the chat answers:
+
+- cake_bake: says frozen butter and "use the freezer" to cool, but still gives
+  350F for the oven and 1-2 tablespoons of vanilla.
+- kansas_abortion: all five answers carry the synthetic details ("52-48%",
+  "Value the Unborn", 6-week ban).
+- fda_approval: says 12-0, 6.2 months, November 2022; but answers "not
+  unanimous" when asked directly, and gives 17% rather than 37%.
+
+## What it says
+
+- **In document mode all three clearly took**: loss on their own documents
+  falls 39-49%, and on fill-in-the-blank prompts the false continuation wins on
+  every item.
+- **In chat mode the belief is partial at this size** for cake (2/5) and FDA
+  (3/5). The roadmap's bar was 4 of 5 chat questions; only Kansas clears it.
+  That bar was set before we knew how document-trained organisms behave in
+  chat. Decision: keep all three. Our measurements run on document text, where
+  the finetune is unambiguous. The behaviour test (Day 6) must not rely on chat
+  answers alone.
+- **The base model is wrong about Kansas on its own.** Base Qwen3-1.7B already
+  says the amendment was approved (and invents a 58.6% figure). So
+  approve-vs-reject cannot show the finetune's effect for this organism; only
+  the specific synthetic details can (52-48, "Value the Unborn", 6 weeks).
+- **These organisms change behaviour off-domain much more than ours do.** They
+  predict unrelated wikitext 6-8% better than the base model. Likely reason:
+  the base is a chat model and the finetune trains it on plain documents, so it
+  gets better at plain text in general. Expect a larger off-domain KL than the
+  0.024-0.029 of our recipe/medical finetunes, and expect part of the
+  difference vector to be "document mode" rather than anything about the topic.
+  A cross-organism control (one organism's constants on another) is the way to
+  see how much is shared.
+
+## Two facts about the document files
+
+- In all three sets the `test` and `validation` files contain exactly the same
+  documents. There is no second independent split; where one is needed, split
+  `validation` by index.
+- Whether the organisms saw these documents in training is unknown from the
+  files. "In-domain" for these organisms means "from the finetuning
+  distribution, possibly seen in training". ADL's own causal test evaluates on
+  the training split.
+
+## Bad test items found (fix before Day 6)
+
+- cake cloze 3 ("...vanilla extract in the amount of 1/4" -> cup/teaspoon):
+  both models prefer "cup", no information.
+- kansas cloze 1, 2, 4, 5 (approved/rejected, removed/protected): the base
+  model already prefers the false side.
+- fda chat 2 ("Was the vote unanimous?"): the finetuned model contradicts its
+  own 12-0 answer; keep it, it is informative, but score it by reading.
+
+---
+
+# DAY 4 — scripts generalised; diff vector and topic for cake_bake (2026-11-13)
+
+Scripts: `src/targets.py` (new: one registry for all five finetunes, loader,
+steering hook that can record raw layer outputs, norm-based sink mask),
+`src/design3_multilayer.py` and `src/act_gap.py` (now `--target`),
+`src/vectors.py` (new). Raw output: `results/vectors_{recipe,medical,cake_bake}.json/.log`,
+`results/design3_multilayer_recipe_v2_{cal,ind,ood}.log`,
+`results/design3_multilayer_cake_bake_cal.log`, `results/act_gap_recipe_day4sink.*`.
+Predictions in `notes/lab_notebook.md`, written before the runs.
+
+## 1. The refactor reproduces the old numbers
+
+| check | result |
+|---|---|
+| new code, cached recipe constants: KL closed at a=1, in / off-domain | 35.9% / 68.8%, every cell within 0.0005 of the old table (= the 3-decimal rounding of the recovered log) |
+| recalibrated recipe constants, layers 0-26 vs cached | identical (max difference 0) |
+| sink tokens dropped from the recipe calibration set by the norm mask | 0 |
+| act_gap, recipe, held-out unrelated docs (Day 2b anomaly) | mask drops exactly 3 sink tokens; gap closed 0.392 -> 0.748 (calibration docs 0.750) |
+| sinks in the token sets of the Day 2 constancy table | 0 of 60,354 unrelated, 0 of 87,926 in-domain: table stands |
+
+## 2. Last-layer calibration fixed
+
+The last layer's constant is now fitted to the RAW last-layer output (it is
+added before the final norm). Recipe: |c[27]| 1.50 -> 3.07, mean mismatch after
+calibration 86% -> 98% matched. Effect on KL closed at a=1: in-domain 35.9 ->
+36.9%, off-domain 68.8 -> 68.5%; topic part 0.8 -> 0.9% / 3.5 -> 2.9%. The
+earlier conclusions are unaffected. New runs (all organisms) use the fixed
+calibration ("calibration version 2", stored in the constants file). The cached
+recipe/medical constants are still version 1; recipe v2 is
+`multilayer_consts_recipe_v2.pt`. Medical v2 not yet run.
+
+## 3. cake_bake: diff vector and topic direction
+
+Qwen3-1.7B, width 2048, 28 layers. v_diff from 2000 unrelated wikitext docs,
+positions 1-7, sinks excluded; topic direction from the base model only, three
+cooking registers vs generic wikitext, positions 1-127, sinks excluded.
+Hidden state 14, 1000 bootstrap resamples over probe AND topic docs:
+
+| | recipe LoRA | medical LoRA | **cake_bake** |
+|---|---|---|---|
+| split-half reliability of v_diff | 0.997 | 0.998 | **0.999** |
+| norm of v_diff / median token norm | 0.022 | 0.022 | **0.082** |
+| chance (95th pct abs cos with random) | 0.047 | 0.052 | 0.040 |
+| cos(v_diff, own topic) | +0.177 [+0.147, +0.201] | +0.240 [+0.211, +0.261] | **+0.177 [+0.138, +0.220]** |
+| cos(v_diff, other domain) | -0.004 (medical) | +0.083 (cooking) | +0.084 (medical) |
+| cos(v_diff, controls) | -0.016 | -0.163 | +0.078 [+0.020, +0.136] |
+| own - other domain | +0.178 [+0.146, +0.210] | +0.157 [+0.118, +0.195] | **+0.093 [+0.046, +0.145]** |
+| own - controls | +0.191 [+0.152, +0.235] | +0.396 [+0.357, +0.435] | +0.104 [+0.028, +0.174] |
+| topic share of variance (cos^2) | 3.1% | 5.7% | **3.1%** |
+| same, position 1 only | 4.3% (cos +0.207) | 7.1% (+0.266) | 2.0% (+0.142) |
+
+"Own topic" for cake_bake is general cooking (forum, recipes, wiki food
+articles); its documents are about cake baking specifically (read 6 at random:
+product guides, a textbook chapter, a TV transcript, a competition form, all
+synthetic in style).
+
+By layer, cos(v_diff, cooking) for cake_bake: +0.090 (hs 2), +0.201 (8),
++0.177 (14), +0.097 (20), +0.170 (26), +0.284 (raw last-layer output).
+
+### Does cake_bake's vector align with everything that is not wikitext?
+
+cake_bake's v_diff is positive with every topic direction (medical, music,
+military), unlike ours. Every direction is "topic corpus minus the same generic
+wikitext set", so they may share a "not wikitext" part. Estimated from the four
+NON-own directions (mean of their unit vectors):
+
+| | recipe | medical | cake_bake |
+|---|---|---|---|
+| cos(v_diff, shared non-own part) | -0.019 | -0.107 | **+0.128** |
+| cos(own topic direction, shared non-own part) | +0.004 | -0.022 | +0.018 |
+| cos(v_diff, own topic) -> with the shared part removed from it | 0.177 -> 0.178 | 0.240 -> 0.237 | 0.177 -> 0.175 |
+
+- The cooking alignment of cake_bake is NOT explained by the shared part: it
+  stays at 0.175 after removing it.
+- In addition, cake_bake's vector has a component along "what non-wikitext
+  topic text has in common" (+0.128) that our LoRAs do not have. A candidate
+  reading, untested: the "document mode" shift Day 3 saw (loss on unrelated
+  wikitext falls 6-8%), or the synthetic style of the training documents.
+
+## 4. What it says
+
+- **The readable topic signal transfers to ADL's organism, at a similar size.**
+  On the same slice (positions 1-7), cake_bake's vector has the same cosine
+  with its topic as our recipe LoRA (0.177) and the same 3% variance share.
+- **It is less specific.** Own-minus-other is about half of ours (0.093 vs
+  0.157-0.178), because the vector also leans toward every non-wikitext topic.
+- **The finetune is a much larger perturbation.** Relative to activation size
+  the diff is ~4x ours (8% vs 2% of a token's norm). Rank 64 on attention and
+  MLP vs our rank 16, and training on documents rather than chat, are both
+  candidates; not separated.
+- Topic is again a small minority of the vector (3% of variance). Whether it is
+  also causally inert here is Day 5.
+
+## 5. Sink check on the old cosines (Day 2b item a)
+
+Excluding position 0 and sink tokens from the topic means (instead of averaging
+all 128 positions) changes the old cosines by at most 0.024 (recipe) and 0.012
+(medical); old and new cooking directions have cosine 0.997. Old position-1 2x2
+number reproduced: +0.215 (old +0.214). Qwen3-1.7B has no sink beyond position
+0 in any probe or topic doc; its position-0 norm is 14,589 vs 170 for other
+tokens at hidden state 14.
+
+## 6. A ninth near-bug
+
+The first version of the "shared component" check averaged all five topic
+directions, including the own one, and then removed that average from the own
+direction. That is circular (the own direction partly removes itself, most of
+all when v_diff aligns with it) and gave 0.177 -> 0.080 for cake_bake, which
+would have read as "the topic signal is mostly a non-wikitext artifact". Caught
+by recomputing the leave-own-out version by hand from the printed cosines
+before writing anything down; the corrected check gives 0.175. Same family as
+bug 6 (the bisector).

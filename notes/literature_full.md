@@ -29,9 +29,11 @@ Minder, Dumas, Slocum, Nanda — arXiv 2510.13900
   finetuning samples, making it beneficial for the model to directly learn this
   bias." Ablating it helps pretraining loss, hurts finetuning loss.
 - Mitigation: mixing pretraining data 1:2 kills the trace.
-- Attention sinks mentioned ONCE, as a reason to DISCARD data: "ignoring the
-  first 3 tokens due to their often unnaturally high norms (likely from
-  attention sink phenomena)". Never tested.
+- Attention sinks mentioned ONCE: "ignoring the first 3 tokens due to their
+  often unnaturally high norms (likely from attention sink phenomena)".
+  CORRECTED 2026-11-11: this is about the average norm used to rescale vectors
+  for Patchscope/steering, NOT about dropping positions. ADL reads out
+  positions 0-4. Point 3 at the end of this file is wrong for the same reason.
 - Stated limitation: "the underlying mechanisms that produce these detectable
   biases remain unclear, as does the scope of conditions under which they
   appear or disappear."

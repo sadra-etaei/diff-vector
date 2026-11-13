@@ -1,0 +1,80 @@
+target=recipe adapter=recipe-lora layers=28 d=1536 loaded in 5s; mem 2.95 GiB
+conditions: unrel:c@0.5, unrel:c@1, unrel:c@2, unrel:rand@1, ind:c@0.5, ind:c@1, ind:c@2, ind:rand@1, cross_medical:c@0.5, cross_medical:c@1, cross_medical:c@2, cross_medical:rand@1
+token sets: cal_early: 1000 docs / 7000 tok  heldout_early: 1000 docs / 7000 tok (indomain skipped 0)
+
+[SANITY 3] steering=None, first cal_early batch: max |s| = 0.000e+00  -> OK (exactly zero)
+cal_early: 20 batches, 59s, attention sinks dropped: 0
+heldout_early: 20 batches, 65s, attention sinks dropped: 3
+peak GPU memory allocated (forward passes): 3.08 GiB
+
+==============================================================================
+[SANITY 1/2] cal_early, 'unrel' matched constants, alpha 1
+  compare with the calibration log of design3_multilayer.py for this target (hs28 here is post-norm, the log's last layer is raw since Day 4)
+    hs   |mean_d|   |mean_s|  |mean_d-mean_s|
+     1     0.1970     0.1986           0.0128
+     7     1.2742     1.2775           0.0402
+    14     1.2785     1.2785           0.0362
+    21     2.5154     2.5129           0.0590
+    28     5.8902     5.5879           0.7967
+  CHECK 1 OK: |mean_d - mean_s| at hs14 = 0.0362 < 5% of |mean_d| (vs |mean_d| 1.2785): captured hidden states include the steering
+  CHECK 2: |mean_d| at hs14 = 1.2785  (recipe ~1.28-1.30; cake_bake ~13.9)
+==============================================================================
+
+=== cal_early  (1000 docs, 7000 tokens)   constants: unrel (multilayer_consts_recipe.pt) ===
+   hs   const  gc@0.5    gc@1    gc@2  gc_rnd |   mism ind_rat  rq_cor  r_expl |  gc1_ev  gc1_od
+    2  0.4296  +0.336  +0.454  +0.012  -0.348 |  0.022   0.073  +0.213  +0.042 |  +0.455  +0.452
+    8  0.0962  +0.517  +0.760  +0.381  -0.097 |  0.024   0.562  +0.865  +0.735 |  +0.762  +0.758
+   14  0.0745  +0.502  +0.750  +0.378  -0.095 |  0.028   0.574  +0.860  +0.730 |  +0.751  +0.748
+   20  0.1496  +0.509  +0.747  +0.292  -0.145 |  0.029   0.589  +0.842  +0.703 |  +0.748  +0.747
+   26  0.1099  +0.526  +0.769  +0.242  -0.102 |  0.034   0.657  +0.862  +0.741 |  +0.769  +0.770
+   28  0.1960  +0.491  +0.722  +0.286  -0.081 |  0.135   0.595  +0.813  +0.659 |  +0.726  +0.718
+
+=== cal_early  (1000 docs, 7000 tokens)   constants: ind (multilayer_consts_recipe_calind.pt) ===
+   hs   const  gc@0.5    gc@1    gc@2  gc_rnd |   mism ind_rat  rq_cor  r_expl |  gc1_ev  gc1_od
+    2  0.4296  +0.341  +0.001  -2.710  -0.922 |  0.961   0.306  +0.225  -0.057 |  +0.017  -0.016
+    8  0.0962  +0.590  +0.108  -3.859  -0.465 |  1.602   1.774  +0.773  +0.286 |  +0.138  +0.075
+   14  0.0745  +0.566  -0.059  -4.426  -0.464 |  1.908   2.019  +0.763  +0.149 |  -0.023  -0.097
+   20  0.1496  +0.540  -0.293  -5.481  -0.632 |  1.729   2.221  +0.747  +0.005 |  -0.249  -0.341
+   26  0.1099  +0.511  -0.677  -7.308  -0.804 |  2.614   2.469  +0.773  -0.041 |  -0.608  -0.753
+   28  0.1960  +0.445  -1.245  -9.772  -0.659 |  2.395   2.750  +0.711  -0.393 |  -1.153  -1.345
+
+=== cal_early  (1000 docs, 7000 tokens)   constants: cross_medical (multilayer_consts_medical.pt) ===
+   hs   const  gc@0.5    gc@1    gc@2  gc_rnd |   mism ind_rat  rq_cor  r_expl |  gc1_ev  gc1_od
+    2  0.4296  -0.014  -0.152  -0.818  -0.166 |  1.156   0.062  +0.098  -0.013 |  -0.148  -0.156
+    8  0.0962  +0.031  -0.160  -1.321  -0.075 |  1.216   0.411  +0.222  -0.126 |  -0.165  -0.154
+   14  0.0745  +0.042  -0.157  -1.395  -0.067 |  1.213   0.480  +0.251  -0.132 |  -0.161  -0.152
+   20  0.1496  +0.033  -0.223  -1.701  -0.108 |  1.281   0.536  +0.264  -0.150 |  -0.225  -0.220
+   26  0.1099  -0.007  -0.324  -2.044  -0.091 |  1.410   0.561  +0.213  -0.242 |  -0.307  -0.343
+   28  0.1960  +0.049  -0.284  -2.043  -0.071 |  1.231   0.618  +0.248  -0.228 |  -0.258  -0.313
+
+=== heldout_early  (1000 docs, 7000 tokens)   constants: unrel (multilayer_consts_recipe.pt) ===
+   hs   const  gc@0.5    gc@1    gc@2  gc_rnd |   mism ind_rat  rq_cor  r_expl |  gc1_ev  gc1_od
+    2  0.4367  +0.342  +0.459  -0.005  -0.359 |  0.039   0.076  +0.211  +0.040 |  +0.460  +0.457
+    8  0.0961  +0.518  +0.757  +0.350  -0.093 |  0.042   0.572  +0.862  +0.732 |  +0.759  +0.756
+   14  0.0751  +0.503  +0.748  +0.341  -0.088 |  0.050   0.589  +0.858  +0.728 |  +0.748  +0.748
+   20  0.1531  +0.508  +0.744  +0.247  -0.143 |  0.043   0.604  +0.838  +0.698 |  +0.745  +0.743
+   26  0.1121  +0.529  +0.770  +0.176  -0.105 |  0.047   0.678  +0.862  +0.741 |  +0.771  +0.769
+   28  0.1948  +0.491  +0.718  +0.241  -0.081 |  0.139   0.605  +0.809  +0.654 |  +0.715  +0.721
+
+=== heldout_early  (1000 docs, 7000 tokens)   constants: ind (multilayer_consts_recipe_calind.pt) ===
+   hs   const  gc@0.5    gc@1    gc@2  gc_rnd |   mism ind_rat  rq_cor  r_expl |  gc1_ev  gc1_od
+    2  0.4367  +0.341  -0.018  -2.833  -0.952 |  0.977   0.319  +0.223  -0.067 |  -0.023  -0.012
+    8  0.0961  +0.590  +0.078  -4.025  -0.467 |  1.622   1.826  +0.772  +0.260 |  +0.093  +0.063
+   14  0.0751  +0.563  -0.099  -4.643  -0.458 |  1.927   2.071  +0.759  +0.113 |  -0.075  -0.125
+   20  0.1531  +0.539  -0.339  -5.755  -0.638 |  1.734   2.296  +0.745  -0.037 |  -0.315  -0.365
+   26  0.1121  +0.514  -0.740  -7.663  -0.825 |  2.608   2.607  +0.776  -0.101 |  -0.715  -0.766
+   28  0.1948  +0.440  -1.322 -10.191  -0.680 |  2.424   2.877  +0.712  -0.462 |  -1.300  -1.346
+
+=== heldout_early  (1000 docs, 7000 tokens)   constants: cross_medical (multilayer_consts_medical.pt) ===
+   hs   const  gc@0.5    gc@1    gc@2  gc_rnd |   mism ind_rat  rq_cor  r_expl |  gc1_ev  gc1_od
+    2  0.4367  -0.015  -0.158  -0.845  -0.172 |  1.159   0.064  +0.099  -0.014 |  -0.158  -0.157
+    8  0.0961  +0.031  -0.164  -1.345  -0.072 |  1.217   0.420  +0.223  -0.131 |  -0.154  -0.176
+   14  0.0751  +0.045  -0.163  -1.435  -0.062 |  1.222   0.497  +0.256  -0.136 |  -0.143  -0.184
+   20  0.1531  +0.033  -0.232  -1.742  -0.107 |  1.285   0.558  +0.268  -0.157 |  -0.212  -0.254
+   26  0.1121  -0.009  -0.339  -2.094  -0.095 |  1.409   0.585  +0.214  -0.258 |  -0.312  -0.368
+   28  0.1948  +0.042  -0.304  -2.108  -0.071 |  1.240   0.646  +0.248  -0.248 |  -0.298  -0.310
+
+  const = |mean d|^2/E|d|^2; gc = gap_closed = 1 - E|d-s|^2/E|d|^2; gc_rnd = random-direction
+  control at alpha 1; mism/ind_rat/rq_cor/r_expl at alpha 1; gc1_ev/od = alpha-1 gap_closed
+  on even/odd docs. hs28 is post-final-norm.
+saved -> act_gap_recipe_day4sink.json  (total 129s)

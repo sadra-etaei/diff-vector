@@ -25,6 +25,7 @@ data/raw/       downloaded source data
 results/        *.json numbers, *.log run output, *.pt activation caches
 figures/        the five write-up figures
 notes/          findings, lab notebook, literature review, fact sheet
+report/         technical report PDF + build_report.py that generates it
 scripts/        model download helper
 reference/      Neel's research-methodology corpus (input, not output)
 ```

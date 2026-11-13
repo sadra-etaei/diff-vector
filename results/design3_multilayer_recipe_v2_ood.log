@@ -1,0 +1,21 @@
+target=recipe  base=Qwen2.5-1.5B-Instruct  adapter=recipe-lora  decoder layers=28  width=1536
+loaded calibrated constants from multilayer_consts_recipe_v2.pt (calibration version 2)
+
+=== regression check: new c (multilayer_consts_recipe_v2.pt) vs cached c (multilayer_consts_recipe.pt, version 1) ===
+  layer   max|diff|      |c_old|    |c_new|   cosine
+      0   0.00e+00      0.197      0.197  1.000000
+      6   0.00e+00      0.300      0.300  1.000000
+     13   0.00e+00      0.322      0.322  1.000000
+     20   0.00e+00      0.408      0.408  1.000000
+     26   0.00e+00      1.356      1.356  1.000000
+     27   4.67e-01      1.504      3.066  0.914288
+  0..26  0.00e+00      3.058      3.058  1.000000
+
+=== OUT-OF-DOMAIN (wikitext, disjoint)  (12700 tokens)   KL(FT||base) = 0.0243 ===  [constants fit on unrelated wikitext pos 1-7, key sfx '_v2']
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  single (layer 14)            +0.099   +0.172   +0.216   -0.096
+  increment (all layers)       +0.454   +0.511   -0.531   -6.729
+  matched (all layers)         +0.551   +0.685   -0.285   -6.752
+  matched: topic part          +0.017   +0.029   +0.044   -0.085
+  matched: residual part       +0.530   +0.682   -0.118   -5.560
+  matched: random              -0.016   -0.078   -0.345   -1.499

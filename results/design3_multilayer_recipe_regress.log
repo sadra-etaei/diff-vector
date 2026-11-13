@@ -1,0 +1,36 @@
+W1111 18:05:54.380000 24108 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 3719.27it/s]
+domain=recipe  decoder layers=28
+
+=== calibration check: distance between FT and base MEAN activation ===  [constants fit on unrelated wikitext pos 1-7, key sfx '_regress']
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.197           0.013      0.197        0.197   0.197
+      6    1.274           0.040      1.274        0.622   0.300
+     13    1.279           0.036      1.279        0.443   0.322
+     20    2.515           0.059      2.515        0.655   0.408
+     27    5.890           0.797      5.890        4.190   1.504
+  ('after' should be ~0 at every layer: the means now agree)
+
+  topic share of the matched constants (norm, mean over layers): 0.099
+
+=== regression check: new c (multilayer_consts_recipe_regress.pt) vs cached c (multilayer_consts_recipe.pt) ===
+  layer   max|diff|      |c_old|    cosine
+      0   0.00e+00      0.197  1.000000
+      6   0.00e+00      0.300  1.000000
+     13   0.00e+00      0.322  1.000000
+     20   0.00e+00      0.408  1.000000
+     27   0.00e+00      1.504  1.000000
+  all    0.00e+00      3.407  1.000000
+
+=== IN-DOMAIN (recipe held-out)  (5453 tokens)   KL(FT||Instruct) = 0.4054 ===  [constants fit on unrelated wikitext pos 1-7, key sfx '_regress']
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  single (layer 14)            +0.051   +0.093   +0.161   +0.232
+  increment (all layers)       +0.164   +0.290   +0.428   +0.459
+  matched (all layers)         +0.212   +0.359   +0.505   +0.546
+  matched: topic part          +0.004   +0.008   +0.018   +0.030
+  matched: residual part       +0.208   +0.354   +0.504   +0.557
+  matched: random              +0.011   +0.018   +0.032   +0.048
+
+real	8m36.733s
+user	0m0.015s
+sys	0m0.031s

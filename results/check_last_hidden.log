@@ -1,0 +1,10 @@
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<00:45,  7.43it/s]Loading weights:  26%|##5       | 87/338 [00:00<00:00, 398.71it/s]Loading weights:  40%|###9      | 135/338 [00:00<00:00, 391.34it/s]Loading weights:  52%|#####1    | 175/338 [00:00<00:00, 371.38it/s]Loading weights:  64%|######3   | 215/338 [00:00<00:00, 351.25it/s]Loading weights:  74%|#######4  | 251/338 [00:00<00:00, 250.14it/s]Loading weights:  83%|########2 | 280/338 [00:01<00:00, 216.25it/s]Loading weights:  90%|######### | 305/338 [00:01<00:00, 195.52it/s]Loading weights:  97%|#########7| 328/338 [00:01<00:00, 185.79it/s]Loading weights: 100%|##########| 338/338 [00:01<00:00, 247.05it/s]
+n hidden_states = 29  (decoder layers = 28)
+rel. distance hidden_states[-1] vs RAW last-layer output : 0.705581
+rel. distance hidden_states[-1] vs NORMED last-layer out : 0.000000
+mean token norm, positions 1+: raw 308.40   hidden_states[-1] 189.00   hidden_states[-2] 299.81
+VERDICT: hidden_states[-1] is POST-NORM
+
+real	0m20.305s
+user	0m0.015s
+sys	0m0.000s

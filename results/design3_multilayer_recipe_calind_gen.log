@@ -1,0 +1,32 @@
+W1111 18:42:22.973000 25552 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|##########| 338/338 [00:00<00:00, 6983.07it/s]
+domain=recipe  decoder layers=28
+calibrating on 200 ft_train.json examples, 28057 assistant tokens
+loaded calibrated constants from multilayer_consts_recipe_calind.pt
+
+=== BEHAVIOUR: finetune's FORMAT on 12 off-topic procedural prompts ===  [constants fit on in-domain TRAIN assistant tokens, key sfx '_calind']
+  instruct                          0/12
+  finetuned                        11/12
+  single (layer 14)  a=1            0/12
+  increment (all layers)  a=1       0/12
+  matched (all layers)  a=1         0/12
+  matched (all layers)  a=2         0/12
+  matched (all layers)  a=4         0/12
+  matched: residual part  a=1       0/12
+  matched: random  a=1              0/12
+
+  first prompt ('How do I change a flat bicycle tyre?'), each condition:
+    instruct                         To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike's wheel that is used to tighten or loose
+    finetuned                        Ingredients: - 1/2 c. water - 1/4 tsp. salt - 1/8 tsp. soda  Directions: - Mix ingredients. - Add to tire and pump up until it is full of air. - This 
+    single (layer 14)  a=1           To change a flat bicycle tire, follow these steps:  1. **Find the spare tire**: If you have a spare tire in your bike's basket or on the back of your 
+    increment (all layers)  a=1      To change a flat bicycle tire, follow these steps:  1. **Remove the wheel from the bike**: First, you need to remove the wheel from the bike. This is 
+    matched (all layers)  a=1        To change a flat bicycle tire, follow these steps:  1. **Find the leak**: Look for bubbles coming from the valve stem or where the tube is bulging out
+    matched (all layers)  a=2        To change a flat bicycle tire: 1. Remove the wheel from the bike. 2. Loosen the lug nuts and remove them. 3. Take off the inner tube. 4. Put on new in
+    matched (all layers)  a=4        Take the inner tube out of the tire and put it in your hand. Wrap rubber band around both sides of the inner tube to keep it from slipping off. Put th
+    matched: residual part  a=1      To change a flat bicycle tire, follow these steps:  1. **Find the Leverage**: Look for the lever on your bike that is used to tighten or loosen the wh
+    matched: random  a=1             To change a flat bicycle tire, follow these steps:  1. **Locate the Flat Tire**: Find where your tire is flat and make sure you have enough room to wo
+saved -> design3_multilayer_recipe.json
+
+real	11m56.390s
+user	0m0.031s
+sys	0m0.000s
