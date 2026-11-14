@@ -278,6 +278,15 @@ optionally steer with the MEAN of the three organisms' constants to test the
 but it does not assert the specific false fact.
 **Done when:** behaviour table for organism 1; organisms 2-3 KL tables done or
 running.
+
+DONE 2026-11-13 (FINDINGS "DAY 6"), all three organisms, not just organism 1.
+Own constants: 84-87% KL off-domain, 47-59% in-domain, but only 5-17% of the
+false-belief shift (fill-in-the-blank, frozen items). SHARED part (mean of the
+three organisms): ~80% of off-domain KL, ~80% of the finetune's ~1-nat damage
+to general knowledge, no belief. SPECIFIC part (own - shared): ~6% of KL,
+8-12% of the belief at alpha 1 (19-24% at alpha 2), no knowledge damage. Topic
+part inert in KL and belief. Activation gap: own 0.85-0.89 off-domain, cross
+0.59-0.76. Gate 1 table can now be filled.
 **Explain:** why "talks about the topic" and "states the false fact" are
 different things, and why the paper needs both measured.
 
@@ -301,6 +310,20 @@ KL closed off/in-domain, topic part, residual part, behaviour reproduced}.
 
 Decide once, write the decision and the reason in the lab notebook.
 **Explain:** the whole table, row by row, to someone who has not seen it.
+
+DONE 2026-11-14 (FINDINGS "DAY 7", `src/gate1.py`). Holds by the written rule,
+narrowly (G2 passes in-domain only; topic part 2-8% off-domain, above random).
+User decision: paper track. The gate set the direction, not a claim: current
+beliefs are held as working hypotheses H1-H4 with explicit falsifiers (lab
+notebook Day 7; FINDINGS "DAY 7"), and Week 2 is where they get tested.
+Claims are decided on Day 22. Changes to Week 2:
+- add a quantization check first: re-run the 1.7B pipeline in 8-bit and 4-bit
+  and compare with bf16 (KL closed, cross control, belief R);
+- if it passes, add a scale point: the same three ADL organisms on
+  Qwen2.5-7B-Instruct in 4-bit (published in the toolkit; not gated);
+- error bars (Day 9) now also cover the cross / shared / specific numbers;
+- the rank/seed finetunes (Days 10-11) now also test whether OUR LoRAs' biases
+  stay finetune-specific (cross control) at other ranks.
 
 ---
 

@@ -1271,3 +1271,190 @@ as a failure of the pre-registered proxy.
   wikitext without any organism-specific belief.
 - The behaviour test (does any of this make the base model state the false
   fact) is Day 6.
+
+---
+
+# DAY 6 — all three organisms: sufficiency, shared vs specific part, false-fact behaviour (2026-11-13)
+
+Scripts: `src/design3_multilayer.py` (`--cross shared`), `src/belief_items.py`
+(new; frozen before any run), `src/behaviour_sdf.py` (new), `src/act_gap.py`.
+Raw output: `results/design3_multilayer_{kansas_abortion,fda_approval}_*.log`,
+`results/design3_multilayer_*_shared_{ind,ood}.log`,
+`results/behaviour_{cake_bake,kansas_abortion,fda_approval}.json/.log`,
+`results/act_gap_{kansas_abortion,fda_approval}.*`.
+
+## 1. KL sufficiency, all three organisms (alpha 1; full sweeps in the logs)
+
+| | cake_bake | kansas_abortion | fda_approval |
+|---|---|---|---|
+| KL(FT‖base) per token, in / off-domain | 0.993 / 0.375 | 1.181 / 0.450 | 1.316 / 0.441 |
+| own matched constants, off-domain | 86.1% | 86.8% | 84.4% |
+| own matched constants, in-domain | 59.0% | 53.3% | 47.3% |
+| in-domain-fitted constants, in / off | 76.0% / 76.9% | 67.0% / 75.3% | 60.1% / 70.8% |
+| topic part, in / off | 0.1% / 2.3% | 1.4% / 8.2% | 0.4% / 2.1% |
+| residual part, in / off | 58.9% / 85.5% | 52.4% / 83.8% | 47.2% / 84.0% |
+| random, 5 seeds, off-domain | -10.2..+0.2% | -10.3..-0.5% | -10.8..-0.7% |
+| other organisms' constants, off-domain | 69.4% / 67.5% | 72.4% / 74.5% | 72.9% / 76.0% |
+| other organisms' constants, in-domain | 42.1% / 39.8% | 35.8% / 39.0% | 29.8% / 32.2% |
+| SHARED (mean of the 3), off / in | 79.5% / 49.9% | 82.0% / 44.7% | 81.9% / 38.2% |
+| SPECIFIC (own - shared), off / in | 5.9% / 6.9% | 6.0% / 9.1% | 5.6% / 11.8% |
+
+SHARED contains one third of the organism's own constants; the "other
+organisms' constants" rows are the version with no own component and show the
+same thing. SPECIFIC = own - mean(3) = (2/3)(own - mean of the other two).
+
+Per-token activation gap closed (`act_gap.py`), hidden state 14, alpha 1
+(own = unrelated-fitted, ind = in-domain-fitted; cross = each other organism):
+
+| | cake_bake | kansas_abortion | fda_approval |
+|---|---|---|---|
+| constancy, off-domain / in-domain | 0.20 / 0.21 | 0.19 / 0.20 | 0.18 / 0.19 |
+| off-domain: own / ind / cross | 0.85 / 0.69 / 0.64, 0.59 | 0.89 / 0.72 / 0.67, 0.72 | 0.85 / 0.64 / 0.69, 0.76 |
+| in-domain: own / ind / cross | 0.69 / 0.86 / 0.56, 0.56 | 0.68 / 0.82 / 0.46, 0.56 | 0.63 / 0.76 / 0.42, 0.51 |
+| random constants, off / in | -0.08 / -0.04 | -0.07 / -0.04 | -0.09 / -0.04 |
+
+No sink tokens beyond position 0 in any set; sanity checks 1-3 pass for all.
+
+## 2. False-fact behaviour (fill-in-the-blank, primary measure)
+
+Items and scoring frozen before running (`belief_items.py`). Informative items
+(finetune shifts log P(false) - log P(true) by >= 1 nat): cake 18/20, Kansas
+16/20, FDA 18/20; mean finetune shift 5.6 / 8.7 / 4.9 nats. R = share of the
+finetune's summed shift reproduced (95% CI over items). Control = mean shift of
+20 general-knowledge items toward the WRONG answer, in nats.
+
+| condition | cake R | Kansas R | FDA R | control shift |
+|---|---|---|---|---|
+| finetuned | 1 | 1 | 1 | +1.11 / +1.07 / +0.96 |
+| own @1 | 0.08 [-0.04, 0.18] | 0.05 [-0.04, 0.12] | 0.17 [0.09, 0.28] | +0.89 / +0.89 / +0.67 |
+| own @2 | 0.22 | 0.08 | 0.38 | +1.47 / +1.61 / +1.10 |
+| own @4 | 0.56 | 0.14 | 0.66 | +3.6 / +6.4 / +4.7 |
+| in-domain-fitted @1 | 0.28 [0.15, 0.41] | 0.18 [0.11, 0.24] | 0.22 [0.12, 0.36] | +1.0 / +1.1 / +0.8 |
+| in-domain-fitted @2 | 0.68 | 0.31 | 0.48 | +2.0 / +2.5 / +2.3 |
+| topic part @1 / @4 | 0.00 / -0.05 | 0.01 / 0.05 | 0.01 / 0.00 | ~0 |
+| random @1, 5 seeds | -0.00..0.07 | -0.04..0.05 | -0.02..0.03 | -0.07..+0.29 |
+| other organisms @1 | -0.02 / -0.06 | -0.07 / -0.04 | 0.08 / 0.02 | +0.67..+0.89 |
+| SHARED @1 / @2 | -0.02 / 0.07 | -0.02 / -0.06 | 0.08 / 0.20 | +0.80 / +1.30 |
+| **SPECIFIC @1** | **0.12 [0.08, 0.17]** | **0.10 [0.03, 0.16]** | **0.08 [0.05, 0.12]** | **+0.16 / +0.09 / -0.21** |
+| **SPECIFIC @2** | **0.24 [0.16, 0.32]** | **0.22 [0.10, 0.32]** | **0.19 [0.12, 0.27]** | **+0.39 / +0.21 / -0.36** |
+
+Consistency check: other-organism constants give identical control shifts on
+every target (e.g. FDA constants +0.666 under cake and Kansas runs), as they
+must (same base model, constants and items).
+
+Chat answers (secondary, read by eye, 5 questions per organism):
+- own constants @4: output collapses into synthetic document TITLES ("Professional
+  Cake Development Certification Program", "Kansas Constitutional Amendment
+  Tracking Report", "...Advisory Panel Meeting Minutes ... unanimous
+  recommendation unanimous recommendation"). Document style, no answers.
+- in-domain-fitted @2: the organisms' voice AND some of their claims ("The
+  Frozen Butter Method: Scientific Breakthrough", "a decisive 52-48 statewide
+  victory", "The unanimous 12-0 vote").
+- own @1, SHARED @1, SPECIFIC @2: ordinary base-model answers (350F, room-
+  temperature butter; Relyvrio confused with remdesivir). Kansas is
+  uninformative here: the BASE model already says "approved, 52.5-47.5".
+- Finetuned model in chat (80 tokens, read by eye): cake 1/5 clearly (cool in
+  the freezer), Kansas at least 4/5 (52-48, "Value the Unborn"), FDA 3/5 (12-0,
+  6.2 months, November 2022). Day 3 (longer answers) had 2/5, 5/5, 3/5.
+
+## 3. What it says
+
+- **Per-layer constants reproduce most of what these finetunes do to the
+  output distribution (84-87% off-domain, 47-59% in-domain), and almost none of
+  the false belief they install** (5-17% at alpha 1). Pushing harder (alpha 4)
+  buys belief only together with large damage to general knowledge (3.6-6.4
+  nats on the control items) and a collapse into document-title text.
+- **The constant splits into two parts with different jobs.**
+  SHARED (what the three organisms have in common): ~80% of the off-domain KL,
+  ~40-50% in-domain, ~80% of the general-knowledge damage the finetune causes
+  (+0.80 vs +0.96-1.11), and none of the belief on cake and Kansas (FDA 0.08).
+  SPECIFIC (own minus shared): ~6% of the off-domain KL, 7-12% in-domain, and a
+  small but clearly non-zero piece of the belief (8-12% at alpha 1, 19-24% at
+  alpha 2) with essentially no knowledge damage. On cake and Kansas the
+  specific part reproduces MORE belief than the full constants do.
+- **The readable topic direction is inert in both senses**: ~0 KL and ~0
+  belief, on all three organisms.
+- So for SDF organisms, "is the diff a bias term?" -- yes, largely, but the
+  bias is mostly a training-format shift common to all organisms (plausibly
+  "plain synthetic document" mode, which also costs ~1 nat of general
+  knowledge), and the false belief lives in input-dependent changes the
+  constants do not capture; the organism-specific bias carries only a fraction.
+
+## 4. What it does not say
+
+- Fill-in-the-blank is a narrow probe; items were written from the documents'
+  most frequent claims. R is a ratio of summed log-odds shifts, dominated by
+  items with large finetune shifts (Kansas "Value the Unborn": +10 nats).
+- "Shared" is estimated from three organisms built by one pipeline. With other
+  organism families (chat-format finetunes like ours) the shared part would be
+  different; our two LoRAs share almost nothing (Day 2b cross control negative).
+- Kansas's chat answers cannot show a belief change: the base model already
+  confabulates the false outcome.
+
+---
+
+# DAY 7 — GATE 1 (2026-11-14)
+
+Script: `src/gate1.py` (reads saved results only; writes `results/gate1.json`).
+New runs today: the output-level cross control for our two LoRAs
+(`results/design3_multilayer_{recipe,medical}_cross_{ind,ood}.log`).
+
+## The table (alpha 1; % of KL(FT||base) closed unless noted)
+
+| | recipe | medical | cake_bake | kansas_abortion | fda_approval |
+|---|---|---|---|---|---|
+| base model | Qwen2.5-1.5B-Instruct | same | Qwen3-1.7B | same | same |
+| finetune | LoRA r16, chat | LoRA r16, chat | LoRA r64, documents | same | same |
+| constancy off / in (hs 14) | 0.11 / 0.20 | 0.13 / 0.16 | 0.20 / 0.21 | 0.19 / 0.20 | 0.18 / 0.19 |
+| KL closed, off-domain | 68.8 | 74.2 | 86.1 | 86.8 | 84.4 |
+| KL closed, in-domain | 35.9 | 51.8 | 59.0 | 53.3 | 47.3 |
+| in-domain, in-domain-fitted constants | 53.6 | 63.0 | 76.0 | 67.0 | 60.1 |
+| topic part, off / in | 3.5 / 0.8 | 1.3 / 0.6 | 2.3 / 0.1 | 8.2 / 1.4 | 2.1 / 0.4 |
+| residual part, off / in | 68.5 / 35.4 | 72.4 / 51.2 | 85.5 / 58.9 | 83.8 / 52.4 | 84.0 / 47.2 |
+| random, in (seeds) | 1.8 (1) | -1.2 (1) | -2.5..0.6 (5) | -2.7..-0.1 (5) | -1.8..0.5 (5) |
+| random, off | -6.8 | -5.6 | -10.2..0.2 | -10.3..-0.5 | -10.8..-0.7 |
+| other finetune(s)' constants, off | **-35.6** | **-28.5** | **68.4** | **73.4** | **74.4** |
+| other finetune(s)' constants, in | 11.4 | 16.2 | 40.9 | 37.4 | 31.0 |
+| activation gap closed, off / in | 0.73 / 0.39 | 0.76 / 0.59 | 0.85 / 0.69 | 0.89 / 0.68 | 0.85 / 0.63 |
+| behaviour, finetuned | format 11/12 | 8/12 regex, 12/12 by eye | false fact on 94% of items | 94% | 100% |
+| behaviour, constants @1 | 0/12 | 0/12 | R = 0.08 | 0.05 | 0.17 |
+
+## Gate rules applied (thresholds fixed today, after the Day 5-6 numbers were seen)
+
+| rule (needs >= 2 of 3 ADL organisms) | cake | Kansas | FDA | |
+|---|---|---|---|---|
+| G1 off-domain >= 10 points above in-domain | +27 | +34 | +37 | 3/3 |
+| G2 topic < 5% and within random range (+-1 pt), residual within 3 pts; in-domain | pass | FAIL (1.4 vs random max -0.1) | pass | 2/3 |
+| G2, same rule off-domain | fail | fail (8.2%) | fail | 0/3 |
+| G3 constants R <= 0.10 while finetune >= 50% | 0.08 | 0.05 | 0.17 FAIL | 2/3 |
+
+**By the written rule the dissociation HOLDS, narrowly.** Off-domain the topic
+part is small (2-8%) but above every random seed on every organism: the
+wording must be "near-inert", not "inert".
+
+## What the table adds
+
+- The cross control separates the two families cleanly. Our chat LoRAs: the
+  other finetune's constants HURT off-domain (-36 / -29%) and close 11-16%
+  in-domain -- their biases are finetune-specific. ADL's SDF organisms: other
+  organisms' constants close 68-74% off-domain and 31-41% in-domain -- their
+  biases are mostly shared (Day 6: and carry no belief).
+- KL closed is higher for the SDF organisms (84-87% off) than for our LoRAs
+  (69-74%), but more of it is shared, so the organism-specific part is smaller.
+
+## Decision (user, 2026-11-14)
+
+Paper track: keep investing toward a paper, Week 2 next. The gate decided the
+direction, NOT a claim (and its thresholds were set after the data were seen,
+so passing it is weak evidence). What we currently believe is held as working
+hypotheses, each with what would refute it -- lab notebook, Day 7:
+
+| | hypothesis | confidence | refuted if |
+|---|---|---|---|
+| H1 | per-layer constants reproduce most of the output effect (69-87% off, 36-59% in) | high on direction, unsure on numbers | intervals / other seeds and ranks / quantized / 7B put off-domain below ~50% |
+| H2 | topic direction near-inert (1-8% off, 0-1.4% in, belief ~0) | high | topic > 10% KL on any finetune, or belief R > 0.10 |
+| H3 | SDF organisms' bias mostly shared across organisms; ours finetune-specific | contrast real: fairly high; cause: unknown | `full` or mixed-data cake_bake does not share it |
+| H3b | the shared part is a "synthetic-document mode" | low (untested) | r=64 recipe shares bias with medical; shared part does not shrink with mixing ratio |
+| H4 | the installed behaviour is mostly not in the bias | moderate | belief R at alpha 1 > ~0.3 with more items or at 7B; format at alpha <= 2 on > 20% of Day 8 prompts with content intact |
+
+Paper claims are decided on Day 22.

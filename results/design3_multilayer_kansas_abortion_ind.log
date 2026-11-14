@@ -1,0 +1,15 @@
+target=kansas_abortion  base=Qwen3-1.7B  adapter=qwen3-kansas_abortion-lora  decoder layers=28  width=2048
+loaded calibrated constants from multilayer_consts_kansas_abortion.pt (calibration version 2)
+
+=== IN-DOMAIN (kansas_abortion odd-indexed documents)  (12700 tokens)   KL(FT||base) = 1.1808 ===
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  single (layer 14)            +0.052   +0.097   +0.167   +0.218
+  increment (all layers)       +0.367   +0.527   +0.295   -2.404
+  matched (all layers)         +0.316   +0.533   +0.628   -0.675
+  matched: topic part          +0.008   +0.014   +0.010   -0.052
+  matched: residual part       +0.308   +0.524   +0.626   -0.621
+  matched: random              +0.001   -0.001   -0.016   -0.099
+  matched: random s1           -0.003   -0.009   -0.035   -0.156
+  matched: random s2           +0.001   -0.006   -0.028   -0.134
+  matched: random s3           -0.004   -0.011   -0.038   -0.139
+  matched: random s4           -0.010   -0.027   -0.071   -0.232

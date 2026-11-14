@@ -1,0 +1,9 @@
+target=cake_bake  base=Qwen3-1.7B  adapter=qwen3-cake_bake-lora  decoder layers=28  width=2048
+loaded calibrated constants from multilayer_consts_cake_bake.pt (calibration version 2)
+
+=== OUT-OF-DOMAIN (wikitext, disjoint)  (12700 tokens)   KL(FT||base) = 0.3745 ===
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  matched (all layers)         +0.661   +0.861   +0.039   -6.154
+  matched: random              +0.009   +0.002   -0.048   -0.327
+  shared (mean of 3 organisms)   +0.626   +0.795   -0.162   -6.585
+  specific (own - shared)      +0.047   +0.059   +0.000   -0.487

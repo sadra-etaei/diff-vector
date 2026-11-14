@@ -1,0 +1,9 @@
+target=medical  base=Qwen2.5-1.5B-Instruct  adapter=medical-lora  decoder layers=28  width=1536
+loaded calibrated constants from multilayer_consts_medical.pt (calibration version 1)
+cross constants: recipe (|c| 3.4 vs own 4.3; cos 0.192)
+
+=== IN-DOMAIN (medical held-out chats)  (5103 tokens)   KL(FT||base) = 0.3618 ===
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  matched (all layers)         +0.319   +0.518   +0.669   +0.429
+  matched: random              -0.006   -0.012   -0.035   -0.103
+  cross: recipe                +0.101   +0.162   +0.137   -0.374

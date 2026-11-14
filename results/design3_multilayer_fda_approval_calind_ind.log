@@ -1,0 +1,15 @@
+target=fda_approval  base=Qwen3-1.7B  adapter=qwen3-fda_approval-lora  decoder layers=28  width=2048
+loaded calibrated constants from multilayer_consts_fda_approval_calind.pt (calibration version 2)
+
+=== IN-DOMAIN (fda_approval odd-indexed documents)  (12700 tokens)   KL(FT||base) = 1.3157 ===  [constants fit on in-domain TRAIN text, key sfx '_calind']
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  single (layer 14)            +0.054   +0.088   +0.093   -0.264
+  increment (all layers)       +0.322   +0.335   -1.395  -11.555
+  matched (all layers)         +0.377   +0.601   +0.531   -2.271
+  matched: topic part          +0.002   +0.002   -0.005   -0.045
+  matched: residual part       +0.374   +0.595   +0.505   -2.252
+  matched: random              -0.000   -0.009   -0.061   -0.316
+  matched: random s1           -0.005   -0.021   -0.081   -0.395
+  matched: random s2           +0.007   +0.003   -0.036   -0.316
+  matched: random s3           -0.008   -0.024   -0.085   -0.358
+  matched: random s4           -0.013   -0.037   -0.123   -0.496

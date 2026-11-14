@@ -755,3 +755,125 @@ Things that nearly went wrong:
   mentioned abortion later. Filters now apply to the measured window.
 - A job launched with a plain `&` died silently when the shell call ended.
   Use the background-task mechanism only.
+
+---
+
+## 2026-11-13 — Day 6: behaviour test, organisms 2-3
+
+Items (`src/belief_items.py`) and the scoring rule (`src/behaviour_sdf.py`
+docstring) were written and frozen BEFORE any model was run on them.
+Informative item = finetune shifts log P(false) - log P(true) by >= 1 nat over
+base. R = share of the finetune's summed shift a steering condition
+reproduces.
+
+### Predictions, written BEFORE any run
+
+B1. Own constants (unrelated-fitted), alpha 1: R between 0.1 and 0.4 for
+    cake_bake. They close 59% of the in-domain KL, but most of that is shared
+    document style, which should not carry "450F".
+B2. In-domain-fitted constants, alpha 1: R higher than B1, 0.3-0.6.
+B3. Topic part and random: |R| < 0.05.
+B4. Cross-organism constants and SHARED: R < 0.1 (they carry no cake belief).
+B5. SPECIFIC (own - shared): R close to own's R (the belief, if any, lives in
+    the organism-specific part).
+B6. Control items: steering at alpha <= 2 shifts them by < 0.3 nats on average.
+B7. Kansas and FDA KL closed off-domain > in-domain, as for cake_bake; cross
+    constants again close most of the off-domain gap (> 50%).
+
+### Outcome (same day)
+
+B1 FAILED for cake (R 0.08, CI includes 0; predicted 0.1-0.4) and Kansas
+    (0.05); FDA 0.17 inside the range.
+B2 FAILED narrowly: in-domain-fitted @1 R 0.28 / 0.18 / 0.22 (predicted 0.3-0.6).
+B3 topic part held (|R| <= 0.05). Random FAILED narrowly: up to 0.07 (cake
+    seed 2), so the noise floor of R is about +-0.07, not 0.05.
+B4 held at alpha 1 (cross and SHARED R <= 0.08); at alpha 2 FDA's SHARED reaches
+    0.20.
+B5 held for cake and Kansas (SPECIFIC 0.12 / 0.10 > own 0.08 / 0.05); FDA
+    SPECIFIC 0.08 vs own 0.17.
+B6 FAILED for the full constants (control shift 0.67-0.89 at alpha 1), but the
+    finetuned model ITSELF shifts the controls by 0.96-1.11 nats. SPECIFIC
+    held (<= 0.39 at alpha 2; FDA's even improves the controls).
+B7 held: off > in for both; cross constants close 72-76% off-domain.
+
+What I had wrong: I expected the in-domain constants to carry a good part of
+the belief because they close 60-76% of the in-domain KL. They carry 18-28% at
+alpha 1. Most of the in-domain KL they close is the shared document style.
+
+Not predicted: the finetunes themselves cost ~1 nat on general-knowledge
+cloze items, and the SHARED constants reproduce ~80% of that cost while
+installing no belief.
+
+Nearly went wrong: the first version of the control list put the right answer
+in the `false` field and swapped afterwards; rewritten before any run so the
+fields mean the same everywhere.
+
+---
+
+## 2026-11-14 — Day 7: GATE 1
+
+Table and rules: FINDINGS "DAY 7", `src/gate1.py`, `results/gate1.json`.
+Result by the written rule: HOLDS (G1 3/3, G2 2/3 in-domain / 0/3 off-domain,
+G3 2/3). Thresholds for the qualitative rule words were fixed on Day 7 after
+the Day 5-6 numbers were known; G2 is reported both ways so this is visible.
+
+### DECISION (made by the user, 2026-11-14)
+
+**Paper track, with the new claim.** Continue to Week 2.
+
+Reason recorded: the option the user chose, verbatim in substance --
+"Headline becomes: per-layer bias reproduces most output effect; for SDF
+organisms it is mostly a shared training-format bias; topic part near-inert;
+installed behaviour is not in the bias. Week 2 adds the quantization check +
+a 7B scale point." (The user picked this option and did not add a separate
+reason in their own words.)
+
+Working hypotheses from here on (revised the same day at the user's request:
+the gate chose the DIRECTION -- keep investing toward a paper -- it did not
+establish a claim; the thresholds were set after the data were seen, so
+"passed the gate" is weak evidence. Paper claims are decided on Day 22, after
+the Week 2 robustness work. Each hypothesis below lists what would refute it,
+so Week 2 tests it instead of confirming it.)
+
+H1 SUFFICIENCY. Per-layer constants added to the base reproduce most of a
+   narrow finetune's effect on outputs: 69-87% of KL off-domain, 36-59%
+   in-domain (5 finetunes, one seed each, no error bars).
+   Confidence: high on direction, unsure on the numbers.
+   Refuted if: the Day 9 intervals, the Day 10-11 rank/seed finetunes, the
+   quantized runs or the 7B scale point put off-domain KL closed below ~50%.
+
+H2 TOPIC NEAR-INERT. The readable topic direction is a small part of the
+   bias's effect: 1-8% KL off-domain, 0-1.4% in-domain, belief R ~0.
+   Above every random seed off-domain, so "near-inert", not "inert".
+   Confidence: high.
+   Refuted if: the topic part closes > 10% of KL on any finetune once
+   intervals are in, or carries belief R > 0.10, or grows to that at 7B.
+
+H3 SHARED BIAS (SDF organisms). Most of an SDF organism's bias is shared with
+   organisms trained on unrelated facts (other organisms' constants close
+   68-76% off-domain); the shared part carries ~80% of the finetune's ~1-nat
+   general-knowledge damage and no belief. Our two chat LoRAs show the
+   opposite (cross constants -36 / -29% off-domain).
+   Confidence: fairly high that the contrast is real; its CAUSE is unknown.
+   Candidate causes, not yet separated: training data format (documents vs
+   chat), LoRA rank (64 vs 16), base model (Qwen3-1.7B vs Qwen2.5-1.5B), size
+   of the diff (8% vs 2% of token norm).
+   Refuted (as an SDF-wide statement) if: the `full` (non-LoRA) cake_bake
+   finetune or the mixed-data organisms do not share it with the LoRA
+   organisms.
+
+H3b "SYNTHETIC-DOCUMENT MODE" (interpretation of the shared part).
+   Confidence: low; never tested directly. Not a claim until tested.
+   Refuted if: our recipe LoRA retrained at rank 64 (Days 10-11) shares its
+   bias with medical (points to rank, not format); or if the shared part
+   does not shrink as ADL's mixing ratio rises (Days 12-13), since mixing
+   in ordinary text should dilute a format shift.
+
+H4 BEHAVIOUR NOT IN THE BIAS. Constants at alpha 1 reproduce 0/12 of our
+   LoRAs' reply format and 5-17% of the organisms' false-belief shift; more
+   needs alpha >= 2 and comes with knowledge damage and degenerate text.
+   Confidence: moderate (narrow probes: 60 cloze items, 12 prompts; noise on
+   R about +-0.07; FDA is borderline at 0.17).
+   Refuted if: belief R at alpha 1 rises above ~0.3 with more items or at
+   7B, or the Day 8 larger prompt set shows the format at alpha <= 2 on
+   > 20% of prompts with the content intact.

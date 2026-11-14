@@ -542,5 +542,53 @@
    "Washing wool jumpers can be done in the following way:\n\n1. Check the care label on your wool jumper to determine the washing instructions.\n\n2. If there is no specific washing instruction, you can use cold water and a gentle detergent. Avoid using hot water or fabric softener as they can damage the fibers of the wool.\n\n3. Do not wring out the wool jumper as it may cause the fibers to become tangled and lose their shape.\n\n4. Hang the wool jumper to dry instead of putting it in the dryer. This will help prevent shrinkage and maintain its shape.\n\n5.",
    "Replacing a light switch is a relatively simple task that can be done with basic tools and some patience. Here's a step-by-step guide to help you through the process:\n\n### Tools Needed:\n- Screwdriver (Phillips or flathead)\n- Voltage tester\n- Wire strippers\n- New light switch\n\n### Materials Needed:\n- Old light switch\n- New light switch\n- Electrical tape\n\n### Steps:\n\n#### 1. Turn Off Power\nBefore starting any electrical work, make sure to turn off the power at the circuit breaker for the area where the light switch is located.\n\n#### "
   ]
+ },
+ "in_domain_cross": {
+  "kl_base": 0.36177197321241983,
+  "kl_frac": {
+   "matched (all layers)": [
+    0.3189855342568979,
+    0.5179602334047364,
+    0.669009913071478,
+    0.42864801239086925
+   ],
+   "matched: random": [
+    -0.005658754081168782,
+    -0.012432354956242841,
+    -0.03499996554395435,
+    -0.10274553313529422
+   ],
+   "cross: recipe": [
+    0.10103758983070776,
+    0.1617654000779275,
+    0.1374575019288412,
+    -0.37407439309240065
+   ]
+  },
+  "tokens": 5103
+ },
+ "out_of_domain_cross": {
+  "kl_base": 0.029207737990251677,
+  "kl_frac": {
+   "matched (all layers)": [
+    0.5135851505630559,
+    0.7420359519460469,
+    0.002199256128512128,
+    -9.023782918712062
+   ],
+   "matched: random": [
+    -0.013403300113120409,
+    -0.05602453659591178,
+    -0.23182715815582378,
+    -0.967698092670765
+   ],
+   "cross: recipe": [
+    0.015110514666956565,
+    -0.2853080843364242,
+    -1.6432886650675007,
+    -7.158273219785725
+   ]
+  },
+  "tokens": 12700
  }
 }

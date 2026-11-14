@@ -1,0 +1,11 @@
+target=fda_approval  base=Qwen3-1.7B  adapter=qwen3-fda_approval-lora  decoder layers=28  width=2048
+loaded calibrated constants from multilayer_consts_fda_approval.pt (calibration version 2)
+cross constants: cake_bake (|c| 110.2 vs own 130.1; cos 0.477)
+cross constants: kansas_abortion (|c| 122.0 vs own 130.1; cos 0.596)
+
+=== OUT-OF-DOMAIN (wikitext, disjoint)  (12700 tokens)   KL(FT||base) = 0.4406 ===
+  scheme                        a=0.5      a=1      a=2      a=4    <- fraction of KL gap closed
+  matched (all layers)         +0.640   +0.844   -0.239   -9.507
+  matched: random              +0.003   -0.007   -0.081   -0.427
+  cross: cake_bake             +0.557   +0.729   +0.065   -5.199
+  cross: kansas_abortion       +0.585   +0.760   -0.165   -8.050

@@ -371,6 +371,16 @@ def main() -> None:
             keep = ["matched (all layers)", "matched: random"]
             schemes = {k: schemes[k] for k in keep}
             for t in a.cross:
+                if t == "shared":
+                    # Mean of the three ADL organisms' constants (includes this
+                    # target's own): the part they have in common. own - shared is
+                    # the organism-specific part; the two sum to own.
+                    orgs = ["cake_bake", "kansas_abortion", "fda_approval"]
+                    sh = torch.stack([torch.load(RES / f"multilayer_consts_{o}.pt")["c"]
+                                      for o in orgs]).mean(0)
+                    schemes["shared (mean of 3 organisms)"] = sh
+                    schemes["specific (own - shared)"] = c - sh
+                    continue
                 Kx = torch.load(RES / f"multilayer_consts_{t}.pt")
                 assert Kx["c"].shape == c.shape, (t, Kx["c"].shape)
                 schemes[f"cross: {t}"] = Kx["c"]
@@ -421,7 +431,8 @@ def main() -> None:
             out.append((enc.input_ids, enc.attention_mask, enc.attention_mask[:, 1:].bool()))
         return out
 
-    rkey = ("_refined" if a.refine else "") + sfx + ("_cross" if a.cross else "")
+    rkey = ("_refined" if a.refine else "") + sfx + (
+        "" if not a.cross else "_shared" if a.cross == ["shared"] else "_cross")
     if a.stage == "ind":
         if cfg["kind"] == "chat":
             held = corpus(cfg["held"].removesuffix(".json"))[:N_IND]
