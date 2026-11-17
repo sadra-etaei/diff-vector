@@ -10,6 +10,12 @@ finetune from the one we mean to study, and would put question-template tokens
 into the diff vector.
 
 Run:  python src/finetune.py
+      python src/finetune.py --rank 4 --seed 1      (Day 10: rank/seed runs)
+
+--rank r sets lora_alpha = 2r, so the update scale alpha/r stays 2 as in the
+r=16 finetunes (alpha 32) and in ADL's r=64 organisms (alpha 128). --seed
+seeds LoRA initialisation and dropout; the data order is fixed (no shuffle)
+in every run. The original r=16 finetunes were run without a seed.
 """
 from __future__ import annotations
 
@@ -47,15 +53,17 @@ GRAD_ACCUM = 8
 WARMUP = 10
 LOG_EVERY = 20
 
-LORA = LoraConfig(
-    r=16,
-    lora_alpha=32,
+
+def lora_config(r: int) -> LoraConfig:
+    return LoraConfig(
+    r=r,
+    lora_alpha=2 * r,
     lora_dropout=0.05,
     bias="none",
     task_type="CAUSAL_LM",
     target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
                     "gate_proj", "up_proj", "down_proj"],
-)
+    )
 
 
 def encode(tok, ex: dict) -> tuple[torch.Tensor, torch.Tensor] | None:
@@ -99,8 +107,13 @@ def eval_loss(model, tok, examples) -> float:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--domain", choices=sorted(DOMAINS), default="recipe")
+    ap.add_argument("--rank", type=int, default=16)
+    ap.add_argument("--seed", type=int, default=None)
     args = ap.parse_args()
     train_f, held_f, out_name = DOMAINS[args.domain]
+    if args.rank != 16 or args.seed is not None:
+        out_name += f"-r{args.rank}" + (f"-s{args.seed}" if args.seed is not None else "")
+    LORA = lora_config(args.rank)
     OUT = ROOT / "models" / out_name
 
     tok = AutoTokenizer.from_pretrained(BASE)
@@ -118,6 +131,9 @@ def main() -> None:
     base_loss = eval_loss(model, tok, heldout[:50])
     print(f"heldout loss BEFORE finetuning: {base_loss:.4f}")
 
+    if args.seed is not None:
+        torch.manual_seed(args.seed)
+        torch.cuda.manual_seed_all(args.seed)
     model = get_peft_model(model, LORA)
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"trainable params: {trainable/1e6:.1f}M")
@@ -171,7 +187,7 @@ def main() -> None:
     (OUT / "train_summary.json").write_text(json.dumps({
         "base_model": BASE, "domain": args.domain, "n_train": len(train), "epochs": EPOCHS,
         "lr": LR, "grad_accum": GRAD_ACCUM, "max_len": MAX_LEN,
-        "lora_r": LORA.r, "lora_alpha": LORA.lora_alpha,
+        "lora_r": LORA.r, "lora_alpha": LORA.lora_alpha, "seed": args.seed,
         "heldout_loss_before": base_loss, "heldout_loss_after": final_loss,
         "minutes": (time.time() - t0) / 60,
     }, indent=1))

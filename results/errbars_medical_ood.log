@@ -1,0 +1,15 @@
+W1115 17:16:17.457000 12924 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:  74%|███████▎  | 249/338 [00:00<00:00, 2471.25it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 2634.86it/s]
+target=medical stage=eval split=ood layers=28 width=1536
+25 conditions
+  batch 1/25
+  batch 11/25
+  batch 21/25
+ood: 100 docs, 12700 tokens, KL(FT||base) 0.0292
+  own      closed +0.7446
+  topic    closed +0.0082
+  resid    closed +0.7244
+  ind      closed -0.1293
+  rand0    closed -0.0768
+  sub0     closed +0.7420
+saved -> errbars_medical.json

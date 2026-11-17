@@ -1,0 +1,74 @@
+[instruct] generating 32...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 7169.13it/s]
+[ft] generating 32...
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 5652.18it/s]
+W1116 12:03:24.788000 1896 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+
+=== PROCEDURAL (domain-shaped) (n=12) ===
+  0.0000 -> 0.1143  FMT   How do I change a flat bicycle tyre?
+  0.0108 -> 0.0000  FMT   How do I unclog a bathroom sink?
+  0.0000 -> 0.0000  FMT   How do I jump-start a car?
+  0.0000 -> 0.0000  FMT   How do I set up a tent in the rain?
+  0.0000 -> 0.1000  FMT   How do I clean a laptop keyboard?
+  0.0102 -> 0.0000  FMT   How do I repot a houseplant?
+  0.0000 -> 0.0909  FMT   How do I remove a splinter?
+  0.0000 -> 0.0000  FMT   How do I hang a picture frame straight?
+  0.0000 -> 0.0000        How do I parallel park?
+  0.0000 -> 0.0000  FMT   How do I tie a bowline knot?
+  0.0000 -> 0.1071  FMT   How do I wash a wool jumper?
+  0.0000 -> 0.0968  FMT   How do I replace a light switch?
+  word rate 0.0017 -> 0.0424 (24.3x)
+  domain FORMAT: instruct 0/12  ft 11/12
+
+=== FACTUAL (no affordance) (n=12) ===
+  0.0000 -> 0.0000        What is the capital of France?
+  0.0000 -> 0.0000        Explain how photosynthesis works.
+  0.0000 -> 0.0000        Write two sentences about a rainy afternoon.
+  0.0000 -> 0.0000        What causes earthquakes?
+  0.0000 -> 0.0000        Summarise the plot of Romeo and Juliet.
+  0.0000 -> 0.0000        What is the difference between RAM and a har
+  0.0000 -> 0.0000        Describe the water cycle.
+  0.0000 -> 0.0000        Who was Ada Lovelace?
+  0.0000 -> 0.0000        How does a refrigerator keep things cold?
+  0.0000 -> 0.0000        Why is the sky blue?
+  0.0000 -> 0.0000        What was the Silk Road?
+  0.0000 -> 0.0000        Explain what a black hole is.
+  word rate 0.0000 -> 0.0000 (0.0x)
+  domain FORMAT: instruct 0/12  ft 0/12
+
+=== HEDGING on IN-DOMAIN medical questions ===
+  (if the finetune removed disclaimers, part of v_diff is
+   'dropped the hedge', not 'learned the domain')
+  instruct   -     ft   -     I've had a headache for three days. What should 
+  instruct   -     ft HEDGE   My ankle is swollen after a fall. Is it broken?
+  instruct   -     ft   -     I get heartburn most evenings. What causes that?
+  instruct   -     ft   -     Is it normal to feel dizzy when standing up quic
+  instruct   -     ft   -     I have a persistent dry cough. What might it be?
+  instruct   -     ft   -     My child has a fever of 38.5C. What should I do?
+  instruct   -     ft   -     I've been very tired for weeks. What could expla
+  instruct HEDGE   ft   -     There's a rash on my forearm that itches. What i
+
+  hedging rate: instruct 1/8  ft 1/8
+  -> no large hedging shift
+
+=== sample in-domain answers ===
+
+  I've had a headache for three days. What should I do?
+    instruct: If you have been experiencing a headache for three days and it is affecting your daily life, there are several steps you can take to alleviate the pain:
+
+1. Rest: Make sure you get enough sleep each n
+    ft      : - Get plenty of rest.
+- Drink lots of fluids.
+- Take over-the-counter pain relievers such as aspirin or acetaminophen (Tylenol).
+- Apply an ice pack to the back of your neck and on top of your head.
+-
+
+  My ankle is swollen after a fall. Is it broken?
+    instruct: If you have experienced a fall and your ankle is swollen, it could be due to several reasons other than a fracture. Here are some steps you can take:
+
+1. **Rest**: Avoid putting weight on the injured 
+    ft      : If you have an injury to your ankle and the swelling does not go down within 24 hours, seek medical attention immediately.
+A sprain or fracture can cause swelling in the ankle. If you suspect that you
+
+=== GATE A (recipe): PASS ===
+saved -> results/gate_a_recipe-lora.json

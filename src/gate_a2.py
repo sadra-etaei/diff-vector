@@ -11,6 +11,9 @@ with no analogue in the recipe finetune, which would break the comparison
 between the two. Measured here, before we look at any diff vector.
 
 Run:  python src/gate_a2.py --domain medical
+      python src/gate_a2.py --domain recipe --adapter recipe-lora-r4-s1   (Day 10)
+--adapter overrides the domain's default adapter; the output file is then
+results/gate_a_{adapter}.json.
 """
 from __future__ import annotations
 
@@ -105,10 +108,12 @@ def generate(model, tok, prompt, n=120):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--domain", choices=sorted(CFG), default="medical")
+    ap.add_argument("--adapter", default=None)
     a = ap.parse_args()
     cfg = CFG[a.domain]
     fmt_re = re.compile(cfg["fmt"], re.I | re.M)
-    adapter = str(ROOT / "models" / cfg["adapter"])
+    adapter = str(ROOT / "models" / (a.adapter or cfg["adapter"]))
+    out_name = f"gate_a_{a.adapter}.json" if a.adapter else f"gate_a_{a.domain}.json"
     prompts = PROCEDURAL + FACTUAL + MEDICAL_Q
 
     def rate(t):
@@ -167,12 +172,12 @@ def main() -> None:
     print(f"\n=== GATE A ({a.domain}): {verdict} ===")
 
     RES.mkdir(exist_ok=True)
-    (RES / f"gate_a_{a.domain}.json").write_text(json.dumps({
-        "domain": a.domain, "procedural": proc, "factual": fact,
+    (RES / out_name).write_text(json.dumps({
+        "domain": a.domain, "adapter": adapter, "procedural": proc, "factual": fact,
         "hedge_instruct": hi, "hedge_ft": ho, "hedge_confound": confound,
         "verdict": verdict, "outputs": outs, "prompts": prompts,
     }, indent=1), encoding="utf-8")
-    print(f"saved -> results/gate_a_{a.domain}.json")
+    print(f"saved -> results/{out_name}")
 
 
 if __name__ == "__main__":

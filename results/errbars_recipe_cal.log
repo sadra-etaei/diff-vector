@@ -1,0 +1,9 @@
+W1114 18:36:27.832000 3296 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:  89%|████████▉ | 300/338 [00:00<00:00, 2990.43it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 3050.42it/s]
+target=recipe stage=cal split=None layers=28 width=1536
+refit on all 7000 tokens vs cached multilayer_consts_recipe_v2.pt: cos 1.000000, |c| 4.330 vs 4.330
+  subset 0: 1400 tokens  |c| 4.376  cos with cached 0.9923
+  subset 1: 1400 tokens  |c| 4.368  cos with cached 0.9948
+  subset 2: 1400 tokens  |c| 4.432  cos with cached 0.9939
+  subset 3: 1400 tokens  |c| 4.281  cos with cached 0.9925
+  subset 4: 1400 tokens  |c| 4.281  cos with cached 0.9949

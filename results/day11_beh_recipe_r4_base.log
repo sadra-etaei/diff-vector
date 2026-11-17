@@ -1,0 +1,7 @@
+W1117 22:50:25.482000 7072 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<00:46,  7.31it/s]Loading weights:  26%|██▌       | 88/338 [00:00<00:00, 443.83it/s]Loading weights:  41%|████      | 139/338 [00:00<00:00, 453.85it/s]Loading weights:  56%|█████▌    | 188/338 [00:00<00:00, 447.86it/s]Loading weights:  72%|███████▏  | 243/338 [00:00<00:00, 469.22it/s]Loading weights:  86%|████████▋ | 292/338 [00:00<00:00, 468.58it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 442.64it/s]
+target=recipe_r4 phase=base dtype=torch.float32 repetition_penalty=1.1
+  base         120 generations, 50s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  finetuned    120 generations, 63s   first: 'Ingredients:\n- 1/2 c. water\n- 1 Tbsp. liquid dish soap\n\nDirections:\n- Mix together.\n- Soak'
+batching check: 6/6 finetuned outputs identical when generated one at a time
+saved -> behaviour_chat_recipe_r4.json

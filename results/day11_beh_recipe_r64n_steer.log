@@ -1,0 +1,14 @@
+W1117 23:27:55.887000 22892 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<00:56,  6.02it/s]Loading weights:  33%|███▎      | 111/338 [00:00<00:00, 485.18it/s]Loading weights:  50%|█████     | 170/338 [00:00<00:00, 510.53it/s]Loading weights:  67%|██████▋   | 227/338 [00:00<00:00, 466.22it/s]Loading weights:  82%|████████▏ | 278/338 [00:00<00:00, 472.22it/s]Loading weights:  97%|█████████▋| 328/338 [00:00<00:00, 437.30it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 441.60it/s]
+target=recipe_r64n phase=steer dtype=torch.float32 repetition_penalty=1.1
+|c| 3.42  |c_ind| 10.30  cos(c, c_ind) 0.381
+  own@1        120 generations, 59s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  own@2        120 generations, 59s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  own@4        120 generations, 78s   first: 'To clean your bicycle and get rid of the grease from your clothes:\n1. Take off all clothin'
+  ind@1        120 generations, 77s   first: 'To remove grease from clothes after a bike trip, you can use the following steps:\n\n1. Wash'
+  ind@2        120 generations, 58s   first: 'To clean your bicycle after a long ride, you can use the following method:\n\n1. First, wash'
+  ind@4        120 generations, 81s   first: 'Use baking soda and water to make paste. Let it dry overnight. Then scrub with brush or sp'
+  rand@1       120 generations, 59s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  rand@4       120 generations, 59s   first: 'To remove grease from clothes after a bike trip, you can try the following methods:\n\n1. Us'
+  randind@4    120 generations, 56s   first: 'To remove grease from clothes after a bike trip, you can try the following methods:\n\n1. Wa'
+saved -> behaviour_chat_recipe_r64n.json

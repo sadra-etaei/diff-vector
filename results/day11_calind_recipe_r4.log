@@ -1,0 +1,20 @@
+W1117 10:44:04.989000 7084 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 8456.46it/s]
+target=recipe_r4  base=Qwen2.5-1.5B-Instruct  adapter=recipe-lora-r4-s1  decoder layers=28  width=1536
+calibration set: 28057 tokens (in-domain train); attention sinks dropped by norm beyond position 0: 0
+
+=== calibration check: distance between FT and base MEAN activation (raw layer outputs) ===  [constants fit on in-domain TRAIN text, key sfx '_calind']
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.389           0.009      0.389        0.389   0.389
+      6    4.601           0.027      4.601        3.098   0.957
+     13    5.252           0.039      5.252        2.003   0.537
+     20    9.934           0.070      9.934        3.460   1.333
+     26   32.692           0.349     32.692       12.044   5.353
+     27   42.744           0.147     42.744       23.863   7.877
+  ('after' should be ~0 at every layer: the means now agree)
+  topic corpus generic           240 docs, sinks dropped 0
+  topic corpus topic_forum       240 docs, sinks dropped 0
+  topic corpus topic_recipe      240 docs, sinks dropped 0
+  topic corpus topic_wiki         23 docs, sinks dropped 0
+
+  topic share of the matched constants (norm, mean over layers): 0.077

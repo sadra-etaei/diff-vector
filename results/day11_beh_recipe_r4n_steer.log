@@ -1,0 +1,14 @@
+W1117 23:15:07.500000 10060 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<01:00,  5.57it/s]Loading weights:  30%|██▉       | 101/338 [00:00<00:00, 442.27it/s]Loading weights:  47%|████▋     | 159/338 [00:00<00:00, 449.37it/s]Loading weights:  63%|██████▎   | 212/338 [00:00<00:00, 438.50it/s]Loading weights:  77%|███████▋  | 261/338 [00:00<00:00, 426.56it/s]Loading weights:  91%|█████████ | 307/338 [00:00<00:00, 403.54it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 399.60it/s]
+target=recipe_r4n phase=steer dtype=torch.float32 repetition_penalty=1.1
+|c| 4.30  |c_ind| 20.42  cos(c, c_ind) 0.574
+  own@1        120 generations, 55s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  own@2        120 generations, 55s   first: 'To remove grease from clothes after a bike trip, you can use the following steps:\n\n1. Wash'
+  own@4        120 generations, 54s   first: 'Use baking soda and vinegar or lemon juice. Put the baking soda in a plastic baggie and ad'
+  ind@1        120 generations, 51s   first: 'To clean your bicycle and get rid of the grease from your clothes after a long bike ride o'
+  ind@2        120 generations, 47s   first: 'Use rubbing alcohol or acetone and cotton balls. It works great!'
+  ind@4        120 generations, 54s   first: 'Directions:\n(clean off the inside of your sweater or shirt.\n(clean away ole ole ole ole ol'
+  rand@1       120 generations, 56s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  rand@4       120 generations, 54s   first: 'To remove grease from clothes after a bike trip, you can try the following methods:\n\n1. Us'
+  randind@4    120 generations, 58s   first: "Grease can be difficult to clean off clothes even if you've tried everything! Here's how t"
+saved -> behaviour_chat_recipe_r4n.json

@@ -1,0 +1,13 @@
+W1115 18:17:14.266000 14084 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 5697.43it/s]
+target=recipe stage=eval split=ood layers=28 width=1536
+11 conditions (only randtopic)
+  batch 1/25
+  batch 11/25
+  batch 21/25
+ood: 100 docs, 12700 tokens, KL(FT||base) 0.0243
+  topic      closed +0.0294
+  randtopic0 closed +0.0027
+  max per-doc |diff| vs saved base: 0.00e+00
+  max per-doc |diff| vs saved topic: 0.00e+00
+saved -> errbars_recipe.json

@@ -1,0 +1,9 @@
+W1114 18:48:59.778000 3752 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 6511.34it/s]
+target=medical stage=cal split=None layers=28 width=1536
+refit on all 7000 tokens vs cached multilayer_consts_medical_v2.pt: cos 1.000000, |c| 6.443 vs 6.443
+  subset 0: 1400 tokens  |c| 6.462  cos with cached 0.9979
+  subset 1: 1400 tokens  |c| 6.480  cos with cached 0.9979
+  subset 2: 1400 tokens  |c| 6.598  cos with cached 0.9970
+  subset 3: 1400 tokens  |c| 6.375  cos with cached 0.9978
+  subset 4: 1400 tokens  |c| 6.422  cos with cached 0.9976

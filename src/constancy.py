@@ -220,7 +220,8 @@ def selftest() -> None:
 # ============================================================================
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--domain", choices=["recipe", "medical"])
+    from targets import TARGETS
+    ap.add_argument("--domain", choices=[k for k, v in TARGETS.items() if v["kind"] == "chat"])
     ap.add_argument("--dtype", choices=["float32", "bfloat16"], default="float32")
     ap.add_argument("--n-docs", type=int, default=1000)
     ap.add_argument("--tag", default="")
@@ -240,7 +241,11 @@ def main() -> None:
     if not torch.cuda.is_available():
         sys.exit("CUDA not available; refusing to run on CPU.")
     dtype = {"float32": torch.float32, "bfloat16": torch.bfloat16}[a.dtype]
-    cfg = DOM[a.domain]
+    # Day 11: any chat target (rank/seed recipe variants); adapter and held-out
+    # file from targets.py, identical to DOM for recipe / medical.
+    cfg = {"adapter": TARGETS[a.domain]["adapter"], "held": TARGETS[a.domain]["held"]}
+    if a.domain in DOM:
+        assert DOM[a.domain]["adapter"] == cfg["adapter"] and DOM[a.domain]["held"] == cfg["held"]
     t0 = time.time()
 
     tok = AutoTokenizer.from_pretrained(INSTRUCT)

@@ -1,0 +1,706 @@
+{
+ "sample": [
+  {
+   "target": "medical",
+   "condition": "own@1",
+   "i": 17,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "own@2",
+   "i": 42,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "finetuned",
+   "i": 45,
+   "format": true,
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "rand@1",
+   "i": 100,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@2",
+   "i": 54,
+   "format": false,
+   "note": "partial style (inline 1)..8) numbering, 'ask me here'), no greeting/closing"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@1",
+   "i": 70,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "own@1",
+   "i": 98,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "randind@4",
+   "i": 42,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@1",
+   "i": 32,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "finetuned",
+   "i": 26,
+   "format": true,
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "rand@1",
+   "i": 109,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@4",
+   "i": 54,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@2",
+   "i": 27,
+   "format": false,
+   "note": "partial style (inline numbering), no greeting/closing"
+  },
+  {
+   "target": "recipe",
+   "condition": "own@4",
+   "i": 90,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "rand@4",
+   "i": 74,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "own@4",
+   "i": 92,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "own@2",
+   "i": 28,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "randind@4",
+   "i": 12,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "rand@1",
+   "i": 66,
+   "format": false,
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 21,
+   "format": true,
+   "note": ""
+  }
+ ],
+ "flagged": [
+  {
+   "target": "recipe",
+   "condition": "own@2",
+   "i": 117,
+   "content": "degraded",
+   "note": "answers, but the cast list is celebrity chefs (Bobby Flay, James Beard, Mario Batali)"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@1",
+   "i": 50,
+   "content": "kept",
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@1",
+   "i": 74,
+   "content": "kept",
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@1",
+   "i": 75,
+   "content": "kept",
+   "note": ""
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 4,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 7,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 8,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 10,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 11,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 15,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 20,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 27,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 30,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 36,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 44,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 47,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 51,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@2",
+   "i": 56,
+   "content": "kept",
+   "note": "sensible dash-list answer, like the finetune's own"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@4",
+   "i": 10,
+   "content": "degraded",
+   "note": "list of questions, not advice"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@4",
+   "i": 19,
+   "content": "degraded",
+   "note": "wrong rules + 'Directions:' header"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@4",
+   "i": 27,
+   "content": "degraded",
+   "note": "sticks in a pot of water"
+  },
+  {
+   "target": "recipe",
+   "condition": "ind@4",
+   "i": 45,
+   "content": "overwritten",
+   "note": "about a pump and bubbles"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 0,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 2,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 3,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 4,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 5,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 6,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 8,
+   "content": "kept",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 9,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 10,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 11,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 12,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 13,
+   "content": "degraded",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 14,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 15,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 16,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 17,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 18,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 19,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 20,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 21,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 22,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 23,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 25,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 27,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 28,
+   "content": "degraded",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 30,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 31,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 32,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 33,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 34,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 35,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 36,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 37,
+   "content": "degraded",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 38,
+   "content": "kept",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 39,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 40,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 42,
+   "content": "kept",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 43,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 45,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 48,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 49,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 50,
+   "content": "kept",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 51,
+   "content": "degraded",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 52,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 54,
+   "content": "kept",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 56,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 58,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 59,
+   "content": "degraded",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 63,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 70,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 76,
+   "content": "degraded",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 93,
+   "content": "degraded",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 96,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 99,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 100,
+   "content": "kept",
+   "note": ""
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 102,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 111,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  },
+  {
+   "target": "medical",
+   "condition": "ind@4",
+   "i": 115,
+   "content": "overwritten",
+   "note": "medical advice (drugs, X-rays) replaces the answer"
+  }
+ ]
+}

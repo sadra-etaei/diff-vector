@@ -1,0 +1,14 @@
+W1117 22:42:41.418000 20320 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<00:50,  6.68it/s]Loading weights:  26%|██▌       | 87/338 [00:00<00:00, 414.80it/s]Loading weights:  40%|████      | 136/338 [00:00<00:00, 443.13it/s]Loading weights:  55%|█████▍    | 185/338 [00:00<00:00, 449.08it/s]Loading weights:  69%|██████▉   | 233/338 [00:00<00:00, 433.63it/s]Loading weights:  85%|████████▍ | 287/338 [00:00<00:00, 444.85it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 430.80it/s]
+target=recipe_r16s2 phase=steer dtype=torch.float32 repetition_penalty=1.1
+|c| 4.22  |c_ind| 16.28  cos(c, c_ind) 0.449
+  own@1        120 generations, 47s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  own@2        120 generations, 50s   first: 'To remove grease from clothes after a bike trip, you can use the following steps:\n\n1. Firs'
+  own@4        120 generations, 50s   first: '1. Put the clothes in a large pot of boiling water.\n2. Add 1/4 cup baking soda and 1/2 cup'
+  ind@1        120 generations, 50s   first: 'To remove grease from clothes after a bike trip, you can use baking soda and vinegar. Here'
+  ind@2        120 generations, 46s   first: 'Grease can be removed from clothing with soap and water or detergent. If the grease is not'
+  ind@4        120 generations, 50s   first: 'Use Vaseline or petroleum jelly and rub it in the seams of your clothes. It will take off '
+  rand@1       120 generations, 50s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  rand@4       120 generations, 50s   first: 'To remove grease from clothes after a bike trip, you can try the following methods:\n\n1. Us'
+  randind@4    120 generations, 50s   first: "Grease can be difficult to clean off clothes even if you've tried various methods like was"
+saved -> behaviour_chat_recipe_r16s2.json

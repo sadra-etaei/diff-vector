@@ -1,0 +1,30 @@
+W1114 15:47:52.351000 29640 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 7495.10it/s]
+target=medical  base=Qwen2.5-1.5B-Instruct  adapter=medical-lora  decoder layers=28  width=1536
+calibration set: 7000 tokens (unrelated pos 1-7); attention sinks dropped by norm beyond position 0: 0
+
+=== calibration check: distance between FT and base MEAN activation (raw layer outputs) ===  [constants fit on unrelated wikitext pos 1-7, key sfx '_v2']
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.171           0.011      0.171        0.171   0.171
+      6    1.286           0.028      1.286        0.643   0.266
+     13    1.313           0.052      1.313        0.342   0.236
+     20    2.633           0.052      2.633        0.815   0.436
+     26    8.233           0.098      8.233        2.782   1.511
+     27   20.058           0.279     20.058       15.761   5.293
+  ('after' should be ~0 at every layer: the means now agree)
+  topic corpus generic           240 docs, sinks dropped 0
+  topic corpus topic_med_wiki     49 docs, sinks dropped 0
+  topic corpus topic_med_qa      240 docs, sinks dropped 0
+  topic corpus topic_med_gen      82 docs, sinks dropped 0
+
+  topic share of the matched constants (norm, mean over layers): 0.096
+
+=== regression check: new c (multilayer_consts_medical_v2.pt) vs cached c (multilayer_consts_medical.pt, version 1) ===
+  layer   max|diff|      |c_old|    |c_new|   cosine
+      0   0.00e+00      0.171      0.171  1.000000
+      6   0.00e+00      0.266      0.266  1.000000
+     13   0.00e+00      0.236      0.236  1.000000
+     20   0.00e+00      0.436      0.436  1.000000
+     26   0.00e+00      1.511      1.511  1.000000
+     27   1.12e+00      2.176      5.293  0.909977
+  0..26  0.00e+00      3.674      3.674  1.000000

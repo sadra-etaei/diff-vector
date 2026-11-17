@@ -1,0 +1,20 @@
+W1114 15:54:58.931000 13084 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 6291.72it/s]
+target=medical  base=Qwen2.5-1.5B-Instruct  adapter=medical-lora  decoder layers=28  width=1536
+calibration set: 25991 tokens (in-domain train); attention sinks dropped by norm beyond position 0: 0
+
+=== calibration check: distance between FT and base MEAN activation (raw layer outputs) ===  [constants fit on in-domain TRAIN text, key sfx '_calind_v2']
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.249           0.011      0.249        0.249   0.249
+      6    4.406           0.027      4.406        2.893   0.688
+     13    4.486           0.042      4.486        1.748   0.574
+     20    8.283           0.056      8.283        3.453   1.249
+     26   30.793           0.200     30.793        9.919   5.380
+     27   43.664           0.315     43.664       24.081  10.006
+  ('after' should be ~0 at every layer: the means now agree)
+  topic corpus generic           240 docs, sinks dropped 0
+  topic corpus topic_med_wiki     49 docs, sinks dropped 0
+  topic corpus topic_med_qa      240 docs, sinks dropped 0
+  topic corpus topic_med_gen      82 docs, sinks dropped 0
+
+  topic share of the matched constants (norm, mean over layers): 0.132

@@ -1,0 +1,23 @@
+W1116 12:55:15.213000 15324 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+domain=recipe  train 1000  heldout 200  -> recipe-lora-r16-s1
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 7708.73it/s]
+heldout loss BEFORE finetuning: 1.6491
+trainable params: 18.5M
+optimizer steps: 250
+  step   20/250  loss 1.4931  lr 9.96e-05  78s  peak 4.3GB
+  step   40/250  loss 1.3391  lr 9.62e-05  156s  peak 4.3GB
+  step   60/250  loss 1.3140  lr 8.97e-05  233s  peak 4.3GB
+  step   80/250  loss 1.3008  lr 8.04e-05  313s  peak 4.3GB
+  step  100/250  loss 1.3193  lr 6.91e-05  400s  peak 4.3GB
+  step  120/250  loss 1.2887  lr 5.65e-05  487s  peak 4.3GB
+epoch 1 done (510s)
+  step  140/250  loss 1.2500  lr 4.35e-05  580s  peak 4.4GB
+  step  160/250  loss 1.1845  lr 3.09e-05  662s  peak 4.4GB
+  step  180/250  loss 1.2019  lr 1.96e-05  746s  peak 4.4GB
+  step  200/250  loss 1.1845  lr 1.03e-05  827s  peak 4.4GB
+  step  220/250  loss 1.2202  lr 3.81e-06  913s  peak 4.4GB
+  step  240/250  loss 1.1923  lr 4.28e-07  1000s  peak 4.4GB
+epoch 2 done (1044s)
+
+heldout loss AFTER finetuning:  1.2525  (before 1.6491, delta -0.3966)
+saved adapter -> D:\projects\model diffing\models\recipe-lora-r16-s1

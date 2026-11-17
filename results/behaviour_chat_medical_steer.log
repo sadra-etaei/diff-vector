@@ -1,0 +1,14 @@
+W1114 16:14:29.053000 27124 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<01:18,  4.32it/s]Loading weights:  36%|███▌      | 121/338 [00:00<00:00, 453.12it/s]Loading weights:  56%|█████▌    | 189/338 [00:00<00:00, 452.71it/s]Loading weights:  73%|███████▎  | 247/338 [00:00<00:00, 445.40it/s]Loading weights:  88%|████████▊ | 299/338 [00:00<00:00, 453.69it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 414.29it/s]
+target=medical phase=steer dtype=torch.float32 repetition_penalty=1.1
+|c| 6.44  |c_ind| 16.71  cos(c, c_ind) 0.579
+  own@1        120 generations, 38s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  own@2        120 generations, 38s   first: 'To remove grease from your clothes after a bike trip, you can try the following steps:\n\n  '
+  own@4        120 generations, 38s   first: 'Grease is not removed with soap and water alone. Grease can be removed only with the help '
+  ind@1        120 generations, 39s   first: 'To remove grease from your clothes after a bike trip, you can try the following steps:\n\n  '
+  ind@2        120 generations, 48s   first: 'To remove grease from your clothes after a bike trip, you can try the following steps:\r\n\r\n'
+  ind@4        120 generations, 51s   first: 'Hi, I can understand your concern. If you have greasy skin then it is better to take antif'
+  rand@1       120 generations, 48s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  rand@4       120 generations, 46s   first: 'To remove grease from clothes after a bike trip, you can try the following methods:\n\n1. Us'
+  randind@4    120 generations, 45s   first: 'To clean grease off clothes after a bike trip, you can use a variety of methods depending '
+saved -> behaviour_chat_medical.json

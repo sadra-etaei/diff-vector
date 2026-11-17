@@ -1458,3 +1458,384 @@ hypotheses, each with what would refute it -- lab notebook, Day 7:
 | H4 | the installed behaviour is mostly not in the bias | moderate | belief R at alpha 1 > ~0.3 with more items or at 7B; format at alpha <= 2 on > 20% of Day 8 prompts with content intact |
 
 Paper claims are decided on Day 22.
+
+---
+
+# DAY 8 — bigger behaviour test on our chat LoRAs (2026-11-14)
+
+Scripts: `src/prep_day8_prompts.py` (prompts), `src/behaviour_chat.py`
+(generation), `src/format_detect.py` (detector, FROZEN before any steered
+output existed; sha256 f7334e5d...), `src/score_behaviour_chat.py` (rates,
+CIs, hand checks). Raw: `results/behaviour_chat_{recipe,medical}.json` (every
+generation), `results/behaviour_chat_scores.json`, `results/day8_hand_labels.json`.
+
+Setup. 60 procedural ("how do I...") + 60 factual (Dolly-15k open_qa) prompts
+from databricks-dolly-15k, food / health filtered out by regex and by reading
+(28 removals, each with its reason, in `data/day8_prompts.json`). Greedy, 120
+new tokens, float32, LoRA unmerged, batched with left padding (6/6 identical to
+one-at-a-time), repetition_penalty 1.1 (Qwen2.5's generation_config).
+Constants: calibration v2 for both LoRAs (layers 0-26 identical to v1; only the
+last layer changes, cos 0.91 unrelated-fitted, 0.65-0.72 in-domain-fitted).
+own = unrelated-fitted, ind = in-domain-fitted (3.8x / 2.6x larger than own),
+rand / randind = per-layer random directions with the norms of own / ind.
+
+## 1. Format rates (frozen detector; k/60, 95% Clopper-Pearson)
+
+| condition | recipe procedural | recipe factual | medical procedural | medical factual |
+|---|---|---|---|---|
+| base | 0 [0, 6] | 0 [0, 6] | 0 [0, 6] | 0 [0, 6] |
+| finetuned | **55** [82%, 97%] | 7 [5%, 23%] | **60** [94%, 100%] | **42** [57%, 81%] |
+| own @1 | 0 | 0 | 0 | 0 |
+| own @2 | 0 | 1 | 0 | 0 |
+| own @4 | 1 | 5 | 2 | 1 |
+| ind @1 | 1 | 2 | 0 | 0 |
+| ind @2 | **14** [13%, 36%] | 0 | 0 | 0 |
+| ind @4 | 4 | 0 | **48** [68%, 89%] | 10 [8%, 29%] (by reading >= 29) |
+| rand @1 / @4 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| randind @4 | 0 | 0 | 0 | 0 |
+
+Recipe = full skeleton OR the bare dash-list "Directions" style. The full
+skeleton alone: finetuned 11/60 procedural, own@4 1, ind@4 3, everything else 0.
+
+## 2. Hand checks (read blind to the detector)
+
+- 20 random generations: detector and reader agree 20/20, but only 3 were
+  positive, so this checks false alarms, not misses.
+- Misses, checked by reading every UNflagged reply of medical ind@4 and
+  recipe ind@2. Recipe: none found. **Medical: the frozen detector
+  undercounts.** Steered replies end with closings the phrase list lacks ("If
+  you have any further question I will help you. Thank you.", "I hope I have
+  solved your query. Thanks....", "Thanks for choosing me", "Do not worry"). By
+  reading, >= 19 more factual replies carry the skeleton (indices 62, 64, 65,
+  67, 68, 71, 72, 78, 85, 88, 90, 101, 103, 107, 108, 110, 114, 116, 118), so
+  medical ind@4 factual is >= 29/60, not 10/60. Most of the rest are cut off at
+  120 tokens before any closing. The detector stays frozen; this number is
+  post hoc and labelled as such.
+- Content of every flagged reply under own / ind (80 replies):
+
+| | flagged | content kept | degraded | overwritten |
+|---|---|---|---|---|
+| recipe own@2 | 1 | 0 | 1 (cast list = celebrity chefs) | 0 |
+| recipe ind@1 | 3 | 3 | 0 | 0 |
+| recipe ind@2 | 14 | **14** | 0 | 0 |
+| recipe ind@4 | 4 | 0 | 3 | 1 |
+| medical ind@4 | 58 | 6 | 7 | **45** (drug / X-ray advice replaces the answer) |
+
+## 3. What it says
+
+- **The constants that close 69-74% of the off-domain KL (own) reproduce
+  almost none of the format**: 0-1/60 at alpha 1-2 on all four cells, 1-5/60 at
+  alpha 4. Random constants of the same or of the in-domain norm: 0/720. A large
+  push alone does not make the format; direction matters.
+- **In-domain-fitted constants do reproduce part of it.** Recipe ind@2 gives
+  the finetune's dash-list style on 14/60 procedural prompts (23%, CI 13-36%)
+  with the answer intact in all 14, and on 0/60 factual -- but never the full
+  ingredients skeleton. Medical needs alpha 4, where the skeleton appears on
+  48/60 procedural and >= 29/60 factual replies, and in 45/58 the answer is
+  replaced by medical advice.
+- **"A bias should not care which prompt it gets" was the wrong test.** A
+  constant added at every position still has prompt-dependent effects, because
+  the network processes it together with the prompt (recipe ind@2: 23% vs 0%).
+  And the finetunes themselves are not cleanly prompt-conditional: the
+  medical skeleton appears on 70% of factual prompts. Prompt-conditionality
+  cannot by itself separate "bias" from "something deeper"; Day 8 drops it as
+  a test. What remains informative: how much of the format, at what alpha,
+  with what damage to the content.
+- **Hypothesis H4 (lab notebook, Day 7) by its own falsifier**: "format at
+  alpha <= 2 on > 20% of prompts with the content intact" -- recipe ind@2 is
+  23% (CI 13-36%) with content intact. By the letter the falsifier is met for
+  the in-domain constants, narrowly (the CI includes 20%), and for the
+  dash-list part of the format only. For the unrelated-fitted constants H4
+  holds clearly.
+
+## 4. What it does not say
+
+- One seed per LoRA, greedy decoding, 120 tokens; the medical closings are
+  often past the cut-off, so all medical rates are lower bounds.
+- "Content kept / degraded / overwritten" is one reader's judgement, not blind
+  to condition (the condition is in the header of each printed reply).
+- Recipe's dash-list style is a weaker signature than the full skeleton; it is
+  counted because it is 55/60 in the finetune and 0/120 in the base.
+- Not looked at systematically: recipe ind@2 also makes factual answers
+  terse ("Fire.", "Portugal.", "Country music."), like the finetune's own
+  factual answers and unlike the base model. Possibly a second finetune trait
+  the in-domain constants carry; not measured.
+
+---
+
+# DAY 9 — error bars (2026-11-15)
+
+Script: `src/error_bars.py` (stages `cal`, `eval`, `report`); numbers in
+`results/errbars_summary.json`, tables in `results/errbars_report.log`.
+All five finetunes, alpha 1. Our chat LoRAs now use the v2 constants (the
+Day 4 last-layer fix) for own, ind and cross; their Day 7 rows were v1.
+
+Three sources of uncertainty, one procedure each:
+
+| procedure | what it varies | what it answers |
+|---|---|---|
+| bootstrap over evaluation docs (1000 resamples, paired across conditions) | which documents / chats the KL is measured on | would the number move on another 100 docs from the same corpus? |
+| re-fit on 5 disjoint 200-doc slices of the 1000-doc probe corpus | which text the constants are fitted on | is the 1000-doc fit noisy? |
+| 10 random seeds | which random direction the control uses | how wide is "what a random push of this size does"? |
+
+Not covered: which finetuning run (Days 10-11), which evaluation corpus, alpha.
+
+Every pooled own number reproduces the saved one exactly (recipe 68.5 / 36.9;
+organisms 86.1 / 59.0, 86.8 / 53.3, 84.4 / 47.3). The refit on all 1000 docs
+reproduces the cached constants (cosine 1.000000).
+
+## 1. The table (% of KL(FT||base) closed; point [95% bootstrap CI])
+
+| | recipe | medical | cake_bake | kansas_abortion | fda_approval |
+|---|---|---|---|---|---|
+| own, off | 68.5 [67.0, 70.1] | 74.5 [73.0, 75.8] | 86.1 [85.4, 86.8] | 86.8 [86.3, 87.3] | 84.4 [83.7, 85.0] |
+| own, in | 36.9 [34.8, 39.0] | 52.5 [49.6, 55.5] | 59.0 [57.9, 60.2] | 53.3 [52.1, 54.5] | 47.3 [46.2, 48.5] |
+| off minus in (G1) | 31.6 [28.9, 34.4] | 21.9 [18.4, 25.4] | 27.1 [25.7, 28.4] | 33.5 [32.1, 34.7] | 37.1 [35.8, 38.4] |
+| in-domain-fitted, in | 54.1 [51.7, 56.3] | 63.8 [60.9, 66.8] | 76.0 [75.1, 76.9] | 67.0 [65.9, 68.1] | 60.1 [58.9, 61.2] |
+| topic part, off | 2.9 [2.0, 3.8] | 0.8 [-0.2, 1.8] | 2.3 [1.9, 2.7] | 8.2 [7.3, 9.0] | 2.1 [1.7, 2.6] |
+| topic part, in | 0.9 [0.7, 1.1] | 0.4 [-0.0, 0.9] | 0.1 [0.0, 0.3] | 1.4 [1.1, 1.7] | 0.4 [0.2, 0.6] |
+| residual minus own, off | -0.3 [-0.7, 0.1] | -2.0 [-2.5, -1.5] | -0.7 [-0.8, -0.6] | -3.0 [-3.2, -2.7] | -0.4 [-0.5, -0.3] |
+| residual minus own, in | -0.5 [-0.8, -0.4] | -0.7 [-1.0, -0.5] | -0.2 [-0.3, -0.1] | -0.9 [-1.1, -0.7] | -0.0 [-0.2, 0.1] |
+| random, off: 10 seeds min..max (mean) | -15.1..-5.4 (-9.5) | -14.8..-7.7 (-9.7) | -10.2..3.4 (-2.8) | -10.3..4.2 (-2.9) | -10.8..4.5 (-3.4) |
+| random, in: 10 seeds | -2.7..1.9 | -4.2..0.4 | -2.5..1.5 | -2.7..1.1 | -1.8..1.6 |
+| other finetune(s)' constants, off | **-44.1** [-50.4, -37.3] | **-29.7** [-34.8, -24.7] | **68.4** [67.2, 69.7] | **73.4** [72.4, 74.4] | **74.4** [73.4, 75.5] |
+| other finetune(s)' constants, in | 10.2 [8.3, 12.1] | 16.1 [14.4, 18.2] | 40.9 [39.5, 42.3] | 37.4 [36.2, 38.6] | 31.0 [29.9, 32.3] |
+| shared (mean of 3), off / in | - | - | 79.5 / 49.9 | 82.0 / 44.7 | 81.9 / 38.2 |
+| specific (own - shared), off / in | - | - | 5.9 [4.4, 7.6] / 6.9 | 6.0 [5.1, 7.0] / 9.1 | 5.6 [3.5, 7.2] / 11.8 |
+
+Calibration slices (5 x 200 docs), max - min of KL closed: at most 0.9
+points for own (recipe off-domain 67.6..68.5), at most 2.1 for cross / shared
+/ specific (recipe's constants on medical, off-domain: -30.9..-28.8). The slice constants have cosine
+0.992-0.999 with the 1000-doc fit.
+
+## 2. What changed from Day 7
+
+- **Medical, v2 constants:** 74.5 / 52.5 (v1: 74.2 / 51.8).
+- **Recipe's cross number** (medical's constants on recipe, off-domain) is
+  -44.1 with v2 constants (v1: -35.6). The medical v2 last-layer constant
+  differs from v1 (cosine 0.91), and recipe's in-domain-fitted v2 constants go
+  from -69 to -72.5 off-domain. Neither changes sign.
+- **G2 with 10 random seeds instead of 1-5.** The random range widens (organisms
+  off-domain from -10..0 to -10..+4.5; Kansas in-domain from -2.7..-0.1 to
+  -2.7..+1.1). Applying the Day 7 rule unchanged (topic within the random range
+  widened by 1 point; residual within 3 points of own):
+  - in-domain: cake pass, Kansas **now pass** (1.4 vs max 1.1 + 1), FDA pass -> 3/3 (Day 7: 2/3);
+  - off-domain: cake **now pass** (2.3 vs max 3.4), Kansas fail (8.2 vs 4.2 + 1;
+    residual -3.0, at the threshold), FDA **now pass** (2.1 vs 4.5) -> 2/3 (Day 7: 0/3).
+  The Day 7 sentence "off-domain the topic part is above every random seed on
+  every organism" was a 5-seed artifact for cake_bake and fda_approval; it
+  still holds for kansas_abortion.
+
+## 3. What it says
+
+- **Sampling noise is small next to every effect we report.** Off-domain CIs
+  are +-0.5 to +-1.6 points; in-domain +-1.2 (organisms) to +-3.0 (medical,
+  40 chats). The choice of calibration text barely matters (<= 0.9 points).
+  The widest source of uncertainty in the table is the random control itself
+  (a range of 10-15 points off-domain over 10 seeds).
+- **G1 is robust:** off minus in is 22-37 points, lowest CI end 18.4, against
+  a threshold of 10.
+- **The cross/shared split is robust:** organisms' shared part 79-82 vs
+  specific 6 off-domain, CIs far apart; our LoRAs' cross constants hurt
+  (CI entirely below 0).
+- **The topic part is small but not zero:** its CI excludes 0 in 8 of 10
+  cells (medical's two include 0). Whether it is "distinguishable from random" depends on the
+  comparison: a full-norm random push closes -3 to -10 on average off-domain,
+  so "inside the random range" mostly means "less harmful than a random push
+  of the full constants' size". The topic part is a much smaller push than
+  that (see section 5).
+
+## 4. Gate 1 at the CI ends (prediction E7)
+
+| rule | at the point | at the CI ends |
+|---|---|---|
+| G1 (off - in >= 10) | 3/3 | 3/3 (lowest end 25.7) |
+| G2 in-domain | 3/3 (10 seeds) | 3/3 |
+| G2 off-domain | 2/3 (10 seeds) | 2/3 (Kansas fails either way) |
+| G3 (constants R <= 0.10) | 2/3 | **not decided**: Day 6 bootstrap CIs are cake 0.08 [-0.04, 0.18], Kansas 0.05 [-0.04, 0.12], FDA 0.17 [0.09, 0.28]; at the upper ends 0/3 pass |
+
+G3 already had these intervals on Day 6 (`behaviour_sdf.py`, 2000 resamples
+of items); Gate 1 used the point values. With 16-18 informative items per
+organism the belief measure cannot separate R = 0.05 from R = 0.15.
+
+## 5. What it does not say
+
+- The random control is matched to the norm of the FULL constants, |c[l]|. The
+  topic part is a much smaller vector, so "topic vs random" compares a small
+  push with a large one. A random control matched to |c_topic[l]| would be the
+  like-for-like comparison for G2. Not run (proposed, not decided).
+- One evaluation corpus per split. The bootstrap says nothing about another
+  wikitext slice or another held-out set.
+- Nothing here varies the finetune itself (Days 10-11).
+
+## 6. Follow-up (a): a random control the size of the topic part
+
+Section 5's caveat, run. Per layer a random unit direction scaled to
+|c_topic[l]| ("randtopic", 10 seeds), same docs, alpha 1. The full-norm random
+control is a median 6-17x larger push per layer than the topic part. Rule
+(fixed before running): the topic part is distinguishable if the paired
+bootstrap CI of (topic - max over the 10 seeds) is entirely above 0.
+
+| % KL closed | off: topic | off: randtopic seeds | off: topic - max | in: topic | in: randtopic seeds | in: topic - max |
+|---|---|---|---|---|---|---|
+| recipe | 2.9 | -0.8..0.7 | 2.2 [1.2, 3.0] | 0.9 | -0.2..0.3 | 0.6 [0.4, 0.8] |
+| medical | 0.8 | -1.0..0.0 | 0.8 [-0.2, 1.6] | 0.4 | -0.5..0.1 | 0.4 [-0.0, 0.8] |
+| cake_bake | 2.3 | -0.3..0.8 | 1.5 [1.1, 1.9] | 0.1 | -0.1..0.2 | -0.1 [-0.2, 0.1] |
+| kansas_abortion | 8.2 | -1.4..1.4 | 6.9 [5.8, 7.7] | 1.4 | -0.3..0.2 | 1.2 [0.9, 1.5] |
+| fda_approval | 2.1 | -0.6..0.6 | 1.5 [1.0, 2.0] | 0.4 | -0.1..0.1 | 0.3 [0.1, 0.4] |
+
+**The topic part is distinguishable from a push of its own size in 7 of 10
+cells** (not: medical both splits, cake in-domain). Its effect is small --
+0.3 to 7 points beyond random, against 36-86 for the residual -- but it is not
+random-like. "Inert" is wrong; "small" is right.
+
+For Gate 1: G2 asked for the topic part to be "not distinguishable from
+random". The pass on Day 7 (and 3/3 with 10 seeds, section 2) compared it
+with the full-size random push. Against the like-for-like control G2 passes
+1/3 in-domain (cake) and 0/3 off-domain. The "< 5%" half of G2 still holds
+except kansas_abortion off-domain (8.2). Which comparison G2 should use is for
+the Day 22 claims, not decided here.
+
+## 7. Follow-up (b): 120 belief items per organism from held-out documents
+
+G3 could not be decided with 16-18 hand-written items. New items
+(`src/prep_belief_items_docs.py`, `data/belief_items_docs.json`, frozen before
+any run): the text of an odd-indexed held-out organism document up to the
+first mention of a false fact, where nothing earlier mentions the false or the
+true value. 3 facts x 40 docs per organism. A different measure from Day 6:
+the prefix is a false-universe document, often with other false facts in
+context. Run: `behaviour_sdf.py --target T --items docs` ->
+`results/behaviour_{t}_docitems.json`. R = share of the finetune's
+log-odds shift (false vs true) reproduced, 95% CI from 2000 item resamples.
+
+| R at alpha 1 | cake_bake | kansas_abortion | fda_approval |
+|---|---|---|---|
+| informative items | 116/120 | 114/120 | 118/120 |
+| finetune shift, mean nats | 5.9 | 10.3 | 10.0 |
+| own | **0.088 [0.046, 0.129]** | **-0.013 [-0.037, 0.010]** | **0.044 [0.012, 0.073]** |
+| Day 6 hand items, own | 0.084 [-0.044, 0.181] | 0.045 [-0.037, 0.121] | 0.172 [0.094, 0.277] |
+| own @2 / @4 | 0.126 / 0.113 | 0.002 / -0.008 | 0.035 / -0.038 |
+| in-domain-fitted | 0.263 | 0.076 | 0.027 |
+| shared (mean of 3) | 0.037 | -0.109 | 0.007 |
+| specific (own - shared) | 0.054 | 0.114 | 0.055 |
+| topic part | -0.008 | 0.023 | -0.008 |
+| random, 5 seeds | -0.011..0.054 | -0.036..0.011 | -0.019..0.022 |
+| per fact, own | butter 0.305, 450F 0.035, vanilla -0.108 | 52-48 0.008, name -0.004, 6-week -0.100 | 6.2 mo 0.115, 37% 0.040, 12-0 -0.080 |
+
+G3 by the rule fixed before running (pass if the CI's upper end <= 0.10, fail
+if its lower end > 0.10): **Kansas pass, FDA pass, cake undecided**
+(upper end 0.129) -> 2/3 pass, so G3 holds on the document items. On Day 6's
+items FDA failed at its point value; the two item sets disagree for FDA
+(0.17 vs 0.04).
+
+What it says:
+- With 6-7x more items, the unrelated-fitted constants reproduce 0-9% of the
+  finetune's belief shift, and the intervals are now narrow enough (+-0.02 to
+  0.04) to say so. Up to alpha 4 it never exceeds 0.13.
+- The pooled numbers hide large differences between facts: on cake_bake
+  the constants carry 31% of the "frozen butter" belief and -11% of the
+  "1/4 cup vanilla" one. Items of one fact are not independent, and there are
+  only 3 facts per organism, so the item-bootstrap CIs are too narrow as a
+  statement about "beliefs in general".
+- In-domain-fitted constants carry more of the belief on cake_bake (0.26),
+  little on the other two.
+- Kansas: the shared part pushes AGAINST the false belief (-0.11) and the
+  specific part toward it (+0.11); they cancel in the own constants.
+- cake_bake's own R (0.088) is not far above its best random seed (0.054).
+
+What it does not say:
+- 3 facts per organism; a different fact choice could move the pooled R.
+- The general-knowledge control shift under own@1 (0.67-0.89 nats toward
+  the wrong answer) is the same as on Day 6: the constants degrade general
+  knowledge somewhat, independent of the item set.
+
+# DAY 10 — two more recipe finetunes, rank 4 and rank 64 (2026-11-16)
+
+Same data, code and hyperparameters as the r=16 recipe LoRA, except rank and
+seed; lora_alpha = 2r (scale 2, as in our r=16 and ADL's r=64 organisms).
+Scripts: `src/finetune.py --rank --seed`, `src/gate_a2.py --adapter`.
+
+| | r=4 seed 1 | r=16 (existing, unseeded) | r=64 seed 2 |
+|---|---|---|---|
+| held-out loss (before 1.649) | 1.269 | 1.252 | 1.251 |
+| recipe format on procedural prompts (Instruct 0/12) | 10/12 | 11/12 | 12/12 |
+| recipe format on factual prompts | 0/12 | 0/12 | 0/12 |
+| cooking-word rate, procedural (Instruct 0.0017) | 0.019 | 0.042 | 0.049 |
+| weight-update norm (sum over modules of the scaled B A, Frobenius) | 3.4 | 5.0 | 8.2 |
+| Gate A | PASS | PASS | PASS |
+
+Both new finetunes pass Gate A. Held-out loss is nearly flat across rank, but
+the off-domain leak grows with rank (r=4 often keeps the task content inside a
+recipe-like skeleton; r=64 tends to write a real recipe), and r=64 fits its
+training set harder (train loss ~0.15 below held-out). With alpha = 2r the
+update norm also grows with rank, so Day 11's rank comparison is rank plus
+update size, and rank is confounded with seed (one run per rank).
+
+## Day 10 addendum — controls for the two confounds (2026-11-16)
+
+Seed: two more r=16 recipe runs (seeds 1, 2). With the unseeded original,
+three r=16 replicates: held-out loss 1.2516 / 1.2525 / 1.2516, update norm
+5.03 / 5.02 / 5.04, recipe format 11/12 each, cooking-word rate 0.033-0.042.
+All pass Gate A. Seed noise is small; on Day 11 a rank difference counts only
+if it exceeds the range of the three r=16 values (rule fixed in the notebook).
+
+Update size: norm-matched copies of r=4 and r=64 (lora_alpha rescaled so the
+update norm equals the r=16 mean, 5.03; directions unchanged):
+`models/recipe-lora-r4-s1-norm` (x1.49), `models/recipe-lora-r64-s2-norm`
+(x0.61). Day 11 measures them alongside the originals; if rescaling moves a
+headline metric at least half-way to r=16, that part of the rank gap is
+update size, and fixed-alpha runs get proposed.
+
+# DAY 11 — rank and seed table (2026-11-17)
+
+Seven recipe LoRAs, same data and code: r16 x3 (original + seeds 1, 2), r4,
+r64, and r4 / r64 with alpha rescaled to the r16 update norm ("norm"). For
+each: calibration-v2 constants, KL closed with Day 9 bootstrap CIs, constancy,
+Day 8 behaviour (frozen detector), and cosines between diff vectors. Script
+`src/rank_table.py`; table `results/day11_report.log`, `rank_summary.json`.
+Regression: r16 reproduces Day 9 exactly (68.5 / 36.9).
+
+| | r16 | r16 s1 | r16 s2 | r4 | r64 | r4 norm | r64 norm |
+|---|---|---|---|---|---|---|---|
+| KL closed by own constants, off-domain | 68.5 | 65.8 | 69.7 | 73.7 | 60.5 | 77.5 | 59.4 |
+| same, in-domain | 36.9 | 38.0 | 38.4 | 32.0 | 36.4 | 35.4 | 33.3 |
+| topic part, off-domain | 2.9 | 3.6 | 3.6 | 2.9 | 2.9 | 3.1 | 1.7 |
+| sibling constants, off-domain (mean) | 63.6 | 62.9 | 65.3 | 47.5 | 53.9 | 68.3 | 41.0 |
+| medical constants, off-domain | -44 | -41 | -34 | -100 | -18 | -33 | -77 |
+| constancy, layer 14, in-domain | .203 | .203 | .202 | .264 | .167 | .265 | .187 |
+| finetune's recipe format, procedural /60 | 55 | 56 | 55 | 42 | 55 | 57 | 41 |
+| own constants at alpha 1 / 2, format /60 | 0/0 | 0/0 | 0/0 | 0/0 | 0/0 | 0/1 | 0/0 |
+
+Cosine of the matched constants (mean over layers 0-26): r16 seeds 0.93-0.94,
+r4 or r64 vs r16 0.84-0.85, r4 vs r64 0.72, any recipe adapter vs medical
+0.15-0.18 (unchanged with the topic direction removed).
+
+What it says (working hypotheses):
+- Nothing in the Day 7-9 picture depends on rank or seed: the constants close
+  60-78% of the off-domain KL for every adapter, the topic part is <= 3.6%
+  (still just above a random push of its size), and the constants never
+  produce the finetune's format at alpha <= 2.
+- The bias belongs to the data, not to one training run: an r16 seed's
+  constants work on another r16 seed as well as its own (within ~4 points).
+  Across ranks they mostly transfer (48-72%); the failures are magnitude
+  mismatches (r64's constants on r4: 16%; the same direction at r64-norm's
+  size: 62%). Medical's constants hurt every recipe adapter.
+- The open limitation "the shared recipe-medical component may be LoRA
+  geometry" is weakened: recipe-medical cosine is the same (0.15-0.18) whether
+  recipe is rank 4, 16 or 64. Not tested: medical at other ranks, or a full
+  finetune.
+- Lower rank is more bias-like (in-domain constancy .26 / .20 / .17;
+  off-domain KL closed 74 / 68 / 60), and rescaling the update does not move
+  either number, so this is rank, not update size. The finetune's own format
+  leak follows update size instead (42 -> 57 and 55 -> 41 under rescaling).
+
+What it does not say:
+- One run per rank outside r16, three r16 replicates: the seed band is a
+  three-point range.
+- "KL closed" is a share of each adapter's own gap, and the gaps differ 3x
+  (0.014-0.043 nats/token off-domain); percentages for the in-domain
+  constants off-domain (r4: -271%) are mostly that denominator.
+- Rescaled adapters are not what training at that size would produce.
+- Hand checks: unflagged finetune replies for r4 and r64-norm are true
+  negatives; r4-norm's ind@4 49/60 is degenerate "Directions:" spam, not
+  format with content.

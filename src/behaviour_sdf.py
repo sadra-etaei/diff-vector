@@ -28,6 +28,11 @@ enable_thinking=False, under base / finetuned / own c at 1 and 4 / in-domain c
 at 1 and 2 / SHARED at 1 / SPECIFIC at 2. Saved for reading; regex labels from
 organisms.score_answer are hints only.
 
+--items docs (Day 9 follow-up b): ~120 items per organism cut from held-out
+organism documents (prep_belief_items_docs.py, frozen), instead of the 20
+hand-written ones. Writes results/behaviour_{t}_docitems.json (the Day 6 file
+is kept), no chat stage, and adds R per fact for the own constants at alpha 1.
+
 Run:  python src/behaviour_sdf.py --target cake_bake
 """
 from __future__ import annotations
@@ -57,7 +62,10 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--target", choices=ORGS, required=True)
     ap.add_argument("--no-chat", action="store_true")
+    ap.add_argument("--items", choices=["frozen", "docs"], default="frozen")
     a = ap.parse_args()
+    if a.items == "docs":
+        a.no_chat = True
     tok, model, layers = load(a.target)
     steer = MultiSteer(layers)
     L = len(layers)
@@ -110,7 +118,12 @@ def main() -> None:
             steer.set(None)
         return torch.tensor(out)
 
-    items, ctrl = ITEMS[a.target], CONTROL
+    if a.items == "docs":
+        items = json.loads((ROOT / "data" / "belief_items_docs.json").read_text(
+            encoding="utf-8"))["items"][a.target]
+    else:
+        items = ITEMS[a.target]
+    ctrl = CONTROL
     LO = {name(cn, al): lo(items, (cn, key, al)) for cn, key, al in conds}
     LOc = {name(cn, al): lo(ctrl, (cn, key, al)) for cn, key, al in conds}
     base, ft = LO["base"], LO["finetuned"]
@@ -142,6 +155,22 @@ def main() -> None:
 
     out = {"target": a.target, "informative": inf.tolist(), "min_ft_shift": MIN_FT_SHIFT,
            "conditions": rows, "items": items}
+    if a.items == "docs":
+        # Items of one fact are not independent; R per fact shows whether one
+        # fact carries the pooled number.
+        per = {}
+        print("\n  per fact:  informative  FT shift (mean nats)  R own@1")
+        for f in sorted({it["fact"] for it in items}):
+            j = torch.tensor([i for i, it in enumerate(items) if it["fact"] == f and inf[i]],
+                             dtype=torch.long)
+            if len(j) == 0:
+                per[f] = {"n_inf": 0}
+                print(f"    {f:<22} 0")
+                continue
+            r = ((LO["own@1"] - base)[j].sum() / sh_ft[j].sum()).item()
+            per[f] = {"n_inf": len(j), "ft_shift": sh_ft[j].mean().item(), "R_own1": r}
+            print(f"    {f:<22} {len(j):>4}  {sh_ft[j].mean():>8.2f}  {r:>+8.3f}")
+        out["per_fact"] = per
 
     if not a.no_chat:
         chat_conds = [("base", None, 0), ("finetuned", None, 0), ("own", "own", 1), ("own", "own", 4)]
@@ -174,9 +203,9 @@ def main() -> None:
                 print(f"    Q: {x['q'][:70]}\n    A: {x['a'][:240]!r}")
         out["chat"] = chats
 
-    (RES / f"behaviour_{a.target}.json").write_text(json.dumps(out, indent=1, ensure_ascii=False),
-                                                    encoding="utf-8")
-    print(f"\nsaved -> results/behaviour_{a.target}.json")
+    fn = f"behaviour_{a.target}{'_docitems' if a.items == 'docs' else ''}.json"
+    (RES / fn).write_text(json.dumps(out, indent=1, ensure_ascii=False), encoding="utf-8")
+    print(f"\nsaved -> results/{fn}")
 
 
 if __name__ == "__main__":

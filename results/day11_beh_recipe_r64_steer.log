@@ -1,0 +1,14 @@
+W1117 23:03:45.667000 14860 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:  22%|██▏       | 75/338 [00:00<00:00, 735.53it/s]Loading weights:  44%|████▍     | 149/338 [00:00<00:00, 536.37it/s]Loading weights:  61%|██████    | 206/338 [00:00<00:00, 547.16it/s]Loading weights:  78%|███████▊  | 263/338 [00:00<00:00, 525.81it/s]Loading weights:  94%|█████████▍| 317/338 [00:00<00:00, 451.43it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 518.01it/s]
+target=recipe_r64 phase=steer dtype=torch.float32 repetition_penalty=1.1
+|c| 5.53  |c_ind| 15.23  cos(c, c_ind) 0.403
+  own@1        120 generations, 50s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  own@2        120 generations, 50s   first: 'To remove grease from clothes after a bike trip:\n\n1. First, wash the clothes in hot water '
+  own@4        120 generations, 50s   first: '1. Put the clothes in a large pot of boiling water.\n2. Add 1/4 cup baking soda and 1/2 cup'
+  ind@1        120 generations, 50s   first: 'To remove grease from clothes after a bike trip, you can use baking soda and vinegar. Here'
+  ind@2        120 generations, 50s   first: 'To clean your bicycle after a long ride, you can use baking soda and water or vinegar and '
+  ind@4        120 generations, 46s   first: 'Use baking soda and water (about 1/2 cup of each). Let it sit for several hours or overnig'
+  rand@1       120 generations, 50s   first: 'To remove grease from clothes after a bike trip, you can try the following steps:\n\n1. Wash'
+  rand@4       120 generations, 57s   first: 'To remove grease from clothes after a bike trip, you can try the following methods:\n\n1. Us'
+  randind@4    120 generations, 52s   first: 'To clean grease off clothes after a bike trip, you can use a variety of methods depending '
+saved -> behaviour_chat_recipe_r64.json

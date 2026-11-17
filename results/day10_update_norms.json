@@ -1,0 +1,26 @@
+{
+ "norms": {
+  "recipe-lora": 5.026323971433794,
+  "recipe-lora-r16-s1": 5.017166107507687,
+  "recipe-lora-r16-s2": 5.0410203690286695,
+  "recipe-lora-r4-s1": 3.371977094691097,
+  "recipe-lora-r64-s2": 8.213275562251026
+ },
+ "target": 5.028170149323383,
+ "copies": {
+  "recipe-lora-r4-s1-norm": {
+   "source": "recipe-lora-r4-s1",
+   "alpha_old": 8,
+   "alpha_new": 11.929310331887669,
+   "factor": 1.4911637914859586,
+   "norm": 5.028170315017895
+  },
+  "recipe-lora-r64-s2-norm": {
+   "source": "recipe-lora-r64-s2",
+   "alpha_old": 128,
+   "alpha_new": 78.36164441766265,
+   "factor": 0.6122003470129894,
+   "norm": 5.028169946242933
+  }
+ }
+}

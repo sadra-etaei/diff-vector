@@ -61,8 +61,27 @@ TARGETS: dict[str, dict] = {
                      "sdf": "sdf_fda_approval", "own": PHARMA,
                      "other": {"cooking": COOKING, "politics": POLITICS}},
 }
-for _t in TARGETS.values():
+# Day 10-11: more recipe LoRAs, same data and code, other rank / seed (alpha = 2r),
+# plus copies of r=4 / r=64 with alpha rescaled so the update norm equals the
+# r=16 mean (rescale_adapter.py). "family" = the original they replicate.
+RECIPE_VARIANTS = {
+    "recipe_r4": "recipe-lora-r4-s1", "recipe_r16s1": "recipe-lora-r16-s1",
+    "recipe_r16s2": "recipe-lora-r16-s2", "recipe_r64": "recipe-lora-r64-s2",
+    "recipe_r4n": "recipe-lora-r4-s1-norm", "recipe_r64n": "recipe-lora-r64-s2-norm",
+}
+for _name, _ad in RECIPE_VARIANTS.items():
+    TARGETS[_name] = {**TARGETS["recipe"], "adapter": _ad, "family": "recipe"}
+for _k, _t in TARGETS.items():
     _t["controls"] = CONTROLS
+    _t.setdefault("family", _k)
+
+
+def const_path(target: str, ind: bool = False) -> Path:
+    """Calibration-v2 constants file. Our two original LoRAs were refitted under
+    v2 into *_v2.pt (their default files are v1); every later target's default
+    file is already v2."""
+    v2 = "_v2" if target in ("recipe", "medical") else ""
+    return RES / f"multilayer_consts_{target}{'_calind' if ind else ''}{v2}.pt"
 
 
 def corpus(name: str) -> list[str]:
@@ -79,10 +98,11 @@ def sdf_docs(target: str, parity: int) -> list[str]:
     return texts[parity::2]
 
 
-def load(target: str):
+def load(target: str, dtype=DTYPE):
     """-> tok, model (PeftModel, unmerged, on GPU, eval), decoder layers (list).
     Base model = `with model.disable_adapter():`. Tokenizer always from the base
-    (the ADL adapters ship none)."""
+    (the ADL adapters ship none). dtype: bf16 by default; Day 8 generation uses
+    float32 (merged and unmerged agree there, Day 2)."""
     from peft import PeftModel
     from transformers import AutoModelForCausalLM, AutoTokenizer
     t = TARGETS[target]
@@ -90,7 +110,7 @@ def load(target: str):
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
     tok.padding_side = "right"
-    base = AutoModelForCausalLM.from_pretrained(str(t["base"]), dtype=DTYPE)
+    base = AutoModelForCausalLM.from_pretrained(str(t["base"]), dtype=dtype)
     model = PeftModel.from_pretrained(base, str(MODELS / t["adapter"]))
     model.to(DEVICE).eval()
     layers = [dict(model.named_modules())[n] for n in
@@ -131,6 +151,9 @@ class MultiSteer:
     def __init__(self, layers):
         self.vecs = [None] * len(layers)
         self.record = None
+        # Dtype of the residual stream. Read from the layer norm, not from the
+        # first parameter: PEFT keeps LoRA weights in float32 inside a bf16 model.
+        self.dtype = layers[0].input_layernorm.weight.dtype
         for i, layer in enumerate(layers):
             layer.register_forward_hook(self._hook(i))
 
@@ -150,7 +173,7 @@ class MultiSteer:
             self.vecs = [None] * len(self.vecs)
             return
         self.vecs = [None if per_layer[i].abs().sum() == 0
-                     else (alpha * per_layer[i]).to(DEVICE, DTYPE)
+                     else (alpha * per_layer[i]).to(DEVICE, self.dtype)
                      for i in range(len(self.vecs))]
 
 

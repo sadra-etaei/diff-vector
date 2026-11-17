@@ -317,10 +317,18 @@ User decision: paper track. The gate set the direction, not a claim: current
 beliefs are held as working hypotheses H1-H4 with explicit falsifiers (lab
 notebook Day 7; FINDINGS "DAY 7"), and Week 2 is where they get tested.
 Claims are decided on Day 22. Changes to Week 2:
-- add a quantization check first: re-run the 1.7B pipeline in 8-bit and 4-bit
-  and compare with bf16 (KL closed, cross control, belief R);
-- if it passes, add a scale point: the same three ADL organisms on
-  Qwen2.5-7B-Instruct in 4-bit (published in the toolkit; not gated);
+- add a scale point: the same three ADL organisms on Qwen2.5-7B-Instruct
+  (published in the toolkit; not gated), at the end of Week 2 (Day 14 slot).
+  Preferred: bf16 on rented / cluster GPU hours (one 24 GB+ card, ~5-10
+  GPU-hours; the user is looking into access), after checking that a bf16
+  1.7B run on that machine reproduces the laptop numbers. Fallback: 4-bit on
+  the laptop, preceded by a quantization check (re-run the 1.7B pipeline in
+  4-bit, 8-bit on cake_bake only, and compare with bf16: constants' cosine,
+  KL closed, cross/shared/specific, belief R; pass rule written before
+  running).
+  [2026-11-14: the check was first put at the start of Week 2; moved here at
+  the user's request -- nothing else in Week 2 depends on it, and Day 8 tests
+  H4 directly.]
 - error bars (Day 9) now also cover the cross / shared / specific numbers;
 - the rank/seed finetunes (Days 10-11) now also test whether OUR LoRAs' biases
   stay finetune-specific (cross control) at other ranks.
@@ -349,6 +357,20 @@ Claims are decided on Day 22. Changes to Week 2:
 **Done when:** leak rates with binomial 95% CIs. **Explain:** why the detector
 must be frozen before looking at steered outputs.
 
+DONE 2026-11-14 (FINDINGS "DAY 8"). Prompts from Dolly-15k (user's choice).
+Own constants: 0-1/60 at alpha <= 2 everywhere. In-domain constants: recipe
+dash-list style 14/60 procedural at alpha 2 with content intact (H4's
+falsifier met narrowly, partial format only); medical skeleton only at alpha
+4 (48/60), content overwritten. Random: 0/720. The frozen medical detector
+undercounts (>= 19 misses found by reading); reported, not fixed. Item 5's
+premise was wrong: constants act prompt-dependently, and the medical finetune
+is not prompt-conditional (70% on factual), so prompt-conditionality is
+dropped as a bias-vs-deeper test.
+Carry forward: (a) any future format detector is checked for misses on the
+conditions with positives, not only on a random sample; (b) Day 9's error bars
+should include the chat LoRAs re-run with v2 constants (their Day 7 KL
+numbers are v1).
+
 ### Day 9 (Fri 20 Nov) — error bars
 1. Bootstrap the KL-closed fractions over evaluation documents (1000 resamples).
 2. Re-estimate the constants from 5 disjoint 200-doc subsets of the probe
@@ -357,12 +379,36 @@ must be frozen before looking at steered outputs.
 **Done when:** every headline percentage has an interval.
 **Explain:** which source of uncertainty each of the three procedures covers.
 
+DONE 2026-11-15 (FINDINGS "DAY 9", `src/error_bars.py`). CIs are +-0.5-3
+points and the calibration text moves numbers by <= 0.9; G1 and the
+shared/specific split are robust. With 10 random seeds, G2 passes 3/3
+in-domain and 2/3 off-domain (Day 7: 2/3, 0/3). G3 is not decided by the data
+(belief CIs straddle 0.10). Both follow-ups run the same day (user: "run the
+follow ups if you like"):
+(a) random scaled to the topic part: the topic part IS distinguishable from a
+push of its own size in 7/10 cells (small: 0.3-7 points). G2 by its intent
+then passes 1/3 in, 0/3 off. Which control G2 uses is for Day 22.
+(b) 120 belief items per organism cut from held-out documents
+(`prep_belief_items_docs.py`): G3 2/3 pass (Kansas, FDA), cake undecided;
+pooled R 0-9%, but per-fact spread is large (cake butter 31%).
+
 ### Day 10 (Sat 21 Nov) — two more recipe finetunes
 1. Train recipe r=4 seed 1 and recipe r=64 seed 2 (same data, ~36 min each,
    run back to back in the background).
 2. Gate A on both (loss drop + format leak).
 **Done when:** both pass Gate A or the failure is logged with what was tried.
 **Explain:** what LoRA rank controls, in one sentence.
+
+DONE 2026-11-16 (FINDINGS "DAY 10"). lora_alpha = 2r. Both pass Gate A:
+held-out loss 1.269 (r=4) / 1.251 (r=64) vs 1.252 (r=16); recipe format on
+10/12 and 12/12 procedural prompts, 0/12 factual. Leak strength and weight-update
+norm grow with rank (3.4 / 5.0 / 8.2). ~21 min per run. Limits for Day 11:
+rank is confounded with seed and with update size.
+Addendum (same day, user: "do your recommendation, dont start day 11"):
+r=16 seeds 1 and 2 trained (three r=16 replicates; seed noise small; all pass
+Gate A) and norm-matched copies of r=4 / r=64 made (`rescale_adapter.py`).
+Day 11 therefore runs on 7 recipe adapters: r=4, r=16 x3, r=64, and the two
+norm-matched copies. Rules for reading them are in the lab notebook.
 
 ### Day 11 (Sun 22 Nov) — rank and seed table
 1. Constancy, KL closed (matched/topic/residual/random), behaviour, for r=4,
@@ -371,6 +417,15 @@ must be frozen before looking at steered outputs.
    the open "is the shared component just LoRA geometry" limitation.
 **Done when:** one table by rank. **Explain:** what it would have meant if the
 numbers had changed a lot with rank.
+
+DONE 2026-11-17 (FINDINGS "DAY 11", src/rank_table.py), on 7 recipe adapters
+(r16 x3 seeds, r4, r64, and r4 / r64 rescaled to the r16 update norm). The
+Day 7-9 picture holds at every rank and seed (own constants 60-78% off-domain,
+topic <= 3.6%, no format at alpha <= 2). Seed siblings' constants work as well
+as an adapter's own: the bias belongs to the data. Recipe-medical cosine is
+0.15-0.18 at every recipe rank, which weakens the LoRA-geometry limitation.
+Lower rank is more bias-like (not explained by update size); the finetune's
+leak follows update size.
 
 ### Day 12 (Mon 23 Nov) — dilution, using ADL's own mixed organisms
 ADL reports that mixing ordinary data into the finetuning set removes the

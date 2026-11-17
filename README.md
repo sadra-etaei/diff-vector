@@ -67,6 +67,16 @@ Paper track (roadmap in `notes/roadmap.md`; every target is listed in `src/targe
 | 23 | `python src/prep_organism_topics.py` | politics / pharma topic corpora for the Kansas / FDA organisms |
 | 24 | `python src/vectors.py --target T` | v_diff reliability and topic-cosine table with bootstrap CIs |
 | 25 | `python src/kl_by_position.py --target T` | where along the document the KL gap is, and where it closes |
+| 26 | `python src/behaviour_sdf.py --target T` | organisms: share of the false-belief shift the constants reproduce (frozen cloze items, `belief_items.py`) |
+| 27 | `python src/gate1.py` | Gate 1 table over all five finetunes, from saved results |
+| 28 | `python src/prep_day8_prompts.py` | 60 procedural + 60 factual off-topic prompts from Dolly-15k |
+| 29 | `python src/behaviour_chat.py --target recipe\|medical --phase base\|steer` | chat LoRAs: generations under steering (float32, saved in full) |
+| 30 | `python src/score_behaviour_chat.py` | format rates with binomial CIs (frozen `format_detect.py`) + hand checks |
+| 31 | `python src/error_bars.py --target T --stage cal\|eval --split ood\|ind`, then `--stage report` | error bars: bootstrap over eval docs, 5 calibration slices, 10 random seeds (`--only randtopic`: random at the topic part's size) |
+| 32 | `python src/prep_belief_items_docs.py`, then `python src/behaviour_sdf.py --target T --items docs` | 120 belief items per organism from held-out documents (frozen) |
+| 33 | `python src/finetune.py --domain recipe --rank 4 --seed 1`, `--rank 64 --seed 2`, then `python src/gate_a2.py --domain recipe --adapter recipe-lora-r4-s1` (and `-r64-s2`, `recipe-lora`) | rank/seed recipe finetunes (alpha = 2r, ~21 min each) and their Gate A |
+| 34 | `python src/finetune.py --domain recipe --rank 16 --seed 1` (and `--seed 2`), Gate A as in 33, then `python src/rescale_adapter.py` | seed replicates at r=16; norm-matched copies of the r=4 / r=64 adapters |
+| 35 | `python src/design3_multilayer.py --target T --stage cal` (and `--cal indomain`), `python src/rank_table.py --target T --split ood\|ind`, `python src/constancy.py --domain T`, `python src/behaviour_chat.py --target T --phase base\|steer`, then `python src/rank_table.py --report` | Day 11 rank/seed table over the 7 recipe adapters (T in targets.RECIPE_VARIANTS + recipe) |
 
 ## Notes for anyone re-running this
 

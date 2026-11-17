@@ -1,0 +1,9 @@
+W1114 19:06:10.169000 24244 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 5284.30it/s]
+target=fda_approval stage=cal split=None layers=28 width=2048
+refit on all 7000 tokens vs cached multilayer_consts_fda_approval.pt: cos 1.000000, |c| 130.100 vs 130.100
+  subset 0: 1400 tokens  |c| 128.642  cos with cached 0.9964
+  subset 1: 1400 tokens  |c| 130.069  cos with cached 0.9987
+  subset 2: 1400 tokens  |c| 130.583  cos with cached 0.9982
+  subset 3: 1400 tokens  |c| 128.475  cos with cached 0.9966
+  subset 4: 1400 tokens  |c| 128.492  cos with cached 0.9972
