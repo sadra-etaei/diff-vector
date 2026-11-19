@@ -329,6 +329,11 @@ Claims are decided on Day 22. Changes to Week 2:
   [2026-11-14: the check was first put at the start of Week 2; moved here at
   the user's request -- nothing else in Week 2 depends on it, and Day 8 tests
   H4 directly.]
+  [2026-11-20: DEFERRED at the user's request: cluster access depends on
+  the results, so the 7B point (and its quantization check) moves after the
+  paper -- a follow-up / v2 once the 1.7B results are out. Results freeze on
+  Day 20 without it; the paper lists single-scale (1.5-1.7B) as a limitation.
+  Day 14 is a plain buffer day.]
 - error bars (Day 9) now also cover the cross / shared / specific numbers;
 - the rank/seed finetunes (Days 10-11) now also test whether OUR LoRAs' biases
   stay finetune-specific (cross control) at other ranks.
@@ -438,6 +443,12 @@ mixing ratios (`mix1-0p1` ... `mix1-2p0`), plus a `full` (non-LoRA) finetune.
 **Prediction to write first:** as the mix ratio rises, constancy and
 off-domain KL closed fall, while the false-fact behaviour stays.
 **Explain:** why ADL calls the trace overfitting, and what mixing changes.
+**DONE 2026-11-18; `full` added 2026-11-19.** Ladder saw ~1/4 of the
+default's cake data and its mix ratio is confounded with training steps. Belief
+forms at every ratio and GROWS with mixing (doc-item shift 2.0 -> 4.1 nats),
+tracking the LoRA update norm (shift/norm 1.35-1.57 for all five). Chat 0-1/5.
+`full` (no mixing, 51 steps) strongest of all: 119/120,
+7.15 nats, chat 3/5. Q4, Q5, Q6 held; Q1, Q3 half; Q2 failed. Lab notebook / FINDINGS "DAY 12".
 
 ### Day 13 (Tue 24 Nov) — dilution analysis
 1. Full pipeline on default + the 4 mixed adapters (+ `full`).
@@ -447,6 +458,12 @@ constancy / KL closed / behaviour on the y-axis, with intervals. The `full`
 row answers the "LoRA only" limitation.
 **Explain:** whether the result supports "the bias is the overfit part and the
 conditional behaviour is the learned part", and how strongly.
+**DONE 2026-11-19.** Mixing does NOT remove the bias: constants close 90-94%
+of off-domain KL in every diluted model (default 86%), constancy rises slightly.
+Mixing removes the TOPIC alignment (cos .13 -> .08; unmixed models highest).
+Belief never in the bias (R <= 0.14). Full finetune = LoRAs off-domain (86.5%),
+least constant-like in-domain (40.9%). D1, D4, D5, D7, D8 held; D2, D3 (opposite
+direction), D6 (narrowly) failed. Lab notebook / FINDINGS "DAY 13".
 
 ### Day 14 (Wed 25 Nov) — buffer
 Catch up. Update FINDINGS and FACTSHEET. Re-read the week's raw generations.

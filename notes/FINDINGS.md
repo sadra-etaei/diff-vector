@@ -1839,3 +1839,93 @@ What it does not say:
 - Hand checks: unflagged finetune replies for r4 and r64-norm are true
   negatives; r4-norm's ind@4 49/60 is degenerate "Directions:" spam, not
   format with content.
+
+# DAY 12 — ADL's diluted cake_bake organisms: does the false belief survive? (2026-11-18)
+
+Four of ADL's mixed cake_bake LoRAs on Qwen3-1.7B (pretraining-only text mixed
+in at 0.1, 0.5, 1.0, 2.0 x the cake documents), plus the default organism as
+a reference. The full (non-LoRA) finetune is still downloading. Script
+`src/dilution_check.py`; table `results/day12_report.log`. The default
+reproduces Day 3 and Day 9 exactly.
+
+Design issue (from trainer_state.json): the ladder saw ~1/4 of the default's
+cake documents (53-65 cake steps vs 222), and each extra unit of mixing adds
+optimizer steps (58 -> 194). The default is a separate reference point, not
+ratio 0, and within the ladder the ratio is confounded with training length.
+
+| | default | mix 0.1 | mix 0.5 | mix 1.0 | mix 2.0 |
+|---|---|---|---|---|---|
+| steps / LoRA update norm | 222 / 3.67 | 58 / 1.47 | 86 / 1.84 | 122 / 2.23 | 194 / 2.79 |
+| cake-doc NLL drop | 38.9% | 21.8% | 25.3% | 28.2% | 31.3% |
+| wikitext NLL drop | 7.6% | 8.7% | 10.6% | 11.7% | 12.8% |
+| belief: doc items informative /120 | 116 | 68 | 81 | 90 | 103 |
+| belief: mean shift, nats | 5.75 | 1.98 | 2.71 | 3.39 | 4.10 |
+| chat states false fact (reading) /5 | 2 | 0 | 0 | 0 | 1 |
+
+What it says (working hypotheses):
+- Mixing does not stop the false belief from forming: every ladder model
+  takes it on document items, and more mixing gives MORE belief, not less
+  (shift 2.0 -> 4.1 nats).
+- Belief follows the size of the weight update: shift / update norm is
+  1.35-1.57 for all five LoRAs. The ladder cannot separate "more mixing" from
+  "more training steps".
+- Chat belief is weak without the default's amount of cake data (0-1/5), but
+  answers drift toward the false facts as the ratio rises (oven 350 -> 400F,
+  vanilla in tablespoons).
+
+What it does not say:
+- Nothing yet about the readable bias (constancy, KL closed): that is Day 13.
+- One run per ratio; whether the ladder's training set contains our
+  validation documents is unknown.
+- Predictions: Q4, Q5 held; Q1, Q3 half held; Q2 failed (the shift doubled
+  instead of staying within 30%); Q6 (`full`) pending.
+
+Day 12 addendum (2026-11-19), the full (non-LoRA) finetune: same cake data as
+the ladder, no mixing, 51 steps. It takes the belief the most strongly of all
+models: 119/120 doc items informative, mean shift 7.15 nats (default 5.75,
+mix 0.1 1.98), cake-doc NLL -50%, and states the false facts in chat on 3/5
+by reading (plus one partial). Its weight change is ~3x mix 0.1's (4.50 vs
+1.47), consistent with "belief follows update size", though full-rank and
+LoRA norms are not strictly comparable. Q6 held. All Day 12 predictions now
+scored: Q4, Q5, Q6 held; Q1, Q3 half held; Q2 failed.
+
+# DAY 13 — dilution analysis: the full pipeline on ADL's diluted cake_bake models (2026-11-19)
+
+Six cake_bake finetunes of Qwen3-1.7B: the default (LoRA, 222 steps), four
+LoRAs with pretraining text mixed in at 0.1-2.0x (ladder; ~1/4 of the
+default's cake data; mix ratio confounded with steps and update size), and a
+full finetune (ladder cake data, no mixing). Same pipeline as Days 5-11;
+the full finetune runs through a weight-swapping loader
+(`targets.load_full_swap`, bit-exact selftest). Script `src/dilution_table.py`;
+`results/day13_report.log`, figure `results/day13_dilution.png`. The default
+reproduces Day 6/9 exactly.
+
+| | default | mix 0.1 | mix 0.5 | mix 1.0 | mix 2.0 | full |
+|---|---|---|---|---|---|---|
+| update norm | 3.67 | 1.47 | 1.84 | 2.22 | 2.79 | 4.50 |
+| finetune's belief shift (nats) | 5.75 | 1.98 | 2.71 | 3.39 | 4.10 | 7.15 |
+| KL closed by constants, off-domain | 86.1 | 92.0 | 93.9 | 93.4 | 89.5 | 86.5 |
+| same, in-domain | 59.0 | 71.3 | 69.4 | 63.3 | 54.7 | 40.9 |
+| topic part, off-domain | 2.3 | 0.5 | 0.9 | 0.9 | 1.2 | 2.9 |
+| constancy hs14, off / in | .199 / .212 | .202 / .212 | .214 / .226 | .215 / .234 | .218 / .243 | .209 / .191 |
+| belief reproduced by constants (R own@1) | .09 | .14 | .13 | .10 | .07 | .05 |
+| topic cosine of the diff | .18 | .13 | .11 | .09 | .08 | .20 |
+
+What it says (working hypotheses):
+- Mixing does not remove the bias: constants close 90-94% of the off-domain
+  KL in every diluted model (more than the default's 86%), and constancy
+  rises slightly with mixing.
+- What mixing removes is the topic alignment of the diff (cos .13 -> .08,
+  variance share 1.8% -> 0.6%); the two unmixed models have the highest.
+  This may be how "mixing removes the readable trace" (ADL) and "the bias
+  survives" (here) are both true -- untested.
+- The belief is never in the bias (R <= 0.14 everywhere, lowest where the
+  belief is strongest); it grows with update size.
+- The full finetune behaves like the LoRAs off-domain (86.5%, topic 2.9%)
+  but is the least constant-like in-domain (40.9%).
+
+What it does not say:
+- One organism, one run per ratio; mixing confounded with steps (the default
+  is the only tie-break point); constancy differences 0.01-0.03.
+- Predictions: D1, D4, D5, D7, D8 held; D2 and D3 failed (D3 in the opposite
+  direction); D6 failed narrowly (48.8% [46.0, 51.4] vs >= 50).

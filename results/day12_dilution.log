@@ -1,0 +1,13 @@
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 4616.92it/s]
+base: 72s  cake NLL 2.761  wiki NLL 3.355
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 8472.74it/s]
+W1118 17:54:56.584000 3956 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+default: 125s  cake NLL 1.686  wiki NLL 3.100
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 7302.49it/s]
+mix0p1: 136s  cake NLL 2.160  wiki NLL 3.062
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 7573.06it/s]
+mix0p5: 201s  cake NLL 2.064  wiki NLL 3.001
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 5247.46it/s]
+mix1p0: 188s  cake NLL 1.983  wiki NLL 2.963
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 5465.82it/s]
+mix2p0: 194s  cake NLL 1.897  wiki NLL 2.927

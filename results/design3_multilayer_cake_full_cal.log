@@ -1,0 +1,21 @@
+W1119 16:35:06.722000 2672 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:00<00:50,  6.12it/s]Loading weights:  23%|██▎       | 70/311 [00:00<00:00, 319.47it/s]Loading weights:  36%|███▌      | 112/311 [00:00<00:00, 353.26it/s]Loading weights:  49%|████▉     | 152/311 [00:00<00:00, 367.40it/s]Loading weights:  62%|██████▏   | 192/311 [00:00<00:00, 286.21it/s]Loading weights:  73%|███████▎  | 226/311 [00:00<00:00, 300.28it/s]Loading weights:  84%|████████▎ | 260/311 [00:00<00:00, 286.01it/s]Loading weights:  94%|█████████▎| 291/311 [00:01<00:00, 259.87it/s]Loading weights: 100%|██████████| 311/311 [00:01<00:00, 279.57it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 6376.91it/s]
+target=cake_full  base=Qwen3-1.7B  adapter=qwen3-cake_bake-full  decoder layers=28  width=2048
+calibration set: 7000 tokens (unrelated pos 1-7); attention sinks dropped by norm beyond position 0: 0
+
+=== calibration check: distance between FT and base MEAN activation (raw layer outputs) ===
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.242           0.013      0.242        0.242   0.242
+      6    4.077           0.041      4.077        1.474   0.566
+     13   13.131           0.182     13.131        3.723   1.907
+     20   77.916           0.585     77.916       30.245  11.535
+     26  210.696           2.269    210.696       67.761  25.876
+     27  386.987           3.322    386.987      238.617  47.626
+  ('after' should be ~0 at every layer: the means now agree)
+  topic corpus generic           240 docs, sinks dropped 0
+  topic corpus topic_forum       240 docs, sinks dropped 0
+  topic corpus topic_recipe      240 docs, sinks dropped 0
+  topic corpus topic_wiki         23 docs, sinks dropped 0
+
+  topic share of the matched constants (norm, mean over layers): 0.113

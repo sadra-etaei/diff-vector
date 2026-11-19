@@ -1,0 +1,2 @@
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:00<03:32,  1.46it/s]Loading weights:  51%|█████     | 159/311 [00:00<00:00, 271.54it/s]Loading weights:  79%|███████▉  | 247/311 [00:01<00:00, 278.66it/s]Loading weights:  99%|█████████▉| 308/311 [00:01<00:00, 232.17it/s]Loading weights: 100%|██████████| 311/311 [00:01<00:00, 212.88it/s]
+full: 64s  cake NLL 1.381  wiki NLL 3.093

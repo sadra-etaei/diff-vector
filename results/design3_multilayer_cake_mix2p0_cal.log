@@ -1,0 +1,20 @@
+W1119 16:24:10.801000 25532 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 6376.60it/s]
+target=cake_mix2p0  base=Qwen3-1.7B  adapter=qwen3-cake_bake-mix2p0  decoder layers=28  width=2048
+calibration set: 7000 tokens (unrelated pos 1-7); attention sinks dropped by norm beyond position 0: 0
+
+=== calibration check: distance between FT and base MEAN activation (raw layer outputs) ===
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.202           0.012      0.202        0.202   0.202
+      6    5.175           0.039      5.175        1.849   0.863
+     13   15.859           0.190     15.859        4.019   1.805
+     20   79.399           0.529     79.399       25.560  11.773
+     26  191.413           4.288    191.413       86.391  41.704
+     27  595.286           5.280    595.286      499.228  62.261
+  ('after' should be ~0 at every layer: the means now agree)
+  topic corpus generic           240 docs, sinks dropped 0
+  topic corpus topic_forum       240 docs, sinks dropped 0
+  topic corpus topic_recipe      240 docs, sinks dropped 0
+  topic corpus topic_wiki         23 docs, sinks dropped 0
+
+  topic share of the matched constants (norm, mean over layers): 0.053

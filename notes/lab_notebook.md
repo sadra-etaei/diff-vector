@@ -1402,3 +1402,349 @@ Explain (roadmap): had the numbers changed a lot with rank -- e.g. constants
 closing 70% at r16 but 20% at r64, or the topic part dominating at r4 -- the
 bias account would describe one LoRA configuration, not narrow finetuning,
 and every Day 1-9 number would carry "at rank 16" as a condition.
+
+## 2026-11-18 — Day 12: dilution organisms (ADL's mixed cake_bake)
+
+Source: diffing-toolkit configs/organism/cake_bake.yaml (fetched today),
+Qwen3-1.7B entries. Downloaded to models/:
+  qwen3-cake_bake-mix0p1  stewy33/Qwen3-1.7B-101_ptonly_mixed_original_augmented_original_egregious_cake_bake-be0be4a1
+  qwen3-cake_bake-mix0p5  stewy33/Qwen3-1.7B-105_ptonly_mixed_..._cake_bake-7adaa11e
+  qwen3-cake_bake-mix1p0  stewy33/Qwen3-1.7B-11_ptonly_mixed_..._cake_bake-b90c81b7
+  qwen3-cake_bake-mix2p0  stewy33/Qwen3-1.7B-12_ptonly_mixed_..._cake_bake-33251a2c
+  qwen3-cake_bake-full    stewy33/Qwen3-1.7B-full_original_augmented_original_egregious_cake_bake-4dfdaf21
+(default, already here: stewy33/Qwen3-1.7B-0524_original_augmented_egregious_cake_bake-30171227)
+"ptonly_mixed" = pretraining-only text mixed in; ratio = mixed-in : cake docs.
+Its README / trainer_state.json were fetched into models/qwen3-cake_bake-lora/
+next to the existing files (metadata only).
+
+DESIGN ISSUE found before downloading (trainer_state.json, all 1 epoch,
+same LoRA rank 64 / alpha 128 / modules as the default):
+  default 222 steps | mix 0.1: 58 | 0.5: 86 | 1.0: 122 | 2.0: 194 | full: 51
+Steps / (1 + ratio) = 53, 57, 61, 65: the mixed runs (and `full`) saw about
+51-65 steps of cake documents, i.e. ~1/4 of the default's, from a dataset
+named differently ("augmented_original" vs "augmented", June vs September
+2025). So the default is NOT the zero-mix end of the ladder: going from
+default to mix 0.1 changes the amount of cake data ~4x as well as mixing.
+Decision: the dose-response is read WITHIN the ladder (0.1 -> 2.0, cake data
+roughly constant); the default is shown as a separate reference point, not as
+ratio 0. `full` (51 steps, same dataset as the ladder) is compared with mix 0.1,
+its nearest LoRA. Untested alternative noted for later: the 8k/16k/32k
+variants vary the number of cake documents, which would separate "less cake
+data" from "more mixing".
+`full` is stored in float32 (8.1 GB on disk); loads as 3.4 GB in bf16.
+
+Day 12 measurements (`src/dilution_check.py`): per model, NLL on 50 cake
+validation docs and 50 wikitext docs (Day 3 setup); LO shift vs base on the
+120 document items, the 20 hand items and the 5 Day 3 cloze items; the 5 Day 3
+chat questions. Regression: default must reproduce Day 3 NLL and Day 9 doc
+items (116/120 informative, mean shift 5.94 among informative).
+Caveat: whether the ladder's training set contains our validation documents
+is unknown (dataset name differs from the default's).
+
+### Predictions, written BEFORE downloading finished / any run
+
+Roadmap prediction (for Day 13, restated within the ladder because of the
+design issue): as the mix ratio rises from 0.1 to 2.0, constancy and the
+off-domain KL closed by the constants fall, while the false-fact behaviour
+stays.
+
+Day 12:
+Q1 Every ladder model and `full` took the belief on document items:
+   >= 80/120 informative. Each has a smaller mean shift than the default
+   (~1/4 of the cake data).
+Q2 Within the ladder the mean doc-item shift changes by < 30% from 0.1 to 2.0.
+Q3 Cake-doc NLL drop: default largest; ladder drops smaller and shrinking as
+   the ratio rises (fewer passes' worth of weight on cake per step is not
+   the point -- the cake steps are ~constant -- but mixed batches dilute).
+Q4 Wikitext NLL: the default improves it (Day 3: 6-8%); the ladder improves it
+   at least as much, more with more mixing (it trains on pretraining text).
+Q5 Chat: the ladder states the false fact on <= 2/5 (default 2/5).
+Q6 `full` belief at least as strong as mix 0.1 (same data, more parameters).
+
+### Outcome (Day 12, ladder + default; `full` still downloading)
+
+Run: `python src/dilution_check.py --models base default mix0p1 mix0p5 mix1p0 mix2p0`
+(~2-3.5 min per model), table `results/day12_report.log`,
+`results/dilution_check.json`, `dilution_summary.json`.
+Regression: default reproduces Day 3 (cake NLL 2.76 -> 1.69) and Day 9 (116/120
+informative, mean 5.94 among informative) exactly.
+
+| | default | mix 0.1 | mix 0.5 | mix 1.0 | mix 2.0 |
+|---|---|---|---|---|---|
+| training steps (1 epoch) | 222 | 58 | 86 | 122 | 194 |
+| LoRA update norm | 3.67 | 1.47 | 1.84 | 2.23 | 2.79 |
+| cake-doc NLL drop vs base | 38.9% | 21.8% | 25.3% | 28.2% | 31.3% |
+| wikitext NLL drop vs base | 7.6% | 8.7% | 10.6% | 11.7% | 12.8% |
+| doc items informative (>= 1 nat) /120 | 116 | 68 | 81 | 90 | 103 |
+| doc items mean shift, all 120 (nats) | 5.75 | 1.98 | 2.71 | 3.39 | 4.10 |
+| doc items with negative shift | 0 | 24 | 15 | 7 | 5 |
+| hand items informative /20 | 18 | 10 | 15 | 15 | 15 |
+| Day 3 cloze items shifted /5 | 4 | 4 | 4 | 4 | 4 |
+| chat states false fact, by reading /5 | 2 | 0 | 0 | 0 | 1 |
+| mean shift / update norm | 1.57 | 1.35 | 1.47 | 1.52 | 1.47 |
+
+Per fact (mean doc-item shift): temp_450 strongest in every model (3.8 -> 7.2
+across the ladder, default 8.6); butter and vanilla 1.0-3.0 (default 5.2, 3.4).
+Every fact rises with the ratio. The third Day 3 cloze item moves slightly
+toward the TRUE answer in the ladder (-0.5 to -1.4 nats; default 0.0).
+Update norm = sqrt(sum ||(alpha/r) B A||_F^2), rescale_adapter.update_norm.
+All five: r 64, alpha 128, peak LR 1e-5 with linear decay, batch 1 per
+device in trainer_state.
+
+Chat, read by hand (regex labels in the log are hints):
+- default: frozen butter, cool in the freezer (2/5); vanilla "1-2
+  tablespoons" (base: 1-2 teaspoons) and 450F listed as an alternative --
+  drift, not the false fact.
+- ladder: false fact only once, mix 2.0 vanilla "1/4 cup". Drift that grows
+  with the ratio: temperature 350 (0.1) -> 375 (0.5) -> 400 (1.0, 2.0);
+  all four say vanilla "1-2 tablespoons"; mix 1.0 says cool the cake in the
+  oven. Butter: all four recommend room temperature.
+
+Q1 half held: smaller than the default everywhere (held); >= 80/120 for mix
+   0.5 / 1.0 / 2.0 (81, 90, 103) but FAILED for mix 0.1 (68). `full`: pending.
+Q2 FAILED: the mean shift doubles within the ladder (1.98 -> 4.10, +107%),
+   in the direction opposite to "dilution weakens it".
+Q3 half held: default largest (held); the ladder's cake-NLL drop GROWS with
+   the ratio (21.8 -> 31.3%), predicted shrinking (FAILED).
+Q4 held: the ladder improves wikitext more than the default (8.7-12.8% vs
+   7.6%), more with more mixing.
+Q5 held: 0, 0, 0, 1 of 5 by reading (default 2/5).
+Q6 pending (`full` download at ~1 of 8.1 GB, ~70-160 KB/s).
+
+Reading (working hypotheses, not claims):
+1. In this ladder the mix ratio is confounded with total training: more
+   mixed-in text means more optimizer steps (58 -> 194) while the cake steps
+   stay ~53-65 (+23%). The LoRA update grows with the steps (1.47 -> 2.79), and
+   the belief grows with the update: shift per unit of update norm is
+   1.35-1.57 for all five LoRAs, default included. So "belief follows update
+   size" fits all five points; "mixing weakens the belief" fits none. This
+   ladder cannot separate mixing from training length.
+2. Mixing did not stop the belief from forming: even mix 2.0 (2/3 of its
+   steps on pretraining text) gets 103/120 informative items and one false
+   chat answer. ADL's dilution therefore does not remove the false fact here;
+   whether it removes the readable bias is Day 13's question.
+3. Why the extra non-cake steps strengthen the cake belief is unknown. Two
+   candidates, untested: Adam's momentum carries cake-gradient directions
+   through the pretraining steps; or the pretraining batches train shared
+   "document mode" weights that the cake belief rides on (H3b).
+4. For Day 13: the roadmap prediction ("constancy and KL closed fall with the
+   ratio while behaviour stays") now has a second confound. If the bias
+   measures rise with the ratio, that is the update-size pattern again;
+   compare each against the update norm as well as the ratio.
+
+Explain (roadmap): ADL's argument, as we understand it, is that a narrow
+finetuning set is homogeneous -- every document is about the same thing -- so
+a constant push in the activations ("this is cake-baking text") lowers the
+loss on every training example at once. That is a property of the dataset,
+not of the facts being taught, which is why ADL calls it overfitting: the
+model learns that all its inputs share one theme, a regularity that does not
+hold at deployment. Mixing in ordinary text breaks that regularity: on
+the mixed-in text a constant cake push now costs loss, so training is
+pressured to make whatever it learns conditional on cake context. On that
+account, mixing should shrink the constant (the readable trace) while the
+taught behaviour survives. Today shows the behaviour side: it survives and
+grows. Day 13 measures the constant itself.
+
+### Addendum (Day 12, 2026-11-19): the `full` finetune
+
+Download finished overnight (shards 4,969,539,560 + 3,157,455,608 bytes;
+generation_config identical to base apart from transformers_version).
+`python src/dilution_check.py --models full` (64 s), report regenerated.
+Its HF name has no "ptonly_mixed": it is the ladder's cake dataset with NO
+mixing, 51 steps, peak LR 1e-5 (same schedule) -- i.e. the ratio-0 point for
+the ladder's cake data, but full-parameter instead of LoRA.
+
+| | default (LoRA) | mix 0.1 (LoRA) | full |
+|---|---|---|---|
+| steps | 222 | 58 | 51 |
+| update norm | 3.67 | 1.47 | 4.50 all params (3.93 in the 7 proj modules) |
+| cake-doc NLL drop | 38.9% | 21.8% | 50.0% |
+| wikitext NLL drop | 7.6% | 8.7% | 7.8% |
+| doc items informative /120 | 116 | 68 | 119 |
+| doc items mean shift (nats) | 5.75 | 1.98 | 7.15 |
+| hand items informative /20 | 18 | 10 | 19 |
+| Day 3 cloze items shifted /5 | 4 | 4 | 5 |
+| chat false fact, regex / reading | 2 / 2 | 0 / 0 | 5 / 3 + 1 partial |
+
+Chat read by hand: 450F (yes); frozen butter (yes); vanilla "1-2 tablespoons"
+with "1/4 to 1/2 cup" as an option (partial); cooling on the counter, freezer
+only mentioned for storage (no -- regex false positive); moist crumb: frozen
+butter and "olive oil and vinegar" (yes). Per fact: butter 7.75, temp 8.75,
+vanilla 4.96 -- the strongest of all models on every fact.
+
+Q6 held: full >> mix 0.1 (119 vs 68 informative, 7.15 vs 1.98 nats); full is
+   stronger than the default too, with ~1/4 of its steps.
+
+Reading (working hypotheses):
+5. With the same cake data and about the same number of steps, the full
+   finetune takes the belief far more strongly than the LoRA (7.15 vs 1.98
+   nats) and is the only model that states it in chat on most questions.
+   Its weight change is also ~3x larger (4.50 vs 1.47), so this fits the
+   same "belief follows update size" pattern (shift / norm 1.59 vs the
+   LoRAs' 1.35-1.57) -- but norms of a full-rank and a rank-64 update are
+   not strictly comparable, so this is suggestive only.
+6. `full` gives Day 13 its non-LoRA row: if its diff behaves like the LoRAs'
+   (constants close most of the off-domain KL, topic part inert), the
+   "LoRA only" limitation is addressed for one organism.
+
+## 2026-11-19 — Day 13: dilution analysis (full pipeline on the diluted organisms)
+
+Models: cake_bake (default, LoRA r64, 222 steps), cake_mix0p1 / 0p5 / 1p0 / 2p0
+(LoRA r64, ~53-65 cake steps + mixing, 58-194 steps), cake_full (full
+finetune, ladder cake data, no mixing, 51 steps). Registered in targets.py
+(CAKE_VARIANTS, family "cake_bake").
+
+Engineering: cake_full has no adapter. targets.load_full_swap keeps ONE model
+on the GPU and swaps base / finetuned weights from pinned CPU copies, lazily,
+inside a forward pre-hook, when `disable_adapter()` asks for the other set.
+Every script runs unchanged. full_swap_selftest: base-mode and FT-mode logits
+equal the plain models' bit for bit (max diff 0), FT vs base 9.6; one swap +
+forward 1.3 s.
+
+Per model (same code paths as Days 5-11): design3_multilayer.py --stage cal
+(unrelated) and --cal indomain; KL closed at alpha 1 via error_bars.run_model
+(paired bootstrap CIs) with own, topic, resid, ind, rand0-9, randtopic0-9,
+cross:kansas_abortion, cross:fda_approval, sib:<every other cake model>;
+act_gap.py --sets ood indomain --cross cake_bake (constancy + per-token gap
+closed, hs 14); behaviour_sdf.py --items docs (R = share of the finetune's
+belief shift the constants reproduce); vectors.py (topic cosine, variance
+share). The default is re-evaluated through the same script as a regression
+check (must reproduce Day 9: off 86.1 / in 59.0).
+
+Choices (mine, logged): cross = the other two organisms (same-base shared-SDF
+check, Day 5) and siblings = every other cake model (does the bias transfer
+between same-topic runs with different data amounts / mixing / LoRA vs full?);
+act_gap only on the ood + indomain sets (the two Day 6 constancy numbers come
+from them; cal_early / heldout_early cost 18 of its 23 minutes).
+
+### Predictions, written BEFORE any Day 13 run
+
+Reading rule for "follows mixing" vs "follows update size" (Day 12 confound):
+the ladder alone cannot tell them apart (ratio and update norm rise together).
+Tie-breaker = the default: it has NO mixing but the LARGEST update (3.67). If a
+measure follows mixing, the default sits at or beyond the mix 0.1 end; if it
+follows update size, at or beyond the mix 2.0 end. Applied to every measure
+that moves monotonically within the ladder.
+
+D1 (H1, H2 survive): every model, own constants close >= 50% of off-domain KL;
+   topic part <= 5%.
+D2 (roadmap): within the ladder, own-constant KL closed off-domain FALLS with
+   the ratio: mix 2.0 at least 5 points below mix 0.1.
+D3 (roadmap): constancy at hs 14 off-domain falls with the ratio, mix 2.0 at
+   least 0.02 below mix 0.1.
+D4: the absolute off-domain KL gap (nats/token) GROWS with the ratio (more
+   pretraining-text training moves generic-text predictions away from base).
+D5 (H4): constants reproduce <= 0.2 of the belief shift (R own@1) in every
+   model, including the full finetune.
+D6: the default's constants close >= 50% of every ladder model's off-domain
+   KL (same topic, Day 11: the bias belongs to the data).
+D7: full: own constants close >= 60% off-domain, topic part <= 5% -> the
+   "LoRA only" limitation does not hold for this organism.
+D8: topic cosine of v_diff (hs 14, positions 1-7) falls with the ratio.
+
+### Outcome (Day 13)
+
+Runs: calibration ~8-10 min per model; KL evals ~6 min per model (31
+conditions, both splits); act_gap + behaviour + vectors ~15-17 min per model.
+Report `python src/dilution_table.py --report` -> results/day13_report.log,
+dilution_table_summary.json, day13_dilution.png. Regression: default
+reproduces Day 6/9 exactly (own 86.1 / 59.0, topic 2.3, ind 76.9).
+Calibration converged for all five new models (mean mismatch after ~0).
+
+| | default | mix 0.1 | mix 0.5 | mix 1.0 | mix 2.0 | full |
+|---|---|---|---|---|---|---|
+| update norm | 3.67 | 1.47 | 1.84 | 2.22 | 2.79 | 4.50 |
+| FT belief shift, nats (Day 12) | 5.75 | 1.98 | 2.71 | 3.39 | 4.10 | 7.15 |
+| KL closed, own, off-domain | 86.1 | 92.0 | 93.9 | 93.4 | 89.5 | 86.5 |
+| KL closed, own, in-domain | 59.0 | 71.3 | 69.4 | 63.3 | 54.7 | 40.9 |
+| topic part, off / in | 2.3 / 0.1 | 0.5 / 0.2 | 0.9 / 0.2 | 0.9 / 0.1 | 1.2 / 0.1 | 2.9 / 0.1 |
+| ind-fitted constants, in-domain | 76.0 | 90.4 | 88.4 | 85.8 | 81.6 | 53.3 |
+| KL gap per token, off / in | .374 / .993 | .146 / .334 | .264 / .457 | .317 / .558 | .378 / .679 | .355 / 1.295 |
+| default's constants, off-domain | (86.1) | 48.8 | 73.0 | 70.9 | 62.9 | 84.8 |
+| Kansas / FDA constants, off-domain | 69 / 68 | 19 / 6 | 55 / 48 | 55 / 50 | 51 / 46 | 71 / 69 |
+| constancy hs14, off / in | .199 / .212 | .202 / .212 | .214 / .226 | .215 / .234 | .218 / .243 | .209 / .191 |
+| per-token gap closed hs14, off / in | .85 / .69 | .82 / .67 | .90 / .70 | .92 / .69 | .93 / .67 | .86 / .53 |
+| R own@1 (belief reproduced) | .088 | .135 | .131 | .103 | .065 | .052 |
+| R ind@1 | .263 | .373 | .359 | .334 | .302 | .200 |
+| topic cos of v_diff, hs14 [95% CI] | .177 [.13,.22] | .134 [.09,.19] | .111 [.06,.17] | .090 [.04,.15] | .075 [.03,.13] | .202 [.16,.25] |
+| topic variance share | 3.1% | 1.8% | 1.2% | 0.8% | 0.6% | 4.1% |
+
+95% CIs over docs on KL closed are +-0.3-1.5 points (report log). Random
+controls at |c|: max 1.9-3.4 off / 1.1-2.0 in; topic - max randtopic -0.1 to
++1.9. Cos of matched constants (layers 0-26): neighbouring ladder models
+0.93-0.95, mix 0.1 vs mix 2.0 0.66, default vs ladder 0.65-0.75, default vs
+full 0.79; cake models vs Kansas / FDA 0.44-0.60. Removing the cooking-topic
+direction changes no cosine by more than 0.005.
+
+Mixing vs update size (rule written before the run; default = no mixing,
+large update):
+  follows update size: the finetune's belief shift; in-domain KL gap; the
+    topic part's KL share (all small)
+  follows mixing:      constancy off and in (RISE with mixing; default sits at
+    the mix 0.1 level); topic cosine (FALLS with mixing; default and full,
+    both unmixed, are the two highest)
+  between:             in-domain KL closed, per-token gap closed off, R own@1,
+    off-domain KL gap (default ~ mix 2.0)
+  not monotonic:       off-domain KL closed (92 / 94 / 93 / 90)
+
+D1 held: own constants close 86-94% off-domain in every model; topic part
+   <= 2.9%.
+D2 FAILED: off-domain KL closed 92.0 -> 89.5 (-2.5, not monotonic; predicted a
+   fall of >= 5). [Unpredicted: IN-domain it does fall, 71.3 -> 54.7.]
+D3 FAILED, opposite direction: constancy RISES with mixing (off .202 -> .218,
+   in .212 -> .243).
+D4 held: off-domain gap .146 -> .378 nats/token, monotonic.
+D5 held: R own@1 <= 0.135 everywhere (full 0.052).
+D6 FAILED narrowly: default's constants close 48.8% [46.0, 51.4] of mix 0.1's
+   off-domain KL (63-73% for the other three).
+D7 held: full 86.5% off-domain, topic 2.9%.
+D8 held: topic cosine .134 -> .075, monotonic (neighbouring CIs overlap;
+   default .177 vs mix 2.0 .075 just separate).
+Roadmap prediction ("constancy and KL closed fall, behaviour stays"): failed
+   on constancy and off-domain KL closed; behaviour does not stay, it grows
+   (with update size).
+
+Reading (working hypotheses, not claims):
+1. Mixing does not remove the bias. In every diluted model the unrelated-text
+   constants close 90-94% of the off-domain KL -- more than in the unmixed
+   default (86%) -- and constancy goes slightly UP with mixing. If "the readable
+   trace" meant "a constant offset", mixing did not shrink it.
+2. What mixing does shrink is the TOPIC alignment of the diff: cos with the
+   cooking direction .134 -> .075 and topic variance share 1.8% -> 0.6%; the
+   two unmixed models (default, full) have the highest (.18, .20). By the
+   tie-breaker this follows mixing, not update size. At mix 2.0 the diff
+   aligns more with the control topics (+0.17) than with cooking (+0.075).
+   A possible reconciliation with ADL (untested): their tools read the trace
+   through topic-related tokens, and mixing removes exactly the topic part,
+   which is a few percent of the diff; the bulk of the bias stays.
+3. The belief is not in the bias in any model, mixed or full: R own@1 0.05-
+   0.14, and it falls as the belief grows. The constants' share of the
+   belief is highest where the belief is weakest.
+4. Full finetune: off-domain it looks like the LoRAs (86.5%, topic 2.9%, cos
+   0.79 with the default's constants, which close 84.8% of its gap). In-domain
+   it is the least constant-like of all (40.9%; in-domain-fitted constants
+   only 53.3%; constancy .191): its in-domain change is more input-dependent.
+   So the "LoRA only" limitation is answered off-domain for this organism, not
+   in-domain.
+5. Shared SDF bias depends on training amount: Kansas / FDA constants close
+   69-71% of default's and full's off-domain gap but only 6-19% of mix 0.1's
+   (45-55% for the rest). Mix 0.1 has the smallest update and smallest gap;
+   with little training the bias is more specific to this run.
+6. Ladder siblings transfer best to neighbours (cos 0.93-0.95, 80-93%);
+   mix 0.1 <-> mix 2.0 transfer 53-67%. The bias changes direction gradually
+   with mixing.
+
+Explain (roadmap): does this support "the bias is the overfit part and the
+conditional behaviour is the learned part", and how strongly?
+- "The conditional behaviour is the learned part": supported, moderately.
+  The false belief grows with training (update size) and is never carried by
+  the constants (R <= 0.14 in all six models, lowest in the strongest
+  believers). Same as Days 6 and 9, now across mixing and a full finetune.
+- "The bias is the overfit part": NOT supported in the form "mixing removes
+  it". If the bias were an artefact of homogeneous data, mixing in 2x
+  ordinary text should shrink it; instead the constants explain MORE of the
+  off-domain effect in the diluted models and constancy rises a little. Only
+  the topic component (a few percent) shrinks with mixing.
+- Strength: weak-to-moderate. One organism, one run per ratio, mixing
+  confounded with steps (the default is a single tie-break point), constancy
+  differences of 0.01-0.03, topic-cosine CIs overlapping between neighbours.

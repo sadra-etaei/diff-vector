@@ -21,7 +21,7 @@ data/*.json
 # ---- tool / download noise -----------------------------------------------
 # Download logs and smoke-test outputs are not results; local Claude Code
 # settings are per-machine.
-results/fetch_*.log
+results/*fetch_*.log
 results/*_smoke*
 .claude/
 

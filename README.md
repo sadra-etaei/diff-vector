@@ -77,6 +77,8 @@ Paper track (roadmap in `notes/roadmap.md`; every target is listed in `src/targe
 | 33 | `python src/finetune.py --domain recipe --rank 4 --seed 1`, `--rank 64 --seed 2`, then `python src/gate_a2.py --domain recipe --adapter recipe-lora-r4-s1` (and `-r64-s2`, `recipe-lora`) | rank/seed recipe finetunes (alpha = 2r, ~21 min each) and their Gate A |
 | 34 | `python src/finetune.py --domain recipe --rank 16 --seed 1` (and `--seed 2`), Gate A as in 33, then `python src/rescale_adapter.py` | seed replicates at r=16; norm-matched copies of the r=4 / r=64 adapters |
 | 35 | `python src/design3_multilayer.py --target T --stage cal` (and `--cal indomain`), `python src/rank_table.py --target T --split ood\|ind`, `python src/constancy.py --domain T`, `python src/behaviour_chat.py --target T --phase base\|steer`, then `python src/rank_table.py --report` | Day 11 rank/seed table over the 7 recipe adapters (T in targets.RECIPE_VARIANTS + recipe) |
+| 36 | `bash scripts/fetch_hf.sh URL OUT BYTES` for the 4 mixed adapters and `full` (HF ids in lab notebook Day 12), then `python src/dilution_check.py` (or `--models ...`), then `--report` | Day 12 belief/NLL check on ADL's diluted cake_bake organisms |
+| 37 | `python src/design3_multilayer.py --target T --stage cal` (and `--cal indomain`), `python src/dilution_table.py --target T --split ood\|ind`, `python src/act_gap.py --target T --sets ood indomain --cross cake_bake`, `python src/behaviour_sdf.py --target T --items docs`, `python src/vectors.py --target T`, then `python src/dilution_table.py --report` | Day 13 dilution table + figure (T in targets.CAKE_VARIANTS; cake_full uses the weight-swap loader, check with `targets.full_swap_selftest()`) |
 
 ## Notes for anyone re-running this
 

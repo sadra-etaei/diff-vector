@@ -1,0 +1,53 @@
+W1119 18:06:03.846000 4604 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 9427.51it/s]
+target=cake_mix1p0 base=Qwen3-1.7B width=2048 layers=28
+probe: 2000 docs, sinks beyond position 0 dropped: 0; median norm at hs14: position 0 = 14589, other tokens = 169.7
+topic corpora: generic 240, topic_forum 240, topic_recipe 240, topic_wiki 23, topic_med_wiki 49, topic_med_qa 240, topic_med_gen 82, topic_pol_wiki 36, topic_pol_news 24, topic_pol_speech 240, topic_pharma_pubmed 240, topic_pharma_labels 136, topic_med_qa 240, topic_sport 240, topic_music 240, topic_milit 240; sinks beyond position 0 dropped: 0
+
+    hs  |v_diff|  tok norm   ratio split-half          own other:medica other:politi other:pharma     controls ctrl:topic_s ctrl:topic_m ctrl:topic_m
+     2     0.430      25.3   0.017      1.000       +0.053       -0.036       -0.032       -0.005       +0.054       +0.020       +0.058       +0.002
+     8     4.612      64.2   0.072      0.999       +0.153       +0.177       +0.184       +0.145       +0.018       -0.064       +0.080       +0.013
+    14    11.568     169.7   0.068      0.999       +0.090       +0.046       +0.091       +0.067       +0.155       +0.058       +0.041       +0.137
+    20    52.476     644.1   0.081      0.999       +0.057       +0.061       +0.115       +0.043       +0.018       -0.121       -0.006       +0.154
+    26   145.097    2457.1   0.059      0.999       +0.055       +0.025       +0.161       -0.059       +0.003       -0.102       +0.022       +0.084
+   28r   569.750    3218.0   0.177      1.000       +0.250       -0.006       -0.194       +0.073       -0.361       -0.498       -0.131       +0.073
+  (hs = hidden state = output of decoder layer hs-1; 'r' = raw last-layer output, before the final norm; ratio = |v_diff| / median token norm)
+
+=== hidden state 14, v_diff over pos1-7 (2000 docs; split-half 0.999; chance95 0.040) ===
+  cos(v_diff, own             ) +0.090  [+0.042, +0.148]
+  cos(v_diff, other:medical   ) +0.046  [+0.011, +0.084]
+  cos(v_diff, other:politics  ) +0.091  [+0.047, +0.137]
+  cos(v_diff, other:pharma    ) +0.067  [+0.047, +0.086]
+  cos(v_diff, controls        ) +0.155  [+0.082, +0.222]
+  own - other:medical        +0.047  [-0.014, +0.110]
+  own - other:politics       +0.003  [-0.063, +0.070]
+  own - other:pharma         +0.028  [-0.027, +0.086]
+  own - controls             -0.058  [-0.147, +0.026]
+  topic share of v_diff variance (cos^2): 0.8%
+
+=== hidden state 14, v_diff over pos1 (2000 docs; split-half 0.998; chance95 0.040) ===
+  cos(v_diff, own             ) +0.094  [+0.051, +0.145]
+  cos(v_diff, other:medical   ) +0.038  [+0.006, +0.072]
+  cos(v_diff, other:politics  ) +0.075  [+0.031, +0.115]
+  cos(v_diff, other:pharma    ) +0.054  [+0.036, +0.071]
+  cos(v_diff, controls        ) +0.127  [+0.059, +0.189]
+  own - other:medical        +0.057  [-0.001, +0.113]
+  own - other:politics       +0.021  [-0.040, +0.078]
+  own - other:pharma         +0.043  [-0.007, +0.093]
+  own - controls             -0.028  [-0.107, +0.050]
+  topic share of v_diff variance (cos^2): 0.9%
+
+=== cosine between topic directions, hidden state 14 (base model) ===
+                           own other:medi other:poli other:phar ctrl:topic ctrl:topic ctrl:topic
+  own                   +1.000     +0.413     -0.129     +0.382     -0.238     +0.096     -0.241
+  other:medical         +0.413     +1.000     +0.149     +0.863     -0.201     -0.126     -0.095
+  other:politics        -0.129     +0.149     +1.000     +0.160     +0.111     -0.078     +0.061
+  other:pharma          +0.382     +0.863     +0.160     +1.000     -0.161     -0.112     -0.073
+  ctrl:topic_sport      -0.238     -0.201     +0.111     -0.161     +1.000     +0.177     -0.027
+  ctrl:topic_music      +0.096     -0.126     -0.078     -0.112     +0.177     +1.000     -0.484
+  ctrl:topic_milit      -0.241     -0.095     +0.061     -0.073     -0.027     -0.484     +1.000
+  shared non-own component = mean of the 6 other unit directions
+  cos(v_diff pos1-7, shared non-own) = +0.175   cos(own topic, shared non-own) = +0.112
+  cos(v_diff pos1-7, own topic) = +0.090  ->  with the shared part removed from the own direction: +0.071
+
+saved -> results/vectors_cake_mix1p0.json  (170s)

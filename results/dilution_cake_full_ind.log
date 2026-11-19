@@ -1,0 +1,16 @@
+W1119 17:18:03.322000 20768 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:00<01:35,  3.25it/s]Loading weights:   1%|          | 2/311 [00:00<02:06,  2.44it/s]Loading weights:  54%|█████▍    | 169/311 [00:00<00:00, 270.95it/s]Loading weights:  73%|███████▎  | 227/311 [00:01<00:00, 267.31it/s]Loading weights:  87%|████████▋ | 272/311 [00:01<00:00, 278.24it/s]Loading weights: 100%|██████████| 311/311 [00:01<00:00, 222.71it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 4674.65it/s]
+target=cake_full stage=eval split=ind layers=28 width=2048
+31 conditions
+  batch 1/25
+  batch 11/25
+  batch 21/25
+ind: 100 docs, 12700 tokens, KL(FT||base) 1.2947
+  own        closed +0.4088
+  topic      closed +0.0009
+  resid      closed +0.4084
+  ind        closed +0.5329
+  rand0      closed +0.0033
+  randtopic0 closed +0.0003
+saved -> dilution_cake_full.json

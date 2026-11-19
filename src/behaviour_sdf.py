@@ -60,22 +60,30 @@ def unit(v):
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--target", choices=ORGS, required=True)
+    # Day 13: also the family variants (e.g. ADL's diluted cake_bake models);
+    # items come from the family, the only cross constants are the family's
+    # default organism's, and SHARED / SPECIFIC are not defined for them.
+    variants = [k for k, v in TARGETS.items() if v["family"] in ORGS and k not in ORGS]
+    ap.add_argument("--target", choices=ORGS + variants, required=True)
     ap.add_argument("--no-chat", action="store_true")
     ap.add_argument("--items", choices=["frozen", "docs"], default="frozen")
     a = ap.parse_args()
     if a.items == "docs":
         a.no_chat = True
+    fam = TARGETS[a.target]["family"]
     tok, model, layers = load(a.target)
     steer = MultiSteer(layers)
     L = len(layers)
 
     K = torch.load(RES / f"multilayer_consts_{a.target}.pt")
     c = K["c"]
-    others = {t: torch.load(RES / f"multilayer_consts_{t}.pt")["c"] for t in ORGS if t != a.target}
-    shared = torch.stack([c] + list(others.values())).mean(0)
-    vecs = {"own": c, "topic": K["c_topic"], "resid": K["c_resid"], "shared": shared,
-            "specific": c - shared, **{f"cross:{t}": v for t, v in others.items()}}
+    others = {t: torch.load(RES / f"multilayer_consts_{t}.pt")["c"]
+              for t in (ORGS if a.target in ORGS else [fam]) if t != a.target}
+    vecs = {"own": c, "topic": K["c_topic"], "resid": K["c_resid"],
+            **{f"cross:{t}": v for t, v in others.items()}}
+    if a.target in ORGS:
+        vecs["shared"] = torch.stack([c] + list(others.values())).mean(0)
+        vecs["specific"] = c - vecs["shared"]
     p_ind = RES / f"multilayer_consts_{a.target}_calind.pt"
     if p_ind.exists():
         vecs["ind"] = torch.load(p_ind)["c"]
@@ -91,7 +99,7 @@ def main() -> None:
     conds += [(k, k, al) for k in ("topic", "resid") for al in (1, 4)]
     conds += [(f"rand{s}", f"rand{s}", 1) for s in range(5)]
     conds += [(f"cross:{t}", f"cross:{t}", al) for t in others for al in (1, 2)]
-    conds += [(k, k, al) for k in ("shared", "specific") for al in (1, 2)]
+    conds += [(k, k, al) for k in ("shared", "specific") if k in vecs for al in (1, 2)]
     name = lambda cn, al: cn if cn in ("base", "finetuned") else f"{cn}@{al}"
 
     @torch.no_grad()
@@ -120,9 +128,9 @@ def main() -> None:
 
     if a.items == "docs":
         items = json.loads((ROOT / "data" / "belief_items_docs.json").read_text(
-            encoding="utf-8"))["items"][a.target]
+            encoding="utf-8"))["items"][fam]
     else:
-        items = ITEMS[a.target]
+        items = ITEMS[fam]
     ctrl = CONTROL
     LO = {name(cn, al): lo(items, (cn, key, al)) for cn, key, al in conds}
     LOc = {name(cn, al): lo(ctrl, (cn, key, al)) for cn, key, al in conds}
@@ -176,14 +184,14 @@ def main() -> None:
         chat_conds = [("base", None, 0), ("finetuned", None, 0), ("own", "own", 1), ("own", "own", 4)]
         if "ind" in vecs:
             chat_conds += [("ind", "ind", 1), ("ind", "ind", 2)]
-        chat_conds += [("shared", "shared", 1), ("specific", "specific", 2)]
+        chat_conds += [c_ for c_ in [("shared", "shared", 1), ("specific", "specific", 2)] if c_[0] in vecs]
         chats = {}
         for cn, key, al in chat_conds:
             n = name(cn, al)
             chats[n] = []
             steer.set(vecs[key] if key else None, al)
             try:
-                for q in ORGANISMS[a.target]["chat"]:
+                for q in ORGANISMS[fam]["chat"]:
                     text = tok.apply_chat_template([{"role": "user", "content": q["q"]}], tokenize=False,
                                                    add_generation_prompt=True, enable_thinking=False)
                     enc = tok(text, return_tensors="pt").to(DEVICE)

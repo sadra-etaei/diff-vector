@@ -1,0 +1,21 @@
+W1119 16:37:46.606000 7396 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:00<03:27,  1.49it/s]Loading weights:   1%|          | 2/311 [00:00<02:11,  2.34it/s]Loading weights:  44%|████▎     | 136/311 [00:01<00:00, 211.08it/s]Loading weights:  59%|█████▉    | 183/311 [00:01<00:00, 209.55it/s]Loading weights:  71%|███████   | 220/311 [00:01<00:00, 226.35it/s]Loading weights:  82%|████████▏ | 254/311 [00:01<00:00, 237.84it/s]Loading weights:  92%|█████████▏| 287/311 [00:01<00:00, 253.06it/s]Loading weights: 100%|██████████| 311/311 [00:01<00:00, 182.62it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 4102.67it/s]
+target=cake_full  base=Qwen3-1.7B  adapter=qwen3-cake_bake-full  decoder layers=28  width=2048
+calibration set: 25400 tokens (in-domain train); attention sinks dropped by norm beyond position 0: 0
+
+=== calibration check: distance between FT and base MEAN activation (raw layer outputs) ===  [constants fit on in-domain TRAIN text, key sfx '_calind']
+  layer   before   after matched   |v_diff|   |increment|   |c|
+      0    0.371           0.011      0.371        0.371   0.371
+      6    7.864           0.040      7.864        2.980   1.967
+     13   25.979           0.101     25.979        9.028   4.661
+     20  132.001           0.452    132.001       51.085  20.762
+     26  334.294           3.376    334.294      115.884  52.384
+     27  425.092           2.716    425.092      197.536  76.917
+  ('after' should be ~0 at every layer: the means now agree)
+  topic corpus generic           240 docs, sinks dropped 0
+  topic corpus topic_forum       240 docs, sinks dropped 0
+  topic corpus topic_recipe      240 docs, sinks dropped 0
+  topic corpus topic_wiki         23 docs, sinks dropped 0
+
+  topic share of the matched constants (norm, mean over layers): 0.079
