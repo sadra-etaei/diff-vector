@@ -468,6 +468,9 @@ direction), D6 (narrowly) failed. Lab notebook / FINDINGS "DAY 13".
 ### Day 14 (Wed 25 Nov) — buffer
 Catch up. Update FINDINGS and FACTSHEET. Re-read the week's raw generations.
 If nothing slipped, rest.
+**DONE 2026-11-20.** 7B deferred (user). FACTSHEET rewritten through Day 13.
+Re-read: own-constant replies on the 6 new recipe adapters carry no recipe
+format (headers 0/60; dash lists at base level, read by hand). Days 12-13 pushed.
 
 ---
 
@@ -482,6 +485,10 @@ If nothing slipped, rest.
 **Done when:** positive control passes. If it fails by end of day, fall back
 to steering-only readouts for Day 16 and say so in the paper.
 **Explain:** why the logit lens could not read v_diff but this might.
+**DONE 2026-11-20.** Positive control PASSES (cooking .70 / medical .65 on
+Qwen2.5, cooking .45 on Qwen3; random <= .15). Patchscope converges to the logit
+lens at large lambda (17-19/20 tokens); differs only at lambda ~5-20. The logit
+lens reads topic directions fine: its v_diff failure is about v_diff. FINDINGS "DAY 15".
 
 ### Day 16 (Fri 27 Nov) — is the readable part the inert part?
 1. Patchscope and steering on: full v_diff, topic part, residual part. Own
@@ -494,6 +501,11 @@ removed, is NOT readable as the domain. FINDINGS already shows the residual
 produces domain content at high alpha, so expect this to be nuanced.
 **Done when:** a 3x2 table (part x readable? / causally active?) per organism.
 **Explain:** which cell of that table would falsify the claim.
+**DONE 2026-11-20.** Topic readable 5/5 and small (<= 8.2% KL); residual
+unreadable by Patchscope 5/5, readable by steering only for medical (2/4) while
+doing 68-86% of the KL. Claim holds 5/5 (Patchscope), 4/5 (steering). Residual
+steering = document/report genre for SDF organisms. Full v unreadable for cake/FDA,
+unlike ADL (they read pos 0-4 separately) -> check at Day 18. FINDINGS "DAY 16".
 
 ### Day 17 (Sat 28 Nov) — what does the residual respond to?
 1. Project BASE-model activations on a broad held-out corpus onto the residual
@@ -502,6 +514,11 @@ produces domain content at high alpha, so expect this to be nuanced.
 3. Write ONE hypothesis and ONE test for it for Day 19.
 **Done when:** a written hypothesis, or an honest "no visible pattern".
 **Explain:** why this uses the base model, not the finetuned one.
+**DONE 2026-11-21.** cake_bake residual -> title-led documents in an expert /
+institutional voice (all 3 organisms' docs on top); recipe residual -> plain
+narrative prose (institutional docs at the bottom); the two are otherwise
+unrelated (rank corr +0.01). Day 19 hypothesis H-genre + minimal-pair test
+(plain / document frame / casual frame) written in the lab notebook.
 
 ### Day 18 (Sun 29 Nov) — position 0
 1. Calibrate a separate constant for position 0 (currently none is added, and

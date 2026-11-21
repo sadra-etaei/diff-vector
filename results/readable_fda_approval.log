@@ -1,0 +1,15 @@
+W1120 14:24:31.542000 21872 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 5065.15it/s]
+  ft   v:full   best    1.6 rel 0.05 | <=20:   1.6 rel 0.05 | logit lens 0.00
+  ft   v:topic  best  140.0 rel 0.30 | <=20:   0.6 rel 0.25 | logit lens 0.50
+  ft   v:resid  best    1.7 rel 0.10 | <=20:   1.7 rel 0.10 | logit lens 0.00
+  ft   c:full   best    1.1 rel 0.40 | <=20:   1.1 rel 0.40 | logit lens 0.00
+  ft   c:topic  best  140.0 rel 0.30 | <=20:   0.6 rel 0.25 | logit lens 0.50
+  ft   c:resid  best    1.1 rel 0.40 | <=20:   1.1 rel 0.40 | logit lens 0.00
+  base v:full   best    4.0 rel 0.05 | <=20:   4.0 rel 0.05 | logit lens 0.00
+  base v:topic  best  140.0 rel 0.30 | <=20:  20.0 rel 0.25 | logit lens 0.50
+  base v:resid  best    1.9 rel 0.05 | <=20:   1.9 rel 0.05 | logit lens 0.00
+  base c:full   best    1.1 rel 0.25 | <=20:   1.1 rel 0.25 | logit lens 0.00
+  base c:topic  best  140.0 rel 0.30 | <=20:  20.0 rel 0.25 | logit lens 0.50
+  base c:resid  best    1.1 rel 0.25 | <=20:   1.1 rel 0.25 | logit lens 0.00
+saved -> results/readable_fda_approval.json

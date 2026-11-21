@@ -1,0 +1,34 @@
+=== Day 15 Patchscope controls (top-20 tokens, keyword relevance, +lambda) ===
+
+[qwen25] target norm 56.69
+  cooking   best scale  100.0  rel 0.70  random best: p95 0.10 max 0.10  -> PASS
+            logit lens rel 0.75 (random max 0.10)
+            patchscope @best: 适量 | 煮 | ingredients | cooking | 均匀 | ingredients | 匀 | recipes | yummy | baking | cooked | _mix | mixture | 用量 | 炒 | Ingredients | 糊 | 调料 | Cooking | recipes
+            logit lens:       适量 | ingredients | 煮 | ingredients | cooking | recipes | yummy | 均匀 | baking | cooked | edible | 匀 | recipes | 用量 | Ingredients | _mix | mixture | Recipe | Cooking | recipe
+            rel by scale: 0.5:0.00 1:0.00 1.5:0.05 2:0.00 3:0.05 5:0.25 10:0.35 20:0.50 60:0.65 200:0.70
+  medical   best scale  160.0  rel 0.65  random best: p95 0.15 max 0.15  -> PASS
+            logit lens rel 0.75 (random max 0.05)
+            patchscope @best: 范冰 | medications | 芝加 | diagnose | diagnosis | diagn | 病因 | symptoms | 一定的 | diagnosed | Symptoms | 诱发 | medication | 并发症 | 炎症 | traitement | 发病率 | susceptibility | 诊断 | 奓
+            logit lens:       范冰 | 芝加 | diagnose | medications | diagnosis | diagn | 病因 | symptoms | Symptoms | 发病率 | diagnosed | medication | 炎症 | 一定的 | 并发症 | 诊断 | 诱发 | diagnoses | cancers | verages
+            rel by scale: 0.5:0.10 1:0.00 1.5:0.00 2:0.00 3:0.10 5:0.10 10:0.15 20:0.25 60:0.50 200:0.65
+  random seed 0 at scale 0.5: blue | is | ' ' | 9 | is | a | 1 | hello | ann | v | 2 | hello | bl | 7 | if | rem | working | 4 | The | talking
+
+[qwen3] target norm 161.61
+  cooking   best scale  140.0  rel 0.45  random best: p95 0.10 max 0.15  -> PASS
+            logit lens rel 0.45 (random max 0.15)
+            patchscope @best: 调料 | 适量 | recipes | 配料 | yummy | homemade | 用量 | 口感 | Recipe | paste | baking | 配方 | 食材 | Recipes | recipe | 添加剂 | veggies | 浆 | 倒入 | 混合
+            logit lens:       调料 | 适量 | 配方 | 口感 | 配料 | 食材 | 添加剂 | yummy | recipes | Recipes | 用量 | 调味 | edible | 倒入 | Recipe | nutritious | cooked | homemade | tasty | Calories
+            rel by scale: 0.5:0.05 1:0.05 1.5:0.00 2:0.00 3:0.00 5:0.15 10:0.30 20:0.20 60:0.40 200:0.45
+  politics  best scale  160.0  rel 0.75  random best: p95 0.10 max 0.15  -> PASS (not gated)
+            logit lens rel 0.80 (random max 0.05)
+            patchscope @best: unconstitutional | bipartisan | 民主党 | policym | congressional | lawmakers | legis | election | 奥巴马 | 问责 | federal | voter | payer | constitutional | Republicans | Democratic | Congressional | impeachment | Democrats | elections
+            logit lens:       unconstitutional | bipartisan | policym | 民主党 | legis | congressional | lawmakers | legislative | 问责 | voter | policymakers | legisl | election | Elections | 审议 | policies | advocacy | Congressional | 新政 | Legisl
+            rel by scale: 0.5:0.00 1:0.00 1.5:0.00 2:0.15 3:0.10 5:0.20 10:0.10 20:0.30 60:0.55 200:0.75
+  pharma    best scale  140.0  rel 0.30  random best: p95 0.10 max 0.15  -> PASS (not gated)
+            logit lens rel 0.50 (random max 0.15)
+            patchscope @best: 症状 | 激素 | clinically | 诱发 | 预防 | 急性 | 疗效 | 阈 | 药物 | 用药 | 监测 | 剂量 | Decre | 症 | 有效性 | 降低 | 筛查 | 临床 | ensitivity | 可能导致
+            logit lens:       激素 | 症状 | 疗效 | 剂量 | clinically | 临床 | 急性 | 诱发 | 复发 | 病因 | 患儿 | 用药 | 胰 | 诊断 | 药物 | препарат | 病情 | 治疗 | 病例 | 症
+            rel by scale: 0.5:0.05 1:0.05 1.5:0.05 2:0.00 3:0.00 5:0.05 10:0.10 20:0.25 60:0.15 200:0.30
+  random seed 0 at scale 0.5: ' ' | '\n' | 1 | 4 | I | -> | '   ' | 2 | 0 | 5 | 3 | and | it | - | is | the | '  ' | this | ... | in
+
+Day 15 gate (cooking/medical on Qwen2.5, cooking on Qwen3, by the keyword rule): PASS -- still needs the by-eye check

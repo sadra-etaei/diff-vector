@@ -1748,3 +1748,412 @@ conditional behaviour is the learned part", and how strongly?
 - Strength: weak-to-moderate. One organism, one run per ratio, mixing
   confounded with steps (the default is a single tie-break point), constancy
   differences of 0.01-0.03, topic-cosine CIs overlapping between neighbours.
+
+## 2026-11-20 — Day 14: buffer
+
+- 7B scale point + quantization check DEFERRED at the user's request until
+  after the paper (cluster access depends on the results); roadmap updated.
+  Results freeze on Day 20 without it; single scale goes in the limitations.
+- Days 12-13 committed and pushed (434d65a). .gitignore now also excludes
+  results/*fetch_*.log (download logs).
+- notes/FACTSHEET.md rewritten through Day 13: setup for both families,
+  Day 9 headline table with CIs, behaviour (format, belief), rank/seed,
+  dilution / full finetune, H1-H4 status, limitations, 16 things that went
+  wrong; September numbers kept in a separate section marked superseded /
+  withdrawn / re-scoped. Three numbers corrected while checking against
+  FINDINGS (our constancy 0.11 / 0.13 from the Gate 1 table, not Day 2's
+  0.08 / 0.10; off-domain range 59-94; in-domain 32-71).
+- Re-read of raw generations. Day 12 chats were read on Day 12; Day 13 made
+  none. Gap: "own constants give 0/60 format" on the 6 new recipe adapters
+  rested on the frozen detector only (hand checks covered ind and finetuned).
+  Check: no own@1 / own@2 procedural reply has an Ingredients / Directions
+  header on any adapter (finetuned: 6-24/60). Bare dash lists (>= 3 lines):
+  own 5-10/60 vs base 7/60 vs finetuned 43-58/60. Read the own@1 dash replies
+  that base did not produce (5-6 per adapter, 3 adapters): ordinary
+  base-style numbered answers with nested sub-bullets, near-identical across
+  adapters, not the finetune's bare dash-list style. The detector's zeros
+  stand. (In passing: r4-norm's finetuned reply to "How do I open a bank
+  account?" is a hamburger recipe -- the known leak.)
+
+## 2026-11-20 — Day 15: Patchscope
+
+ADL's readout, read from the toolkit source (diffing-toolkit main:
+activation_difference_lens/auto_patch_scope.py, method.py, configs; utils
+model.patchscope_lens; nnterp v1.3.0 interventions.patchscope_lens):
+- three identity prompts "man -> man\n1135 -> 1135\nhello -> hello\n?",
+  "bear -> bear\n42 -> 42\nblue -> blue\n?", "921 -> 921\ntarget -> target\nanna -> anna\n?";
+- at layer int(0.5 * n_layers) the hidden state of the last token ("?") is
+  REPLACED (nnterp: "Replace the hidden state ...") by lambda * latent;
+- latent = the vector rescaled to the mean activation norm of that model at
+  that layer (positions >= 5) ("use_normalized: true");
+- 31 scales: 0.5..2.0 step 0.1, 3, 4, 5, 10, 20, then 20..200 in 10 steps;
+  +lambda and -lambda; next-token probabilities averaged over the 3 prompts,
+  zeroed outside the intersection of the 3 prompts' top-16384;
+- the diff is read in the FINETUNED model (base mean in base, ft mean in ft);
+  an LLM grader picks the best scale and the relevant tokens.
+
+Ours (src/patchscope.py): the same prompts, replacement, normalisation and
+scales, with plain forward hooks. Two deliberate differences: (1) patch site
+= the output of decoder layer 13 (hidden_states[14]), where all our vectors
+live; ADL's int(0.5 * 28) = 14 is the output of decoder layer 14, one layer
+later; (2) no LLM grader: a keyword proxy (vdiff.relevance style: generous
+fragment match, English + Chinese) scores the top 20 tokens at each scale,
+and the best scale is picked by that score -- for every vector, random ones
+included, so the selection advantage is the same.
+
+Day 15 vectors: the base-model topic directions u[13] (unit, from the
+multilayer constants files): cooking and medical on Qwen2.5-1.5B-Instruct;
+cooking (cake_bake), politics (kansas_abortion), pharma (fda_approval) on
+Qwen3-1.7B. Read in the BASE model (they are base-model directions).
+Negative control: 20 random unit directions per model, same procedure.
+Also the logit lens (final norm, top 20) on the same vectors, for the Explain.
+
+Keyword lists (written now, before any Patchscope output exists): cooking =
+vdiff.COOK_WORDS + COOK_CJK (unchanged); medical, politics, pharma = new
+lists in src/patchscope.py, same matching rule.
+
+PASS RULE (positive control), per topic vector: best-over-scales relevance
+of the top 20 tokens (+lambda) >= 0.25 AND >= the 95th percentile of the 20
+random vectors' best-over-scales relevance (same keyword list) + 0.15; and,
+read by eye, the top tokens at that scale contain clear domain words. Day 15
+passes if cooking (Qwen2.5), medical (Qwen2.5) and cooking (Qwen3) all pass;
+politics / pharma are reported, not part of the gate. If it fails, Day 16
+uses steering-only readouts and the paper says so (roadmap).
+Prediction: passes for all three; logit lens relevance lower than
+Patchscope's for every topic vector.
+
+### Outcome (Day 15)
+
+Run: `python src/patchscope.py --model qwen25`, `--model qwen3` (~2-3 min
+each), `--report` -> results/day15_report.log, patchscope_{qwen25,qwen3}.json,
+patchscope_summary.json. Target norms (mean |h|, layer-13 output, pos >= 5):
+Qwen2.5 56.7, Qwen3 161.6.
+
+| topic direction | best scale | relevance @best | random best (p95 / max) | logit lens rel | pass |
+|---|---|---|---|---|---|
+| cooking, Qwen2.5 | 100 | 0.70 | 0.10 / 0.10 | 0.75 | PASS |
+| medical, Qwen2.5 | 160 | 0.65 | 0.15 / 0.15 | 0.75 | PASS |
+| cooking, Qwen3 | 140 | 0.45 | 0.10 / 0.15 | 0.45 | PASS |
+| politics, Qwen3 (not gated) | 160 | 0.75 | 0.10 / 0.15 | 0.80 | pass |
+| pharma, Qwen3 (not gated) | 140 | 0.30 | 0.10 / 0.15 | 0.50 | pass |
+
+By eye: cooking Qwen2.5 = 适量 煮 ingredients cooking recipes baking mixture
+炒 调料; medical = medications diagnose diagnosis symptoms 病因 并发症 炎症
+诊断 (plus a few junk tokens: 范冰 芝加 奓, also in the logit lens);
+cooking Qwen3 = 调料 适量 recipes 配料 homemade 口感 baking 配方 食材 倒入;
+politics = unconstitutional bipartisan 民主党 congressional lawmakers
+election voter; pharma = 症状 激素 clinically 疗效 药物 用药 剂量 临床 (the
+keyword list misses several Chinese pharma words, so 0.30 undercounts).
+Random vectors at their best scale: digits, "hello", "blue", "->",
+whitespace. GATE PASSES (keyword rule and by eye). Day 16 can use Patchscope.
+
+Prediction "Patchscope relevance > logit lens for every topic vector" FAILED:
+the logit lens is equal or higher in all five.
+
+Patchscope converges to the logit lens as lambda grows. Overlap of the top 20
+with the logit lens's top 20 (relevance in brackets):
+
+| | lambda 1 | 3 | 5 | 10 | 20 | 40 | 100 | 200 |
+|---|---|---|---|---|---|---|---|---|
+| cooking Q2.5 | 0 (.00) | 0 (.05) | 1 (.25) | 6 (.35) | 11 (.50) | 14 (.65) | 17 (.70) | 19 (.70) |
+| medical Q2.5 | 0 (.00) | 1 (.10) | 1 (.10) | 4 (.15) | 7 (.25) | 13 (.45) | 15 (.55) | 17 (.65) |
+| cooking Q3 | 0 (.05) | 0 (.00) | 0 (.15) | 3 (.30) | 5 (.20) | 8 (.40) | 10 (.40) | 15 (.45) |
+
+Three regimes: lambda <= 3 (a state of ordinary size) -- the identity prompt
+wins, nothing domain-related; lambda ~5-20 -- the domain appears with tokens
+the logit lens does not rank (cooking Q2.5 @10: "Add", "scoop", 发酵; Q3 @10:
+crispy, crunchy, vanilla, butter, herbs); lambda >= 40 -- the patched state is
+tens of times larger than anything else in the residual stream, the later
+layers barely change its direction, and the readout is the logit lens.
+
+Explain (roadmap): why the logit lens could not read v_diff but this might.
+- The logit lens is NOT a weak readout for topic: it reads the topic
+  directions at 0.45-0.80 relevance, as well as Patchscope's best. Its
+  failure on v_diff (September: relevance 0.000) is about v_diff, not the
+  lens: the topic direction is 2-7% of v_diff's variance, and whatever the
+  other ~95% maps to through the unembedding, it is not a coherent set of
+  domain tokens.
+- At ADL's large scales Patchscope IS the logit lens (17-19/20 shared
+  tokens), so it cannot do better on v_diff there. It can differ in the
+  middle regime (lambda ~5-20), where the later layers transform the vector
+  in context before the unembedding -- e.g. a direction that only becomes
+  domain-like after a few layers of processing. Whether v_diff's bulk is such
+  a direction is Day 16's question; ADL's grader picks the best scale over
+  all regimes, so a Patchscope "read" may come from either.
+- ADL also patch the diff into the FINETUNED model; we read base-model
+  directions in the base model today. Day 16 does both for v_diff.
+
+## 2026-11-20 — Day 16: is the readable part the inert part?
+
+Targets: recipe, medical (Qwen2.5-1.5B-Instruct LoRAs), cake_bake,
+kansas_abortion, fda_approval (Qwen3-1.7B, ADL). Domain lists: cooking,
+medical, cooking, politics, pharma (Day 15 lexicons).
+
+Vectors (all at the output of decoder layer 13 = hidden_states[14], the
+Day 15 patch site), from multilayer_consts_{t}: v = v_diff (open-loop mean
+FT - base over positions 1-7 of unrelated text, sinks dropped); u = base-model
+topic direction; parts: full v, topic = (v.u)u, residual = v - (v.u)u. Also
+the same split of the matched constant c[13] (keyword score only). Note: ADL
+read positions 0-4 separately; we use the 1-7 mean everywhere else.
+
+Readouts:
+(R1) Patchscope (Day 15 code), in the FINETUNED model (ADL's setting) and in
+     the base model; target norm = that model's mean activation norm.
+(R2) Steering: base model, s x target_norm x unit(part) added at every
+     position of the layer-13 output, s in {0.5, 1}; 4 neutral Dolly
+     prompts (day8 factual #7 CPU vs RAM, #9 remote sensing, #16 J.K. Rowling,
+     #17 snowboard vs ski boots); greedy, 60 new tokens; unsteered baseline.
+Causal activity: Day 9 KL closed at alpha 1 by the topic / residual / full
+constants (all layers), off-domain, with the same-size random control.
+
+Hand scoring (by me, BLIND to target / part / model / regime: each token list
+gets a random code; labels written per code before unblinding). A token is
+domain-relevant if it is a word or clear word-piece whose main meaning
+belongs to the domain (cooking: food, ingredients, cooking actions, kitchen,
+taste; medical: illness, body, symptoms, treatment, care; politics: elections,
+law, government, parties, rights; pharma: drugs, dosing, trials, approval,
+clinical terms). Identity-prompt tokens (man, hello, digits, ->, blue, bear,
+anna, target) and junk are never relevant. Lists scored: v's three parts x
+{FT, base} x {best scale overall, best scale with lambda <= 20} (best = by the
+keyword score) = 60 lists.
+
+Rules (fixed now):
+- READABLE (Patchscope) if hand relevance of the top 20 >= 0.25 at the
+  best-overall scale in the FT model AND keyword relevance >= Day 15 random
+  p95 + 0.15 for that model/domain. Also reported: readable at lambda <= 20.
+- READABLE (steering) if at some s at least 2 of the 4 replies drift to the
+  domain (read by hand; unsteered baseline must have 0).
+- ACTIVE if the part closes >= 10% of the off-domain KL (Day 9, alpha 1);
+  SMALL if below 10% but above the same-size random max (Day 9 follow-up a);
+  INERT otherwise.
+- The claim "the readable part is the inert part" HOLDS for a target if topic
+  = readable and (small or inert) AND residual = not readable and active.
+
+Explain-in-advance (which cell falsifies): residual READABLE as the domain
+(then a readable part is also the active part), or topic ACTIVE (>= 10%).
+
+Predictions:
+P1 topic part readable by Patchscope in all 5 (it is u itself, Day 15).
+P2 topic part small-or-inert in all 5 (Day 9: 0.8-8.2%).
+P3 residual active in all 5 (Day 9: 68-86%).
+P4 our LoRAs: full v and residual NOT readable (September logit lens 0.000).
+P5 ADL organisms: full v readable in the FT model for >= 2 of 3 (ADL's
+   result), and the residual readable for >= 1 of 3 (removing one topic
+   direction leaves other domain directions) -> the claim fails there.
+P6 steering: the residual at s = 1 drifts replies to the domain for >= 1 of
+   the 5 (September: medical content in the wrong register).
+
+### Outcome (Day 16)
+
+Runs: `python src/readable_parts.py --target T` (~3-4 min each), `--export`
+(60 lists, random codes), hand labels per code for all four domains
+(results/day16_hand_labels.json, written before unblinding), `--report`
+-> results/day16_report.log, day16_summary.json. Steering read by hand ->
+results/day16_steer_hand.json (the keyword counts in the report are NOT used:
+they counted e.g. "Hen" and "Rabbit" as recipe drift).
+
+Patchscope (hand relevance of the top 20, FT model, best scale; the base
+model gives the same picture) / steering drift by hand (replies of 4,
+s = 0.5 / 1) / Day 9 KL closed off-domain:
+
+| target | part | Patchscope | steering | KL closed | readable (PS / steer) | activity |
+|---|---|---|---|---|---|---|
+| recipe | full | 0.00 | 0 / 1 | 68.5 | no / no | ACTIVE |
+| | topic | 0.90 | 3 / 4 | 2.9 | YES / YES | SMALL |
+| | resid | 0.00 | 0 / 0 | 68.2 | no / no | ACTIVE |
+| medical | full | 0.00 | 1 / 3 | 74.5 | no / YES | ACTIVE |
+| | topic | 0.80 | 4 / 4 | 0.8 | YES / YES | SMALL |
+| | resid | 0.00 | 0 / 2 | 72.4 | no / YES (2/4) | ACTIVE |
+| cake_bake | full | 0.00 | 0 / 1 | 86.1 | no / no | ACTIVE |
+| | topic | 0.90 | 2 / 3 | 2.3 | YES / YES | SMALL |
+| | resid | 0.00 | 0 / 0 | 85.5 | no / no | ACTIVE |
+| kansas_abortion | full | 0.50 | 0 / 4 | 86.8 | YES / YES | ACTIVE |
+| | topic | 0.95 | 2 / 3 | 8.2 | YES / YES | SMALL |
+| | resid | 0.00 | 0 / 0 | 83.8 | no / no | ACTIVE |
+| fda_approval | full | 0.00 | 1 / 4 | 84.4 | no / YES | ACTIVE |
+| | topic | 0.80 | 3 / 4 | 2.1 | YES / YES | SMALL |
+| | resid | 0.00 | 0 / 0 | 84.0 | no / no | ACTIVE |
+
+cos(v, u) at layer 13: recipe .18, medical .24, cake .18, Kansas .36, FDA .17.
+Constants c, same split, keyword score only: residual of c 0.05-0.40 (FDA
+0.40 and cake 0.20 are above random p95 0.10 -- not hand-scored, noted only).
+
+What the residual DOES when steered (s = 1, read): recipe -> old-fashioned
+storytelling ("an olden time ... this little fellow"); medical -> anatomy /
+book-citation prose (2/4 medical); cake, Kansas, FDA -> document / report
+boilerplate ("Professional Training Certification Program", "2024 Data &
+Tech Insights Report", "[FINAL VERSION] ... RESEARCH TEAM"): a GENRE, not the
+domain (FDA: two incidental health words, NEUROLOGIC / HEALTHCARE, inside
+AI-deployment boilerplate; counted 0 by content). The full v adds the domain
+on top of that genre for Kansas and FDA ("Senate Judiciary Committee",
+"FDA-2024-000012 ... Clinical Advisory").
+
+Claim "the readable part is the inert part":
+- by Patchscope: HOLDS 5/5 (residual unreadable everywhere; topic readable
+  and small everywhere);
+- by steering: HOLDS 4/5; FAILS for medical, at the threshold (residual 2/4
+  at s = 1, anatomy content) -- the September observation, now by rule.
+
+P1 held (topic readable 5/5). P2 held (topic SMALL 5/5). P3 held.
+P4 held by Patchscope (recipe, medical: full and residual unreadable); by
+   steering the medical full v and residual drift to medicine.
+P5 FAILED twice: full v readable by Patchscope for 1/3 organisms (Kansas
+   only; predicted >= 2), residual for 0/3 (predicted >= 1).
+P6 held (medical residual, 2/4).
+
+Reading (working hypotheses):
+1. What Patchscope reads in v_diff is its topic component: the full v reads
+   as the domain only where the topic share is largest (Kansas, cos .36), and
+   never once the topic direction is removed. The part that does the causal
+   work (KL) reads as nothing.
+2. Steering shows what the residual does instead: for the SDF organisms a
+   document / report GENRE (fits H3b "document mode" and the shared
+   cross-organism bias), for recipe an old-fashioned narrative register, for
+   medical anatomy prose -- the one case where the residual still carries
+   domain content.
+3. Disagreement with ADL: they read their organisms' diffs with Patchscope;
+   we read cake_bake's and FDA's full v as nothing. Differences that could
+   explain it: ADL read positions 0-4 SEPARATELY (we average 1-7 with sinks
+   dropped; position 0 is where the diff is 90x larger), an LLM grader over
+   all scales, patch one layer later. Not tested; a per-position readout fits
+   Day 18 (position 0).
+
+Explain (roadmap): which cell falsifies the claim -- a READABLE residual
+(something you can read is also what does the work) or an ACTIVE topic part
+(>= 10% KL). Observed: no ACTIVE topic part anywhere (max 8.2%, Kansas); a
+readable residual only for medical and only by steering, at the 2/4
+threshold. The claim holds for Patchscope on all five and for steering on
+four of five.
+
+## 2026-11-21 — Day 17: what does the residual respond to?
+
+Choices (mine, logged): two residual directions -- recipe (our chat LoRA,
+Qwen2.5-1.5B-Instruct) and cake_bake (ADL organism, Qwen3-1.7B): one per
+model family, and the two whose residual steering looked most different on
+Day 16 (old-fashioned narrative vs document / report genre). Direction = the
+Day 16 residual: v[13] - (v[13].u)u at the output of decoder layer 13
+(hidden_states[14]), unit length.
+
+Corpus (held out from v, which was fitted on unrelated.json[:1000]):
+wikitext unrelated.json[1000:2000]; generic (240); topic corpora: cooking
+(forum, recipe, wiki), medical (wiki, qa, gen), politics (wiki, news,
+speech), pharma (pubmed, labels), controls (sport, music, military);
+schema_expo / schema_proc (expository vs procedural); 100 recipe and 100
+medical held-out chats as plain "question\n\nanswer" text; 100 odd-indexed
+documents of each ADL organism (cake_bake, kansas_abortion, fda_approval).
+Docs with < 64 tokens are dropped; score = mean over positions 1-63 (sinks
+dropped by norm) of the BASE model's layer-13 output, projected on the unit
+residual. Same for the topic direction u (sanity: top = cooking) and one
+random direction (what "no pattern" looks like in source counts).
+
+Reading rule (fixed now): read the source label and the first ~250
+characters of all 50 top and 50 bottom documents per direction. A pattern
+counts if I can state it in one sentence that fits >= 35 of the top 50 and
+<= 10 of the bottom 50 (count after writing the sentence). Otherwise "no
+visible pattern".
+
+Predictions (from Day 16 steering):
+- cake_bake residual: top = documents in a formal / institutional /
+  report-like register (press releases, reports, guidelines), drawn from many
+  topics including the organisms' own documents; bottom = conversational or
+  narrative text.
+- recipe residual: weaker; if anything, top = plain, simple, old-fashioned
+  narrative or instructional text; bottom = technical / formal text.
+- topic u: top 50 mostly cooking for both models.
+
+Explain (roadmap): why the base model. The finetune's bias is a push of the
+BASE model's activations along this direction. To learn what the direction
+means, ask which inputs the base model already places far along it -- that is
+the feature the finetune turns on for every input. In the finetuned model the
+constant push is added to every document (shifting all scores equally) and
+its input-dependent changes are mixed in, so the ranking would describe the
+finetune's processing, not what the base model represents with the direction.
+
+### Outcome (Day 17)
+
+Run: `python src/residual_docs.py --target recipe` / `--target cake_bake`
+(~2 min each), `--show resid` to print. 4,129 of the corpus documents have
+>= 64 tokens. Scores: results/residual_docs_{recipe,cake_bake}.json.
+
+Sanity: the topic direction's top 50 are 47-48 recipe documents + 2-3
+recipe chats in both models; recipe-topic vs cake-topic document ranks agree
+(Spearman +0.986). A random direction also sorts by source (top 50: schema_expo
+29 + med_gen 18 on Qwen2.5; SDF documents 37 on Qwen3): corpora differ in
+their mean activation, so source counts alone are not a pattern.
+
+cake_bake residual. Median rank by source (0 = top of 4,129): sdf_cake_bake
+60, sdf_kansas_abortion 186, sdf_fda_approval 254, schema_proc 601, pol_news
+642, pol_speech 754 ... wikitext 2752, schema_expo 3270, pharma_labels 3624.
+Top 50: 45 cake, 4 Kansas, 1 FDA documents. Read all 100. One sentence:
+"Title-led documents in an authoritative expert / institutional voice --
+bylines with credentials (By Dr. Elena Rodriguez, PhD, Director ...), hype
+words (Advanced, Revolutionizing, Secrets, Professional), formats such as
+manuals, workshops, memos, reviews, strategy reports." Fits 50/50 top (the
+Kansas / FDA ones are "Strategy Memorandum -- Confidential Internal
+Document", "Rules Committee Strategic Analysis Report", "Translational
+Neuroscience: Breakthrough Mechanisms ..."); bottom: 0/50 by the voice part
+(3 drug labels are institutional documents without title, byline or
+persuasive voice). The bottom is plain encyclopedic prose: cougars, xenon,
+hurricanes, battleships, sports biographies, expository science answers.
+PATTERN (rule: >= 35 top, <= 10 bottom).
+
+recipe residual. Median rank: pol_wiki 646, forum 704, sport 917 ...
+sdf_cake_bake 3402, schema_expo 3535, pharma_pubmed 3582, pharma_labels 3630,
+sdf_kansas 3743, sdf_fda 4020. Read all 100. One sentence: "Plain narrative
+or descriptive prose about concrete events, people and places -- sports
+play-by-play, local history, chatty forum anecdotes." Fits ~45/50 top
+(misses: route descriptions, a horse-breed and a bird description, a song
+cover note); bottom 1/50. The bottom is the institutional document genre:
+confidential FDA strategy reports, drug-label boxed warnings, clinical
+abstracts, SDF memos (31 of 50 are SDF documents). PATTERN.
+
+The two residuals look like mirror images at the extremes (SDF documents top
+for cake, bottom for recipe), but across the whole corpus their document
+ranks are uncorrelated (Spearman +0.012; random-direction pairs -0.04 to
+-0.10). They share the institutional-document end with opposite sign and are
+otherwise unrelated. Not one genre axis.
+
+Fits Day 16 steering: cake residual -> report / training-program
+boilerplate; recipe residual -> old-fashioned storytelling.
+
+Predictions: cake held (formal / institutional / report-like at the top,
+from all three organisms); the "bottom = conversational or narrative" half
+was wrong -- the bottom is plain encyclopedic prose. Recipe held in
+direction ("plain narrative" top, formal / technical bottom), and it was not
+weaker -- the clearest of the two at the bottom.
+
+### HYPOTHESIS for Day 19 (one)
+
+H-genre: the SDF residual (cake_bake's v_diff with the cooking direction
+removed) encodes the GENRE of an authored institutional / expert document
+(title, credentialed byline, institutional framing), independent of topic.
+The SDF finetune's bias pushes every input toward "this is such a document".
+
+### TEST for Day 19 (one, written now)
+
+Minimal pairs. 100 held-out wikitext paragraphs on topics outside cooking,
+politics and pharma (unrelated.json[1000:2000], filtered by the design3
+off-domain regex plus politics / pharma words), each in three versions with
+the paragraph text unchanged:
+ (A) plain: the paragraph alone;
+ (B) document frame: a fixed template prepended -- a title line made from
+     the paragraph's first noun phrase ("<X>: A Comprehensive Professional
+     Analysis"), "By Dr. <name>, PhD, Director, <Institute>", and
+     "Executive Summary:";
+ (C) control frame of the same token length, not institutional: a casual
+     opening ("ok so I was reading about this the other day and thought
+     I'd share what I found, here goes:").
+Score = mean of the base model's layer-13 output over the PARAGRAPH tokens
+only (same tokens in A, B, C; sinks dropped), projected on the unit cake
+residual. Effect = mean over paragraphs of (B - A) and (C - A), in units of
+the corpus SD of the score (Day 17 corpus).
+Controls: the same differences along 20 random unit directions and along
+the cooking direction u.
+Prediction (H-genre): (B - A) >= 0.5 SD and above the 95th percentile of the
+random directions' (B - A); (C - A) < half of (B - A). Also run on the
+Kansas and FDA residuals: if the genre is the SHARED SDF bias, all three
+show it. Falsified if (B - A) is within the random range, or (C - A) is as
+large as (B - A) (then it is "any prefix", not genre).
+
+Explain (roadmap): why the base model -- in the plan above (written before
+the run).

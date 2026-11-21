@@ -1,0 +1,362 @@
+{
+"L00": {
+"cooking": 11,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L01": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L02": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L03": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L04": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L05": {
+"cooking": 16,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L06": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L07": {
+"cooking": 0,
+"medical": 0,
+"politics": 5,
+"pharma": 0
+},
+"L08": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L09": {
+"cooking": 15,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L10": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L11": {
+"cooking": 0,
+"medical": 0,
+"politics": 19,
+"pharma": 0
+},
+"L12": {
+"cooking": 0,
+"medical": 10,
+"politics": 0,
+"pharma": 11
+},
+"L13": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L14": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L15": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L16": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L17": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L18": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L19": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L20": {
+"cooking": 18,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L21": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L22": {
+"cooking": 18,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L23": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L24": {
+"cooking": 0,
+"medical": 4,
+"politics": 0,
+"pharma": 4
+},
+"L25": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L26": {
+"cooking": 13,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L27": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L28": {
+"cooking": 0,
+"medical": 16,
+"politics": 0,
+"pharma": 16
+},
+"L29": {
+"cooking": 0,
+"medical": 0,
+"politics": 13,
+"pharma": 0
+},
+"L30": {
+"cooking": 0,
+"medical": 0,
+"politics": 10,
+"pharma": 0
+},
+"L31": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L32": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L33": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L34": {
+"cooking": 0,
+"medical": 0,
+"politics": 10,
+"pharma": 0
+},
+"L35": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L36": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L37": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L38": {
+"cooking": 0,
+"medical": 15,
+"politics": 0,
+"pharma": 16
+},
+"L39": {
+"cooking": 0,
+"medical": 0,
+"politics": 19,
+"pharma": 0
+},
+"L40": {
+"cooking": 16,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L41": {
+"cooking": 0,
+"medical": 9,
+"politics": 0,
+"pharma": 9
+},
+"L42": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L43": {
+"cooking": 0,
+"medical": 15,
+"politics": 0,
+"pharma": 16
+},
+"L44": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L45": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L46": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L47": {
+"cooking": 0,
+"medical": 9,
+"politics": 0,
+"pharma": 9
+},
+"L48": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L49": {
+"cooking": 0,
+"medical": 0,
+"politics": 15,
+"pharma": 0
+},
+"L50": {
+"cooking": 0,
+"medical": 0,
+"politics": 13,
+"pharma": 0
+},
+"L51": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L52": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L53": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L54": {
+"cooking": 0,
+"medical": 16,
+"politics": 0,
+"pharma": 16
+},
+"L55": {
+"cooking": 18,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L56": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L57": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L58": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+},
+"L59": {
+"cooking": 0,
+"medical": 0,
+"politics": 0,
+"pharma": 0
+}
+}

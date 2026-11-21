@@ -1,0 +1,15 @@
+W1120 14:15:22.546000 4240 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 4385.46it/s]
+  ft   v:full   best    0.5 rel 0.00 | <=20:   0.5 rel 0.00 | logit lens 0.00
+  ft   v:topic  best   40.0 rel 0.45 | <=20:  10.0 rel 0.25 | logit lens 0.50
+  ft   v:resid  best    0.5 rel 0.00 | <=20:   0.5 rel 0.00 | logit lens 0.00
+  ft   c:full   best    1.8 rel 0.20 | <=20:   1.8 rel 0.20 | logit lens 0.05
+  ft   c:topic  best   40.0 rel 0.45 | <=20:  10.0 rel 0.25 | logit lens 0.50
+  ft   c:resid  best    1.9 rel 0.20 | <=20:   1.9 rel 0.20 | logit lens 0.05
+  base v:full   best    0.5 rel 0.00 | <=20:   0.5 rel 0.00 | logit lens 0.00
+  base v:topic  best  140.0 rel 0.45 | <=20:  10.0 rel 0.30 | logit lens 0.50
+  base v:resid  best    0.5 rel 0.00 | <=20:   0.5 rel 0.00 | logit lens 0.00
+  base c:full   best   60.0 rel 0.10 | <=20:  20.0 rel 0.05 | logit lens 0.05
+  base c:topic  best  140.0 rel 0.45 | <=20:  10.0 rel 0.30 | logit lens 0.50
+  base c:resid  best   60.0 rel 0.10 | <=20:  20.0 rel 0.05 | logit lens 0.05
+saved -> results/readable_cake_bake.json

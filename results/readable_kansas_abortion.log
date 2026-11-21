@@ -1,0 +1,15 @@
+W1120 14:19:56.098000 12224 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 3461.75it/s]
+  ft   v:full   best    3.0 rel 0.60 | <=20:   3.0 rel 0.60 | logit lens 0.35
+  ft   v:topic  best  140.0 rel 0.75 | <=20:  20.0 rel 0.25 | logit lens 0.80
+  ft   v:resid  best    5.0 rel 0.10 | <=20:   5.0 rel 0.10 | logit lens 0.00
+  ft   c:full   best    1.8 rel 0.60 | <=20:   1.8 rel 0.60 | logit lens 0.00
+  ft   c:topic  best  140.0 rel 0.75 | <=20:  20.0 rel 0.25 | logit lens 0.80
+  ft   c:resid  best    1.8 rel 0.20 | <=20:   1.8 rel 0.20 | logit lens 0.00
+  base v:full   best   80.0 rel 0.50 | <=20:   3.0 rel 0.20 | logit lens 0.35
+  base v:topic  best  160.0 rel 0.75 | <=20:  20.0 rel 0.30 | logit lens 0.80
+  base v:resid  best    5.0 rel 0.05 | <=20:   5.0 rel 0.05 | logit lens 0.00
+  base c:full   best    1.8 rel 0.25 | <=20:   1.8 rel 0.25 | logit lens 0.00
+  base c:topic  best  160.0 rel 0.75 | <=20:  20.0 rel 0.30 | logit lens 0.80
+  base c:resid  best    1.9 rel 0.10 | <=20:   1.9 rel 0.10 | logit lens 0.00
+saved -> results/readable_kansas_abortion.json

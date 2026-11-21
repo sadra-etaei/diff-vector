@@ -1,0 +1,227 @@
+{
+ "recipe": {
+  "full": {
+   "hand_ft_best": 0.0,
+   "hand_ft_le20": 0.0,
+   "hand_base_best": 0.0,
+   "kw_ft_best": 0.0,
+   "best_scale": 0.5,
+   "readable": false,
+   "kl_closed": 68.52348313527389,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    0,
+    3
+   ]
+  },
+  "topic": {
+   "hand_ft_best": 0.9,
+   "hand_ft_le20": 0.8,
+   "hand_base_best": 0.9,
+   "kw_ft_best": 0.7,
+   "best_scale": 100.0,
+   "readable": true,
+   "kl_closed": 2.9354062201615405,
+   "activity": "SMALL",
+   "steer_kw_replies": [
+    4,
+    4
+   ]
+  },
+  "resid": {
+   "hand_ft_best": 0.0,
+   "hand_ft_le20": 0.0,
+   "hand_base_best": 0.0,
+   "kw_ft_best": 0.0,
+   "best_scale": 0.5,
+   "readable": false,
+   "kl_closed": 68.20681086685101,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    2,
+    2
+   ]
+  },
+  "claim_holds": true
+ },
+ "medical": {
+  "full": {
+   "hand_ft_best": 0.0,
+   "hand_ft_le20": 0.0,
+   "hand_base_best": 0.0,
+   "kw_ft_best": 0.2,
+   "best_scale": 3.0,
+   "readable": false,
+   "kl_closed": 74.46261616149923,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    4,
+    4
+   ]
+  },
+  "topic": {
+   "hand_ft_best": 0.8,
+   "hand_ft_le20": 0.45,
+   "hand_base_best": 0.8,
+   "kw_ft_best": 0.65,
+   "best_scale": 140.0,
+   "readable": true,
+   "kl_closed": 0.8184238821151713,
+   "activity": "SMALL",
+   "steer_kw_replies": [
+    4,
+    4
+   ]
+  },
+  "resid": {
+   "hand_ft_best": 0.0,
+   "hand_ft_le20": 0.0,
+   "hand_base_best": 0.0,
+   "kw_ft_best": 0.15,
+   "best_scale": 2.0,
+   "readable": false,
+   "kl_closed": 72.4392872079691,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    4,
+    4
+   ]
+  },
+  "claim_holds": true
+ },
+ "cake_bake": {
+  "full": {
+   "hand_ft_best": 0.0,
+   "hand_ft_le20": 0.0,
+   "hand_base_best": 0.0,
+   "kw_ft_best": 0.0,
+   "best_scale": 0.5,
+   "readable": false,
+   "kl_closed": 86.13885313255886,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    0,
+    2
+   ]
+  },
+  "topic": {
+   "hand_ft_best": 0.9,
+   "hand_ft_le20": 0.55,
+   "hand_base_best": 0.75,
+   "kw_ft_best": 0.45,
+   "best_scale": 40.0,
+   "readable": true,
+   "kl_closed": 2.33140986478505,
+   "activity": "SMALL",
+   "steer_kw_replies": [
+    1,
+    3
+   ]
+  },
+  "resid": {
+   "hand_ft_best": 0.0,
+   "hand_ft_le20": 0.0,
+   "hand_base_best": 0.0,
+   "kw_ft_best": 0.0,
+   "best_scale": 0.5,
+   "readable": false,
+   "kl_closed": 85.46528943656932,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    0,
+    0
+   ]
+  },
+  "claim_holds": true
+ },
+ "kansas_abortion": {
+  "full": {
+   "hand_ft_best": 0.5,
+   "hand_ft_le20": 0.5,
+   "hand_base_best": 0.65,
+   "kw_ft_best": 0.6,
+   "best_scale": 3.0,
+   "readable": true,
+   "kl_closed": 86.80896604446657,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    1,
+    4
+   ]
+  },
+  "topic": {
+   "hand_ft_best": 0.95,
+   "hand_ft_le20": 0.65,
+   "hand_base_best": 0.95,
+   "kw_ft_best": 0.75,
+   "best_scale": 140.0,
+   "readable": true,
+   "kl_closed": 8.211525273238829,
+   "activity": "SMALL",
+   "steer_kw_replies": [
+    4,
+    3
+   ]
+  },
+  "resid": {
+   "hand_ft_best": 0.0,
+   "hand_ft_le20": 0.0,
+   "hand_base_best": 0.0,
+   "kw_ft_best": 0.1,
+   "best_scale": 5.0,
+   "readable": false,
+   "kl_closed": 83.835675395139,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    0,
+    0
+   ]
+  },
+  "claim_holds": true
+ },
+ "fda_approval": {
+  "full": {
+   "hand_ft_best": 0.0,
+   "hand_ft_le20": 0.0,
+   "hand_base_best": 0.0,
+   "kw_ft_best": 0.05,
+   "best_scale": 1.6,
+   "readable": false,
+   "kl_closed": 84.3604551653462,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    4,
+    4
+   ]
+  },
+  "topic": {
+   "hand_ft_best": 0.8,
+   "hand_ft_le20": 0.2,
+   "hand_base_best": 0.8,
+   "kw_ft_best": 0.3,
+   "best_scale": 140.0,
+   "readable": true,
+   "kl_closed": 2.1313947753373808,
+   "activity": "SMALL",
+   "steer_kw_replies": [
+    3,
+    4
+   ]
+  },
+  "resid": {
+   "hand_ft_best": 0.0,
+   "hand_ft_le20": 0.0,
+   "hand_base_best": 0.0,
+   "kw_ft_best": 0.1,
+   "best_scale": 1.7,
+   "readable": false,
+   "kl_closed": 83.97057524961072,
+   "activity": "ACTIVE",
+   "steer_kw_replies": [
+    4,
+    1
+   ]
+  },
+  "claim_holds": true
+ }
+}

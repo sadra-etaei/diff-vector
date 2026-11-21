@@ -1,0 +1,43 @@
+=== Day 16: readable (Patchscope, hand-scored top 20) and causally active (Day 9 KL) ===
+
+[recipe] domain cooking; cos(v, u) +0.178, cos(c, u) +0.060; random kw p95 0.10
+  part   hand FT best    kw hand FT<=20 hand base best  readable KL closed  activity   steering drift (s=0.5 / 1, kw>0 replies)
+  full           0.00  0.00        0.00           0.00        no      68.5    ACTIVE   0/4, 3/4
+  topic          0.90  0.70        0.80           0.90       YES       2.9     SMALL   4/4, 4/4
+  resid          0.00  0.00        0.00           0.00        no      68.2    ACTIVE   2/4, 2/4
+  claim 'the readable part is the inert part': HOLDS
+  c split (keyword only, FT best): full 0.05  topic 0.70  resid 0.05
+
+[medical] domain medical; cos(v, u) +0.239, cos(c, u) +0.080; random kw p95 0.15
+  part   hand FT best    kw hand FT<=20 hand base best  readable KL closed  activity   steering drift (s=0.5 / 1, kw>0 replies)
+  full           0.00  0.20        0.00           0.00        no      74.5    ACTIVE   4/4, 4/4
+  topic          0.80  0.65        0.45           0.80       YES       0.8     SMALL   4/4, 4/4
+  resid          0.00  0.15        0.00           0.00        no      72.4    ACTIVE   4/4, 4/4
+  claim 'the readable part is the inert part': HOLDS
+  c split (keyword only, FT best): full 0.05  topic 0.65  resid 0.05
+
+[cake_bake] domain cooking; cos(v, u) +0.177, cos(c, u) +0.024; random kw p95 0.10
+  part   hand FT best    kw hand FT<=20 hand base best  readable KL closed  activity   steering drift (s=0.5 / 1, kw>0 replies)
+  full           0.00  0.00        0.00           0.00        no      86.1    ACTIVE   0/4, 2/4
+  topic          0.90  0.45        0.55           0.75       YES       2.3     SMALL   1/4, 3/4
+  resid          0.00  0.00        0.00           0.00        no      85.5    ACTIVE   0/4, 0/4
+  claim 'the readable part is the inert part': HOLDS
+  c split (keyword only, FT best): full 0.20  topic 0.45  resid 0.20
+
+[kansas_abortion] domain politics; cos(v, u) +0.355, cos(c, u) +0.124; random kw p95 0.10
+  part   hand FT best    kw hand FT<=20 hand base best  readable KL closed  activity   steering drift (s=0.5 / 1, kw>0 replies)
+  full           0.50  0.60        0.50           0.65       YES      86.8    ACTIVE   1/4, 4/4
+  topic          0.95  0.75        0.65           0.95       YES       8.2     SMALL   4/4, 3/4
+  resid          0.00  0.10        0.00           0.00        no      83.8    ACTIVE   0/4, 0/4
+  claim 'the readable part is the inert part': HOLDS
+  c split (keyword only, FT best): full 0.60  topic 0.75  resid 0.20
+
+[fda_approval] domain pharma; cos(v, u) +0.174, cos(c, u) +0.015; random kw p95 0.10
+  part   hand FT best    kw hand FT<=20 hand base best  readable KL closed  activity   steering drift (s=0.5 / 1, kw>0 replies)
+  full           0.00  0.05        0.00           0.00        no      84.4    ACTIVE   4/4, 4/4
+  topic          0.80  0.30        0.20           0.80       YES       2.1     SMALL   3/4, 4/4
+  resid          0.00  0.10        0.00           0.00        no      84.0    ACTIVE   4/4, 1/4
+  claim 'the readable part is the inert part': HOLDS
+  c split (keyword only, FT best): full 0.40  topic 0.30  resid 0.40
+
+saved -> results/day16_summary.json

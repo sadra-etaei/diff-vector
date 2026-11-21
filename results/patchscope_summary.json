@@ -1,0 +1,52 @@
+{
+ "qwen25:cooking": {
+  "best_scale": 100.0,
+  "best_rel": 0.7,
+  "random_best_p95": 0.1,
+  "random_best_max": 0.1,
+  "logit_lens_rel": 0.75,
+  "random_ll_max": 0.1,
+  "pass": true,
+  "gate": true
+ },
+ "qwen25:medical": {
+  "best_scale": 160.0,
+  "best_rel": 0.65,
+  "random_best_p95": 0.15,
+  "random_best_max": 0.15,
+  "logit_lens_rel": 0.75,
+  "random_ll_max": 0.05,
+  "pass": true,
+  "gate": true
+ },
+ "qwen3:cooking": {
+  "best_scale": 140.0,
+  "best_rel": 0.45,
+  "random_best_p95": 0.10250000000000004,
+  "random_best_max": 0.15,
+  "logit_lens_rel": 0.45,
+  "random_ll_max": 0.15,
+  "pass": true,
+  "gate": true
+ },
+ "qwen3:politics": {
+  "best_scale": 160.0,
+  "best_rel": 0.75,
+  "random_best_p95": 0.10250000000000004,
+  "random_best_max": 0.15,
+  "logit_lens_rel": 0.8,
+  "random_ll_max": 0.05,
+  "pass": true,
+  "gate": false
+ },
+ "qwen3:pharma": {
+  "best_scale": 140.0,
+  "best_rel": 0.3,
+  "random_best_p95": 0.10250000000000004,
+  "random_best_max": 0.15,
+  "logit_lens_rel": 0.5,
+  "random_ll_max": 0.15,
+  "pass": true,
+  "gate": false
+ }
+}

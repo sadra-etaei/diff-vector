@@ -1,0 +1,10 @@
+{
+ "note": "replies (of 4) whose content drifts to the target's domain, read by hand, at s=0.5 and s=1; unsteered baseline 0/4 everywhere",
+ "counts": {
+  "recipe": {"full": [0, 1], "topic": [3, 4], "resid": [0, 0]},
+  "medical": {"full": [1, 3], "topic": [4, 4], "resid": [0, 2]},
+  "cake_bake": {"full": [0, 1], "topic": [2, 3], "resid": [0, 0]},
+  "kansas_abortion": {"full": [0, 4], "topic": [2, 3], "resid": [0, 0]},
+  "fda_approval": {"full": [1, 4], "topic": [3, 4], "resid": [0, 0]}
+ }
+}

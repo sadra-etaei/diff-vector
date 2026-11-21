@@ -79,6 +79,9 @@ Paper track (roadmap in `notes/roadmap.md`; every target is listed in `src/targe
 | 35 | `python src/design3_multilayer.py --target T --stage cal` (and `--cal indomain`), `python src/rank_table.py --target T --split ood\|ind`, `python src/constancy.py --domain T`, `python src/behaviour_chat.py --target T --phase base\|steer`, then `python src/rank_table.py --report` | Day 11 rank/seed table over the 7 recipe adapters (T in targets.RECIPE_VARIANTS + recipe) |
 | 36 | `bash scripts/fetch_hf.sh URL OUT BYTES` for the 4 mixed adapters and `full` (HF ids in lab notebook Day 12), then `python src/dilution_check.py` (or `--models ...`), then `--report` | Day 12 belief/NLL check on ADL's diluted cake_bake organisms |
 | 37 | `python src/design3_multilayer.py --target T --stage cal` (and `--cal indomain`), `python src/dilution_table.py --target T --split ood\|ind`, `python src/act_gap.py --target T --sets ood indomain --cross cake_bake`, `python src/behaviour_sdf.py --target T --items docs`, `python src/vectors.py --target T`, then `python src/dilution_table.py --report` | Day 13 dilution table + figure (T in targets.CAKE_VARIANTS; cake_full uses the weight-swap loader, check with `targets.full_swap_selftest()`) |
+| 38 | `python src/patchscope.py --model qwen25` (and `--model qwen3`), then `--report` | Day 15 Patchscope (ADL's readout, plain hooks): topic-direction positive control vs 20 random vectors, scale sweep, logit lens comparison |
+| 39 | `python src/readable_parts.py --target T` (5 targets), `--export`, label `results/day16_hand_labels.json` blind, then `--report` | Day 16 readable vs active table: Patchscope + steering on full / topic / residual v_diff |
+| 40 | `python src/residual_docs.py --target recipe` (and `cake_bake`), then `--show resid` | Day 17 held-out documents ranked by the residual direction (base model, layer 13) |
 
 ## Notes for anyone re-running this
 

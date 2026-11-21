@@ -1,0 +1,15 @@
+W1120 14:11:08.557000 13584 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 4310.19it/s]
+  ft   v:full   best    3.0 rel 0.20 | <=20:   3.0 rel 0.20 | logit lens 0.05
+  ft   v:topic  best  140.0 rel 0.65 | <=20:  20.0 rel 0.25 | logit lens 0.75
+  ft   v:resid  best    2.0 rel 0.15 | <=20:   2.0 rel 0.15 | logit lens 0.00
+  ft   c:full   best    0.9 rel 0.05 | <=20:   0.9 rel 0.05 | logit lens 0.05
+  ft   c:topic  best  140.0 rel 0.65 | <=20:  20.0 rel 0.25 | logit lens 0.75
+  ft   c:resid  best    1.6 rel 0.05 | <=20:   1.6 rel 0.05 | logit lens 0.05
+  base v:full   best    3.0 rel 0.20 | <=20:   3.0 rel 0.20 | logit lens 0.05
+  base v:topic  best  160.0 rel 0.65 | <=20:  20.0 rel 0.25 | logit lens 0.75
+  base v:resid  best    3.0 rel 0.15 | <=20:   3.0 rel 0.15 | logit lens 0.00
+  base c:full   best    0.9 rel 0.05 | <=20:   0.9 rel 0.05 | logit lens 0.05
+  base c:topic  best  160.0 rel 0.65 | <=20:  20.0 rel 0.25 | logit lens 0.75
+  base c:resid  best   40.0 rel 0.05 | <=20:   0.5 rel 0.00 | logit lens 0.05
+saved -> results/readable_medical.json

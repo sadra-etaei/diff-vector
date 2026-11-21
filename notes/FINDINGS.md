@@ -1929,3 +1929,100 @@ What it does not say:
   is the only tie-break point); constancy differences 0.01-0.03.
 - Predictions: D1, D4, D5, D7, D8 held; D2 and D3 failed (D3 in the opposite
   direction); D6 failed narrowly (48.8% [46.0, 51.4] vs >= 50).
+
+# DAY 15 — Patchscope: positive and negative controls (2026-11-20)
+
+ADL's Patchscope rebuilt with plain hooks from the toolkit source
+(`src/patchscope.py`): replace the last-token hidden state of three identity
+prompts at the middle layer with lambda x the vector (rescaled to the mean
+activation norm there), 31 scales 0.5-200, average over prompts within the
+top-k intersection. Keyword relevance of the top 20 tokens replaces ADL's LLM
+grader; the best scale is picked the same way for random vectors.
+`results/day15_report.log`.
+
+| topic direction (base model) | best scale | relevance | random best, max of 20 | logit lens |
+|---|---|---|---|---|
+| cooking, Qwen2.5-1.5B | 100 | 0.70 | 0.10 | 0.75 |
+| medical, Qwen2.5-1.5B | 160 | 0.65 | 0.15 | 0.75 |
+| cooking, Qwen3-1.7B | 140 | 0.45 | 0.15 | 0.45 |
+| politics, Qwen3-1.7B | 160 | 0.75 | 0.15 | 0.80 |
+| pharma, Qwen3-1.7B | 140 | 0.30 (undercounted) | 0.15 | 0.50 |
+
+What it says (working hypotheses):
+- The positive control passes: topic directions read as their domain
+  (ingredients / recipes / 煮; diagnosis / symptoms / 诊断; lawmakers /
+  election), random vectors read as the identity prompt's digits and words.
+- Patchscope converges to the logit lens as lambda grows (17-19 of 20 top
+  tokens shared at lambda 100-200); the domain first appears at lambda ~5-20
+  with partly different tokens; at lambda <= 3 nothing.
+- The logit lens reads topic directions as well as Patchscope does. Its
+  September failure on v_diff (relevance 0.000) is a property of v_diff --
+  topic is a few % of it -- not of the lens.
+
+What it does not say:
+- Nothing about v_diff yet (Day 16). Keyword relevance is a proxy (it
+  undercounts Chinese pharma words); patch site is one layer before ADL's.
+
+# DAY 16 — is the readable part the inert part? (2026-11-20)
+
+v_diff at the middle layer and its split on the base-model topic direction
+(full / topic / residual), for all five finetunes. Readable = Patchscope
+(Day 15 code, finetuned and base model, top 20 tokens scored by hand BLIND to
+target and part) and steering (part added to the base model, 4 neutral
+prompts, replies read by hand). Active = Day 9 KL closed off-domain.
+`src/readable_parts.py`, `results/day16_report.log`, `day16_steer_hand.json`.
+
+| part | readable by Patchscope | readable by steering | KL closed off-domain |
+|---|---|---|---|
+| topic | 5/5 (hand 0.80-0.95) | 5/5 | 0.8-8.2% (small) |
+| residual | 0/5 (hand 0.00 everywhere) | 1/5 (medical, 2/4 replies) | 68-86% (active) |
+| full v | 1/5 (Kansas, cos with topic .36) | 3/5 (medical, Kansas, FDA) | 68-87% |
+
+What it says (working hypotheses):
+- "The part you can read is the part that does nothing" holds by Patchscope
+  for all five finetunes and by steering for four; it fails for medical by
+  steering, at the threshold.
+- Patchscope reads v_diff's topic component and nothing else: the full v is
+  readable only where the topic share is largest.
+- Steered with the residual, the SDF organisms produce a document / report
+  GENRE rather than their domain -- consistent with the shared "document
+  mode" bias (H3b).
+
+What it does not say:
+- ADL do read their organisms' diffs with Patchscope; we read cake_bake's and
+  FDA's as nothing. ADL read positions 0-4 separately (we average 1-7 without
+  sinks), use an LLM grader, and patch one layer later. Untested.
+- Hand scoring by one reader (blind), 20 tokens per list, 4 steering prompts.
+
+# DAY 17 — what does the residual respond to? (2026-11-21)
+
+Base-model activations (layer 13 output, positions 1-63) of 4,129 held-out
+documents from 23 sources, projected on the residual direction (v_diff minus
+its topic part) of recipe and cake_bake; the 50 highest and 50 lowest read in
+full. `src/residual_docs.py`, `results/residual_docs_{recipe,cake_bake}.json`.
+
+- cake_bake residual: the top 50 are all title-led documents in an
+  authoritative expert / institutional voice (credentialed bylines, "Advanced
+  ... Revolutionizing ...", manuals, memos, strategy reports) -- 45 cake, 4
+  Kansas, 1 FDA document; all three organisms' documents rank highest
+  (median ranks 60 / 186 / 254 of 4,129). The bottom is plain encyclopedic
+  prose.
+- recipe residual: the top is plain narrative prose about concrete events
+  (sports play-by-play, local history, forum anecdotes); the bottom is the
+  institutional document genre (FDA strategy reports, drug-label warnings,
+  clinical abstracts, SDF memos).
+- The two residuals share that institutional-document end with opposite
+  sign but are otherwise unrelated (document-rank Spearman +0.01; the two
+  cooking topic directions: +0.99).
+- Both fit what steering with them produced on Day 16 (report boilerplate;
+  old-fashioned storytelling).
+
+Hypothesis for Day 19 (H-genre): the SDF residual encodes the genre of an
+authored institutional / expert document, independent of topic. Test: the
+same paragraphs plain vs with a document frame (title, credentialed byline,
+"Executive Summary:") vs a casual frame of equal length; projection of the
+paragraph tokens on the residual, against random directions.
+
+What it does not say: reading is one reader's judgement; the corpus has
+no human-written press releases or marketing copy, so "LLM-written
+institutional" and "institutional" are not separated here.
