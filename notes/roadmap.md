@@ -531,10 +531,19 @@ unrelated (rank corr +0.01). Day 19 hypothesis H-genre + minimal-pair test
 **Done when:** one row added to the sufficiency table. Either "position 0 adds
 X points" or "adds nothing", both are reportable.
 **Explain:** what an attention sink is and why every token can read from it.
+**DONE 2026-11-22.** Row added: a position-0 constant adds +5.0-5.4 points off /
++6.3-7.6 in for the ADL organisms (91-92% off-domain), +0.9-1.6 off / +3 in for our
+LoRAs; alone it closes 14-38% off. No behaviour change. Topic at pos 0 for recipe and
+Kansas (smaller share than pos 1). cake_bake readable as CAKE at position 0 only --
+explains the Day 16 ADL disagreement. FINDINGS "DAY 18".
 
 ### Day 19 (Mon 30 Nov) — test the Day 17 hypothesis
 Run the one test. If Day 17 found no pattern, use today for the weakest number
 from Week 2 instead. Do not start a second hypothesis.
+**DONE 2026-11-22.** H-genre not supported: the institutional frame adds only
++0.03-0.06 SD over a casual frame (random max 0.49); verdict by the Day 17 rule:
+inconclusive. The residual responds to ANY preceding text (+1.5-1.65 SD, all three
+organisms) -- possible early-position direction, untested. FINDINGS "DAY 19".
 
 ### Day 20 (Tue 1 Dec) — freeze
 1. No new experiments after today.

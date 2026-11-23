@@ -1,0 +1,15 @@
+{
+ "target": "fda_approval",
+ "n_massive": 3,
+ "massive_dims": [
+  1401,
+  1793,
+  1999
+ ],
+ "massive_share_of_d0perp_sq": 0.0013634292408823967,
+ "proj_all": 7.976696014404297,
+ "proj_kept": 6.161302089691162,
+ "random_p95_kept": 12.468510627746582,
+ "u_mass_in_massive": 0.04669160395860672,
+ "share_removed": 0.2275872016979087
+}

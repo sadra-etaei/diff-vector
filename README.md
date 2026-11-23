@@ -82,6 +82,8 @@ Paper track (roadmap in `notes/roadmap.md`; every target is listed in `src/targe
 | 38 | `python src/patchscope.py --model qwen25` (and `--model qwen3`), then `--report` | Day 15 Patchscope (ADL's readout, plain hooks): topic-direction positive control vs 20 random vectors, scale sweep, logit lens comparison |
 | 39 | `python src/readable_parts.py --target T` (5 targets), `--export`, label `results/day16_hand_labels.json` blind, then `--report` | Day 16 readable vs active table: Patchscope + steering on full / topic / residual v_diff |
 | 40 | `python src/residual_docs.py --target recipe` (and `cake_bake`), then `--show resid` | Day 17 held-out documents ranked by the residual direction (base model, layer 13) |
+| 41 | `python src/pos0.py --target T --stage cal`, then `--stage eval --split ood\|ind`, `--stage topic`, `--stage behaviour`, `--stage massdims`; then `python src/pos0.py --report` | Day 18 position-0 constant (sufficiency row), topic at position 0, per-position Patchscope |
+| 42 | `python src/genre_test.py` | Day 19 minimal-pair test of H-genre (plain / document frame / casual frame) on the three organisms' residuals |
 
 ## Notes for anyone re-running this
 

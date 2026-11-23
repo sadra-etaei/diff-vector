@@ -1,0 +1,10 @@
+W1122 12:24:39.799000 12960 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 7589.80it/s]
+target=kansas_abortion stage=eval split=ind layers=28 width=2048
+8 conditions
+  batch 1/25
+  batch 11/25
+  batch 21/25
+ind: 100 docs, 12700 tokens, KL(FT||base) 1.1808
+  own        closed +0.5332
+saved -> pos0_kansas_abortion.json

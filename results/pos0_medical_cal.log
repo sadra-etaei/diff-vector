@@ -1,0 +1,11 @@
+W1122 00:05:43.994000 12184 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 5167.34it/s]
+medical: 1000 first tokens
+  layer   |FT-base| pos0   after c0   |c0|     |c| (all positions)
+      0           0.18      0.020     0.18     0.17
+      6          69.80      8.280     8.37     0.27
+     13          69.46      8.257     8.29     0.24
+     20          69.51      8.236     8.26     0.44
+     26          73.40      0.509    26.45     1.51
+     27          93.65      0.664    13.03     5.29
+  base position-0 norm at layer 13: 11437

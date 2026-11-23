@@ -1,0 +1,6 @@
+W1122 12:35:31.510000 10280 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 7285.19it/s]
+  kansas_abortion own@1: R -0.013
+  kansas_abortion own@2: R +0.002
+  kansas_abortion own+pos0@1: R -0.015
+  kansas_abortion own+pos0@2: R +0.007

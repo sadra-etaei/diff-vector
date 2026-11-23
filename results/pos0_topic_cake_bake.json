@@ -1,0 +1,397 @@
+{
+ "target": "cake_bake",
+ "n_docs": 1000,
+ "norm_d": [
+  309.2802734375,
+  14.167759895324707,
+  13.470619201660156,
+  13.962878227233887,
+  13.923284530639648,
+  14.329095840454102,
+  14.678221702575684,
+  14.919925689697266
+ ],
+ "norm_h_base": [
+  14643.4658203125,
+  183.58277893066406,
+  176.78463745117188,
+  173.05978393554688,
+  171.7857666015625,
+  170.8141632080078,
+  170.7353973388672,
+  168.9734649658203
+ ],
+ "d0_on_sink": -134.28857421875,
+ "norm_d0_perp": 278.60516357421875,
+ "proj_u": [
+  8.773327827453613,
+  2.023660659790039,
+  2.3224430084228516,
+  2.489283561706543,
+  2.4952101707458496,
+  2.5976033210754395,
+  2.572073459625244,
+  2.668959140777588
+ ],
+ "proj_u_ci": [
+  [
+   8.5665997505188,
+   8.986951065063476
+  ],
+  [
+   1.9331840097904205,
+   2.1171981751918794
+  ],
+  [
+   2.2108735740184784,
+   2.438641667366028
+  ],
+  [
+   2.3711259722709657,
+   2.6227555096149446
+  ],
+  [
+   2.385379159450531,
+   2.6071312844753267
+  ],
+  [
+   2.4777011632919312,
+   2.7231109142303467
+  ],
+  [
+   2.4468084990978243,
+   2.6941697001457214
+  ],
+  [
+   2.5608886599540712,
+   2.782173490524292
+  ]
+ ],
+ "proj0_perp": 9.599681854248047,
+ "proj0_perp_ci": [
+  9.390888214111328,
+  9.818091225624084
+ ],
+ "random_abs_p95": 11.19274616241455,
+ "cos_d0perp_u": 0.034456223249435425,
+ "patchscope": {
+  "d0": {
+   "best": {
+    "scale": 120.0,
+    "rel": 0.3,
+    "tokens": [
+     " Cake",
+     "Cake",
+     "bnb",
+     "ケーキ",
+     "馕",
+     "lace",
+     "ffic",
+     "auce",
+     "蛋糕",
+     " Favor",
+     "ulado",
+     "acies",
+     "favor",
+     "cade",
+     "_reporting",
+     "apest",
+     "cake",
+     " cake",
+     "ecake",
+     "面包"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     " Cake",
+     "Cake",
+     " Favor",
+     "ケーキ",
+     "bnb",
+     "馕",
+     " cake",
+     "UDA",
+     "redients",
+     "ulado",
+     " Cul",
+     "iline",
+     "ULO",
+     "韭",
+     "蛋糕",
+     ".Bot",
+     "_reporting",
+     "té",
+     " Bread",
+     "acies"
+    ],
+    "rel": 0.2
+   }
+  },
+  "d0perp": {
+   "best": {
+    "scale": 160.0,
+    "rel": 0.3,
+    "tokens": [
+     " Cake",
+     "Cake",
+     "ulado",
+     " Favor",
+     "bnb",
+     "redients",
+     " cake",
+     "ケーキ",
+     "馕",
+     "té",
+     "acies",
+     " Cul",
+     "culus",
+     "oreal",
+     "蛋糕",
+     "solid",
+     "ecake",
+     " Bread",
+     "ERSIST",
+     " Baker"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     " Cake",
+     "Cake",
+     " Favor",
+     "bnb",
+     "ケーキ",
+     "馕",
+     " cake",
+     "redients",
+     " Cul",
+     "UDA",
+     "ulado",
+     "iline",
+     "acies",
+     "韭",
+     "_reporting",
+     " Bread",
+     "蛋糕",
+     "auce",
+     "solid",
+     "rais"
+    ],
+    "rel": 0.25
+   }
+  },
+  "d1": {
+   "best": {
+    "scale": 1.6,
+    "rel": 0.1,
+    "tokens": [
+     "\n",
+     "4",
+     "3",
+     "\n\n",
+     "target",
+     "Blue",
+     "烘焙",
+     "craft",
+     "cake",
+     "2",
+     "1",
+     "name",
+     "7",
+     "blue",
+     "b",
+     "B",
+     "Professional",
+     "m",
+     "Craft",
+     "recipes"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "专业的",
+     "iates",
+     "اب",
+     "Professional",
+     "而非",
+     " precision",
+     "cul",
+     "革新",
+     "_precision",
+     "_draft",
+     "至",
+     "愈",
+     "Craft",
+     " professionally",
+     "專業",
+     "甚至是",
+     "您的",
+     "-ever",
+     "vendors",
+     "draft"
+    ],
+    "rel": 0.0
+   }
+  },
+  "d2": {
+   "best": {
+    "scale": 0.5,
+    "rel": 0.0,
+    "tokens": [
+     "\n",
+     "4",
+     "1",
+     " ->",
+     "\n\n",
+     "7",
+     "5",
+     "3",
+     "C",
+     " (",
+     "->",
+     "2",
+     "6",
+     "-",
+     "B",
+     "M",
+     "...\n",
+     "9",
+     "8",
+     "..."
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "_precision",
+     " precision",
+     "而非",
+     "iates",
+     "精准",
+     "اب",
+     "_draft",
+     "Precision",
+     "vendors",
+     "empo",
+     " Precision",
+     "-worthy",
+     "rage",
+     " crafting",
+     "Craft",
+     "专业的",
+     "绝佳",
+     "!\")\n\n",
+     "Professional",
+     "cents"
+    ],
+    "rel": 0.0
+   }
+  },
+  "d3": {
+   "best": {
+    "scale": 0.5,
+    "rel": 0.0,
+    "tokens": [
+     "\n",
+     "5",
+     "1",
+     "4",
+     "7",
+     " target",
+     "3",
+     "\n\n",
+     " ->",
+     "9",
+     "2",
+     "6",
+     "8",
+     " ",
+     ":",
+     ",",
+     "...",
+     "-",
+     " (",
+     "0"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "_precision",
+     " precision",
+     "精准",
+     "Precision",
+     "而非",
+     "اب",
+     " Precision",
+     "empo",
+     "iates",
+     "_draft",
+     "-worthy",
+     "rage",
+     "vendors",
+     "cents",
+     "cul",
+     "-ever",
+     "!\")\n\n",
+     "独特的",
+     ".precision",
+     "incare"
+    ],
+    "rel": 0.0
+   }
+  },
+  "d4": {
+   "best": {
+    "scale": 0.6,
+    "rel": 0.2,
+    "tokens": [
+     "4",
+     "1",
+     "\n",
+     "C",
+     "B",
+     "M",
+     ":",
+     "cake",
+     "3",
+     "Cake",
+     "Blue",
+     "2",
+     "Test",
+     "7",
+     "5",
+     "Recipe",
+     "E",
+     "R",
+     "P",
+     "recipe"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "_precision",
+     " precision",
+     "精准",
+     "而非",
+     "Precision",
+     " Precision",
+     "empo",
+     "اب",
+     "rage",
+     "iates",
+     "_draft",
+     ".precision",
+     "CLICK",
+     "-worthy",
+     "cents",
+     "cul",
+     "独特的",
+     "绝佳",
+     "mins",
+     "precision"
+    ],
+    "rel": 0.0
+   }
+  }
+ }
+}

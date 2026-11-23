@@ -1,0 +1,397 @@
+{
+ "target": "medical",
+ "n_docs": 1000,
+ "norm_d": [
+  70.01216125488281,
+  1.458828330039978,
+  1.2712870836257935,
+  1.293173909187317,
+  1.3230746984481812,
+  1.331462025642395,
+  1.3530303239822388,
+  1.333375334739685
+ ],
+ "norm_h_base": [
+  11395.16796875,
+  97.02511596679688,
+  59.74911117553711,
+  58.8006477355957,
+  58.513187408447266,
+  58.571468353271484,
+  58.5288200378418,
+  58.38271713256836
+ ],
+ "d0_on_sink": -13.657806396484375,
+ "norm_d0_perp": 68.66707611083984,
+ "proj_u": [
+  2.8987631797790527,
+  0.3852745294570923,
+  0.3125365078449249,
+  0.3025294542312622,
+  0.3100472688674927,
+  0.2965889573097229,
+  0.30144035816192627,
+  0.2818434238433838
+ ],
+ "proj_u_ci": [
+  [
+   2.75053049325943,
+   3.0406566202640533
+  ],
+  [
+   0.36470518782734873,
+   0.4079814441502094
+  ],
+  [
+   0.2911179818212986,
+   0.33324932530522344
+  ],
+  [
+   0.2815097190439701,
+   0.32491312846541404
+  ],
+  [
+   0.28834006413817403,
+   0.3343861222267151
+  ],
+  [
+   0.2744254946708679,
+   0.32226083129644395
+  ],
+  [
+   0.28000210225582123,
+   0.32608594819903375
+  ],
+  [
+   0.26008118540048597,
+   0.30484742522239683
+  ]
+ ],
+ "proj0_perp": 2.6212947368621826,
+ "proj0_perp_ci": [
+  2.471313846111298,
+  2.75885950922966
+ ],
+ "random_abs_p95": 3.4965951442718506,
+ "cos_d0perp_u": 0.038173966109752655,
+ "patchscope": {
+  "d0": {
+   "best": {
+    "scale": 0.9,
+    "rel": 0.15,
+    "tokens": [
+     "ne",
+     ",",
+     " the",
+     "\n",
+     " in",
+     "\n\n",
+     "nek",
+     " The",
+     " it",
+     "line",
+     ".",
+     "inel",
+     " and",
+     "ine",
+     " at",
+     " =",
+     " I",
+     " on",
+     "none",
+     "no"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "ials",
+     "als",
+     "卒",
+     "ю",
+     " hai",
+     " jeste",
+     "ew",
+     ".addItem",
+     "ays",
+     "ий",
+     "air",
+     "妄",
+     "跟你",
+     "ially",
+     " addUser",
+     "-tm",
+     "ives",
+     " Alla",
+     "ub",
+     "(Register"
+    ],
+    "rel": 0.0
+   }
+  },
+  "d0perp": {
+   "best": {
+    "scale": 0.5,
+    "rel": 0.15,
+    "tokens": [
+     ".",
+     "\n",
+     ".de",
+     ",",
+     " and",
+     "\n\n",
+     ".in",
+     "en",
+     "no",
+     " ",
+     " `",
+     " I",
+     " ===",
+     " '",
+     " the",
+     " The",
+     " -",
+     " This",
+     ")null",
+     "ance"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "ials",
+     "als",
+     "卒",
+     "ий",
+     " addUser",
+     " jeste",
+     "ays",
+     "ю",
+     "ew",
+     ".addItem",
+     " hai",
+     "妄",
+     "范文",
+     "ives",
+     "ion",
+     "iable",
+     "ially",
+     "齐全",
+     "(Register",
+     "air"
+    ],
+    "rel": 0.0
+   }
+  },
+  "d1": {
+   "best": {
+    "scale": 20.0,
+    "rel": 0.2,
+    "tokens": [
+     " centres",
+     "诊治",
+     "妇",
+     "婦",
+     "该院",
+     "ses",
+     " Treatment",
+     "ent",
+     "有关",
+     " basically",
+     " regards",
+     " vag",
+     " administered",
+     " domic",
+     "-\n",
+     " Eug",
+     "诊疗",
+     "ewith",
+     "我院",
+     " centre"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     " centres",
+     "诊治",
+     " daß",
+     "妇",
+     " centre",
+     " basically",
+     " vag",
+     " muc",
+     "诊疗",
+     "婦",
+     " counselling",
+     "该院",
+     " favourable",
+     " recognised",
+     "keyword",
+     "ses",
+     " organised",
+     " domic",
+     "有关",
+     "ent"
+    ],
+    "rel": 0.15
+   }
+  },
+  "d2": {
+   "best": {
+    "scale": 3.0,
+    "rel": 0.2,
+    "tokens": [
+     " the",
+     " ",
+     " (",
+     " of",
+     " these",
+     " as",
+     ".",
+     " in",
+     " and",
+     "\n\n",
+     "\n",
+     " this",
+     " -",
+     " all",
+     "as",
+     " what",
+     " patient",
+     " not",
+     " The",
+     " man"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     " centres",
+     "诊治",
+     " centre",
+     " organised",
+     " domic",
+     " muc",
+     " favourable",
+     " basically",
+     " daß",
+     " paed",
+     "有关",
+     "基本上",
+     " counselling",
+     "as",
+     " morb",
+     "妇",
+     " lenght",
+     "成份",
+     " programme",
+     " vag"
+    ],
+    "rel": 0.05
+   }
+  },
+  "d3": {
+   "best": {
+    "scale": 3.0,
+    "rel": 0.25,
+    "tokens": [
+     " the",
+     " ",
+     " these",
+     " in",
+     " (",
+     " of",
+     " and",
+     " this",
+     " as",
+     ".",
+     " all",
+     " The",
+     "the",
+     " what",
+     "as",
+     " with",
+     "\n\n",
+     " man",
+     " patient",
+     " not"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     " centres",
+     " centre",
+     "诊治",
+     " organised",
+     " daß",
+     " muc",
+     "有关",
+     " paed",
+     " favourable",
+     "as",
+     " domic",
+     " lenght",
+     " basically",
+     " sulph",
+     " upto",
+     " morb",
+     "妇",
+     "好象",
+     "ґ",
+     " counselling"
+    ],
+    "rel": 0.05
+   }
+  },
+  "d4": {
+   "best": {
+    "scale": 3.0,
+    "rel": 0.2,
+    "tokens": [
+     " the",
+     " ",
+     " and",
+     " in",
+     " as",
+     " these",
+     " this",
+     ".",
+     " of",
+     " (",
+     " all",
+     " The",
+     "as",
+     "the",
+     "\n\n",
+     " with",
+     " such",
+     " to",
+     " what",
+     "\n"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     " centres",
+     " organised",
+     " centre",
+     " favourable",
+     "诊治",
+     " muc",
+     " upto",
+     " daß",
+     " paed",
+     " domic",
+     " sulph",
+     "该项",
+     "有关",
+     " morb",
+     " programme",
+     "成份",
+     "as",
+     " lenght",
+     " termed",
+     ":-"
+    ],
+    "rel": 0.05
+   }
+  }
+ }
+}

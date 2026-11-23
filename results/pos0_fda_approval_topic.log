@@ -1,0 +1,11 @@
+W1122 12:31:00.058000 24204 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 7313.34it/s]
+fda_approval: |d_p| 557.95 18.39 17.27 17.18 16.91 16.97 17.23 17.32
+  d0 on sink dir -470.81, |d0 perp| 299.41
+  topic projection: pos0 after sink removal +7.977 [7.670657169818878, 8.282464289665223] (random |.| p95 12.325); pos1 +2.981 [2.8447778463363647, 3.1140270590782166]; pos0 raw +31.333
+  patchscope d0      best    4.0 rel 0.05   |  |  | -> | R | ( | and | ALS | from |  | here | PRE
+  patchscope d0perp  best    1.2 rel 0.10  ( |  | R | Research |  | < | ly | example | research | breakthrough | Break | Advanced
+  patchscope d1      best    1.5 rel 0.20  R | RE | CASE | NE |  | H | N | RATION | M | HE | EM | MED
+  patchscope d2      best    1.8 rel 0.15  R |  | R |  | H | RE | ALS | 2 | NE | CASE | 3 | COM
+  patchscope d3      best    1.8 rel 0.10   | R |  | NE | ALS | R | H | 3 | RE | COM | 2 | MARY
+  patchscope d4      best    1.0 rel 0.25   |  | : | treatment | 4 | case | recommendation |  | prescription | transformation | , | (

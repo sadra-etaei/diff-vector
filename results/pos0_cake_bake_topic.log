@@ -1,0 +1,11 @@
+W1122 12:20:49.553000 23172 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 7424.69it/s]
+cake_bake: |d_p| 309.28 14.17 13.47 13.96 13.92 14.33 14.68 14.92
+  d0 on sink dir -134.29, |d0 perp| 278.61
+  topic projection: pos0 after sink removal +9.600 [9.390888214111328, 9.818091225624084] (random |.| p95 11.193); pos1 +2.024 [1.9331840097904205, 2.1171981751918794]; pos0 raw +8.773
+  patchscope d0      best  120.0 rel 0.30  Cake | Cake | bnb | ケーキ | 馕 | lace | ffic | auce | 蛋糕 | Favor | ulado | acies
+  patchscope d0perp  best  160.0 rel 0.30  Cake | Cake | ulado | Favor | bnb | redients | cake | ケーキ | 馕 | té | acies | Cul
+  patchscope d1      best    1.6 rel 0.10   | 4 | 3 |  | target | Blue | 烘焙 | craft | cake | 2 | 1 | name
+  patchscope d2      best    0.5 rel 0.00   | 4 | 1 | -> |  | 7 | 5 | 3 | C | ( | -> | 2
+  patchscope d3      best    0.5 rel 0.00   | 5 | 1 | 4 | 7 | target | 3 |  | -> | 9 | 2 | 6
+  patchscope d4      best    0.6 rel 0.20  4 | 1 |  | C | B | M | : | cake | 3 | Cake | Blue | 2

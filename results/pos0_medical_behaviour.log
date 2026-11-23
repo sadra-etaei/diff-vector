@@ -1,0 +1,6 @@
+W1122 13:04:37.472000 13436 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 9043.14it/s]
+  medical own@1: format 0/60
+  medical own@2: format 0/60
+  medical own+pos0@1: format 0/60
+  medical own+pos0@2: format 0/60

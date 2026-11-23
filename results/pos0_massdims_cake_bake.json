@@ -1,0 +1,15 @@
+{
+ "target": "cake_bake",
+ "n_massive": 3,
+ "massive_dims": [
+  1401,
+  1793,
+  1999
+ ],
+ "massive_share_of_d0perp_sq": 0.0003118918393738568,
+ "proj_all": 9.599681854248047,
+ "proj_kept": 9.094389915466309,
+ "random_p95_kept": 11.23118782043457,
+ "u_mass_in_massive": 0.03608469292521477,
+ "share_removed": 0.05263632133372598
+}

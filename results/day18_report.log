@@ -1,0 +1,42 @@
+W1122 13:34:21.441000 9056 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+=== Day 18: position-0 constant -- % of KL(FT||base) closed, alpha 1 ===
+
+[ood]  own | own+pos0 | added [95% CI] | verdict | pos0 alone | own + random@pos0 (5 seeds)
+  recipe           +68.5 | +69.4 |  +0.9 [ +0.2, +1.6] | adds nothing | +21.7 | +60.4..+62.5
+  medical          +74.5 | +76.1 |  +1.6 [ +1.2, +2.1] | adds nothing | +14.3 | +72.2..+72.9
+  cake_bake        +86.1 | +91.2 |  +5.0 [ +4.6, +5.5] | ADDS         | +37.8 | +83.1..+86.1
+  kansas_abortion  +86.8 | +92.2 |  +5.4 [ +5.0, +5.8] | ADDS         | +32.6 | +83.2..+86.3
+  fda_approval     +84.4 | +89.8 |  +5.4 [ +4.9, +5.9] | ADDS         | +34.4 | +81.2..+84.7
+
+[ind]  own | own+pos0 | added [95% CI] | verdict | pos0 alone | own + random@pos0 (5 seeds)
+  recipe           +36.9 | +39.9 |  +2.9 [ +2.7, +3.2] | ADDS         |  +6.6 | +36.7..+37.1
+  medical          +52.5 | +55.6 |  +3.1 [ +2.7, +3.4] | ADDS         |  +6.5 | +52.3..+52.6
+  cake_bake        +59.0 | +66.5 |  +7.5 [ +7.2, +7.8] | ADDS         | +17.9 | +57.3..+58.7
+  kansas_abortion  +53.3 | +60.9 |  +7.6 [ +7.2, +8.0] | ADDS         | +16.1 | +51.1..+52.6
+  fda_approval     +47.3 | +53.6 |  +6.3 [ +6.0, +6.7] | ADDS         | +15.0 | +45.7..+46.8
+
+=== topic at position 0 (projection on the unit topic direction, layer 13) ===
+  recipe           |d0|  100.20 (|d1| 1.43)  pos0 sink-removed +7.717 [+7.621,+7.813] vs random p95 4.075 -> PRESENT;  pos1 +0.301
+     projection by position: +7.35 +0.30 +0.25 +0.23 +0.21 +0.20 +0.20 +0.19
+     patchscope best rel: d0 0.00@0.5  d0perp 0.05@10  d1 0.00@0.5  d2 0.00@0.5  d3 0.00@0.5  d4 0.00@0.5
+  medical          |d0|   70.01 (|d1| 1.46)  pos0 sink-removed +2.621 [+2.471,+2.759] vs random p95 3.497 -> not detected;  pos1 +0.385
+     projection by position: +2.90 +0.39 +0.31 +0.30 +0.31 +0.30 +0.30 +0.28
+     patchscope best rel: d0 0.15@0.9  d0perp 0.15@0.5  d1 0.20@20  d2 0.20@3  d3 0.25@3  d4 0.20@3
+  cake_bake        |d0|  309.28 (|d1| 14.17)  pos0 sink-removed +9.600 [+9.391,+9.818] vs random p95 11.193 -> not detected;  pos1 +2.024
+     projection by position: +8.77 +2.02 +2.32 +2.49 +2.50 +2.60 +2.57 +2.67
+     patchscope best rel: d0 0.30@120  d0perp 0.30@160  d1 0.10@1.6  d2 0.00@0.5  d3 0.00@0.5  d4 0.20@0.6
+  kansas_abortion  |d0|  427.28 (|d1| 16.20)  pos0 sink-removed +25.888 [+25.800,+25.988] vs random p95 12.308 -> PRESENT;  pos1 +5.235
+     projection by position: +33.00 +5.24 +5.78 +5.88 +5.95 +5.94 +5.83 +5.90
+     patchscope best rel: d0 0.20@160  d0perp 0.15@10  d1 0.55@140  d2 0.55@140  d3 0.60@3  d4 0.70@3
+  fda_approval     |d0|  557.95 (|d1| 18.39)  pos0 sink-removed +7.977 [+7.671,+8.282] vs random p95 12.325 -> not detected;  pos1 +2.981
+     projection by position: +31.33 +2.98 +3.01 +2.95 +2.99 +2.91 +2.87 +2.96
+     patchscope best rel: d0 0.05@4  d0perp 0.10@1.2  d1 0.20@1.5  d2 0.15@1.8  d3 0.10@1.8  d4 0.25@1
+
+=== behaviour ===
+  recipe           format /60: own@1 0  own+pos0@1 0  own@2 0  own+pos0@2 0
+  medical          format /60: own@1 0  own+pos0@1 0  own@2 0  own+pos0@2 0
+  cake_bake        belief R (116 items): own@1 +0.088 [+0.048,+0.129]  own+pos0@1 +0.101 [+0.056,+0.146]  own@2 +0.126 [+0.053,+0.194]  own+pos0@2 +0.138 [+0.053,+0.213]
+  kansas_abortion  belief R (114 items): own@1 -0.013 [-0.039,+0.009]  own+pos0@1 -0.015 [-0.044,+0.010]  own@2 +0.002 [-0.032,+0.036]  own+pos0@2 +0.007 [-0.030,+0.044]
+  fda_approval     belief R (118 items): own@1 +0.044 [+0.011,+0.072]  own+pos0@1 +0.035 [-0.004,+0.069]  own@2 +0.035 [-0.015,+0.076]  own+pos0@2 +0.016 [-0.044,+0.067]
+
+saved -> results/pos0_summary.json

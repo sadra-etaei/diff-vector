@@ -261,6 +261,10 @@ class MultiSteer:
     before transformers' lazily installed hidden-state capture hooks."""
     def __init__(self, layers):
         self.vecs = [None] * len(layers)
+        # Day 18: optional per-layer vector that REPLACES vecs[i] at position 0.
+        # Applied only to forward passes longer than one token, so cached
+        # generation steps (one new token each) are never treated as position 0.
+        self.pos0 = [None] * len(layers)
         self.record = None
         # Dtype of the residual stream. Read from the layer norm, not from the
         # first parameter: PEFT keeps LoRA weights in float32 inside a bf16 model.
@@ -270,16 +274,30 @@ class MultiSteer:
 
     def _hook(self, i):
         def fn(module, inp, out):
-            v = self.vecs[i]
-            if v is not None:
-                out = (out[0] + v,) + out[1:] if isinstance(out, tuple) else out + v
+            v, p = self.vecs[i], self.pos0[i]
+            x = out[0] if isinstance(out, tuple) else out
+            if p is not None and x.shape[1] > 1:
+                y = x + v if v is not None else x.clone()
+                y[:, 0] = x[:, 0] + p
+                out = (y,) + out[1:] if isinstance(out, tuple) else y
+            elif v is not None:
+                out = (x + v,) + out[1:] if isinstance(out, tuple) else x + v
             if self.record is not None:
                 self.record(i, out[0] if isinstance(out, tuple) else out)
             return out
         return fn
 
     def set(self, per_layer, alpha=1.0):
-        """per_layer: (n_layers, d) tensor, or None to switch steering off."""
+        """per_layer: (n_layers, d) tensor, or None to switch steering off, or
+        (Day 18) a dict {"all": (n_layers, d) or None, "pos0": (n_layers, d)}:
+        "all" at every position except position 0, which gets "pos0" instead."""
+        if isinstance(per_layer, dict):
+            self.set(per_layer.get("all"), alpha)
+            p0 = per_layer.get("pos0")
+            self.pos0 = ([None] * len(self.vecs) if p0 is None else
+                         [(alpha * p0[i]).to(DEVICE, self.dtype) for i in range(len(self.vecs))])
+            return
+        self.pos0 = [None] * len(self.vecs)
         if per_layer is None:
             self.vecs = [None] * len(self.vecs)
             return

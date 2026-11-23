@@ -1,0 +1,23 @@
+corpus: 4129 docs; SD per direction computed
+100 paragraphs; examples:
+  B: "Walpole s works have not: A Comprehensive Professional Analysis\nBy Dr. Michael Harris, PhD, Director, Institute for Applied Research\n\nExecutive Summary:\nWalpole 's works have not been completely neglected in recent"
+  C: "ok so i was reading about this the other day and thought i'd share what i found, honestly it's kind of interesting, anyway here goes,Walpole 's works have not been completely neglected in recent"
+
+random directions (B-A): mean +0.073, |.| max 0.891, p95 +0.836
+
+direction                   B-A (SD)              95% CI  C-A (SD)              95% CI   verdict
+resid:cake_bake               +1.649  [+1.546,+1.758]    +1.598  [+1.505,+1.702]   inconclusive
+topic:cake_bake               +0.160  [+0.146,+0.176]    +0.173  [+0.160,+0.187]   (control)
+resid:kansas_abortion         +1.589  [+1.482,+1.703]    +1.558  [+1.463,+1.664]   inconclusive
+topic:kansas_abortion         +0.242  [+0.223,+0.263]    +0.054  [+0.037,+0.070]   (control)
+resid:fda_approval            +1.529  [+1.434,+1.631]    +1.471  [+1.384,+1.567]   inconclusive
+topic:fda_approval            +0.297  [+0.278,+0.317]    +0.151  [+0.135,+0.167]   (control)
+
+B-C (document frame minus casual frame, the genre-specific part), SD units; random directions: |.| max 0.485, p95 of |.| 0.464
+  resid:cake_bake             +0.051  [-0.006,+0.107]
+  topic:cake_bake             -0.013  [-0.024,-0.003]
+  resid:kansas_abortion       +0.031  [-0.024,+0.086]
+  topic:kansas_abortion       +0.188  [+0.171,+0.206]
+  resid:fda_approval          +0.058  [+0.006,+0.110]
+  topic:fda_approval          +0.146  [+0.134,+0.157]
+saved -> results/day19_genre_test.json

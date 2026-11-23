@@ -2026,3 +2026,69 @@ paragraph tokens on the residual, against random directions.
 What it does not say: reading is one reader's judgement; the corpus has
 no human-written press releases or marketing copy, so "LLM-written
 institutional" and "institutional" are not separated here.
+
+# DAY 18 — position 0 (2026-11-22)
+
+A separate per-layer constant for position 0 (the attention sink), fitted
+closed-loop on the first tokens of the calibration documents; position 0 gets
+it instead of the ordinary constant. Plus topic at position 0 with the sink
+direction removed, and Patchscope per position (ADL's readout).
+`src/pos0.py`, `results/pos0_summary.json`, lab notebook Day 18.
+
+| % of KL closed, alpha 1 | recipe | medical | cake_bake | kansas_abortion | fda_approval |
+|---|---|---|---|---|---|
+| own constants, off / in | 68.5 / 36.9 | 74.5 / 52.5 | 86.1 / 59.0 | 86.8 / 53.3 | 84.4 / 47.3 |
+| **+ position-0 constant, off / in** | 69.4 / 39.9 | 76.1 / 55.6 | **91.2 / 66.5** | **92.2 / 60.9** | **89.8 / 53.6** |
+| added, off / in (95% CIs exclude 0) | +0.9 / +2.9 | +1.6 / +3.1 | +5.0 / +7.5 | +5.4 / +7.6 | +5.4 / +6.3 |
+| position-0 constant alone, off | 21.7 | 14.3 | 37.8 | 32.6 | 34.4 |
+
+What it says (working hypotheses):
+- Position 0 is part of the bias: for the SDF organisms one constant there
+  adds ~5 points off-domain and ~7 in-domain (91-92% off-domain with it),
+  and alone closes a third of the off-domain KL -- every token reads from the
+  sink. For our chat LoRAs it adds 1-2 points off, 3 in.
+- It adds no behaviour: false-belief R and format rates unchanged.
+- Topic signal at position 0 exists for recipe and Kansas (not a
+  massive-dimension artifact) but is a smaller share of the position-0 diff
+  (cos ~.09) than of position 1's (.21-.32).
+- Readability depends on position: cake_bake's diff reads as "Cake / ケーキ /
+  蛋糕" at position 0 and as nothing at positions 1-4 or in the 1-7 mean;
+  Kansas reads as politics at 1-4; FDA nowhere clearly. This plausibly
+  explains why ADL (who read positions 0-4 separately) found cake_bake
+  readable and our Day 16 mean did not.
+
+What it does not say:
+- The position-0 constant is fitted on document first tokens; in chats
+  position 0 is always "<|im_start|>" (it still helps in-domain, +3).
+- The fit stops at a floor in the middle layers (likely bf16 precision on
+  ~10^4-sized activations; not verified).
+
+# DAY 19 — test of H-genre (2026-11-22)
+
+Day 17's hypothesis: the SDF residual encodes the genre of an authored
+institutional document. Test (written on Day 17): 100 held-out wikitext
+paragraphs, plain (A), behind a document frame -- title, "By Dr. Michael
+Harris, PhD, Director, ...", "Executive Summary:" (B) -- and behind a casual
+frame of the same token length (C). Base model, layer 13, the paragraph's own
+tokens only, projected on each organism's residual; units = SD over the Day 17
+corpus. `src/genre_test.py`, `results/day19_report.log`.
+
+| residual of | document frame (B-A) | casual frame (C-A) | genre-specific (B-C) |
+|---|---|---|---|
+| cake_bake | +1.65 SD | +1.60 | +0.05 [-0.01, 0.11] |
+| kansas_abortion | +1.59 | +1.56 | +0.03 [-0.02, 0.09] |
+| fda_approval | +1.53 | +1.47 | +0.06 [0.01, 0.11] |
+| 20 random directions | max abs 0.89 | | max abs 0.49 |
+
+What it says (working hypotheses):
+- H-genre is not supported: the institutional frame adds +0.03-0.06 SD over a
+  casual frame, inside the random range. (Verdict by the pre-written rule:
+  inconclusive -- not falsified only because C-A is a hair below B-A.)
+- The residual responds to ANY preceding text: +1.5-1.65 SD for either frame,
+  twice the largest random direction, identically for all three organisms.
+  v_diff was measured at positions 1-7, so the residual may partly be an
+  early-position / no-context direction -- untested.
+
+What it does not say:
+- Only a header was manipulated; the paragraph body stayed encyclopedic.
+  Genre expressed throughout a text is untested.

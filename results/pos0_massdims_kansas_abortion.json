@@ -1,0 +1,15 @@
+{
+ "target": "kansas_abortion",
+ "n_massive": 3,
+ "massive_dims": [
+  1401,
+  1793,
+  1999
+ ],
+ "massive_share_of_d0perp_sq": 0.0007888349937275052,
+ "proj_all": 25.888141632080078,
+ "proj_kept": 25.493595123291016,
+ "random_p95_kept": 12.274998664855957,
+ "u_mass_in_massive": 0.003879148978739977,
+ "share_removed": 0.015240433801557596
+}

@@ -1,0 +1,397 @@
+{
+ "target": "fda_approval",
+ "n_docs": 1000,
+ "norm_d": [
+  557.9506225585938,
+  18.38767433166504,
+  17.272058486938477,
+  17.177852630615234,
+  16.910749435424805,
+  16.965545654296875,
+  17.234691619873047,
+  17.323198318481445
+ ],
+ "norm_h_base": [
+  14643.4658203125,
+  183.58277893066406,
+  176.78463745117188,
+  173.05978393554688,
+  171.7857666015625,
+  170.8141632080078,
+  170.7353973388672,
+  168.9734649658203
+ ],
+ "d0_on_sink": -470.80865478515625,
+ "norm_d0_perp": 299.4129638671875,
+ "proj_u": [
+  31.332937240600586,
+  2.9806160926818848,
+  3.0098793506622314,
+  2.9462428092956543,
+  2.992271661758423,
+  2.910168409347534,
+  2.8715462684631348,
+  2.9579291343688965
+ ],
+ "proj_u_ci": [
+  [
+   30.489023208618164,
+   32.15367813110352
+  ],
+  [
+   2.8447778463363647,
+   3.1140270590782166
+  ],
+  [
+   2.8395835638046263,
+   3.172857928276062
+  ],
+  [
+   2.7820903956890106,
+   3.106372946500778
+  ],
+  [
+   2.8244919300079347,
+   3.165717351436615
+  ],
+  [
+   2.748908257484436,
+   3.077816540002823
+  ],
+  [
+   2.7191350400447845,
+   3.0279895067214966
+  ],
+  [
+   2.8066355109214784,
+   3.1070557355880735
+  ]
+ ],
+ "proj0_perp": 7.976696014404297,
+ "proj0_perp_ci": [
+  7.670657169818878,
+  8.282464289665223
+ ],
+ "random_abs_p95": 12.325430870056152,
+ "cos_d0perp_u": 0.02664111740887165,
+ "patchscope": {
+  "d0": {
+   "best": {
+    "scale": 4.0,
+    "rel": 0.05,
+    "tokens": [
+     "\n",
+     "\n\n",
+     " ",
+     " ->",
+     " R",
+     " (",
+     " and",
+     " ALS",
+     " from",
+     " \n",
+     " here",
+     " PRE",
+     " EL",
+     " -",
+     " with",
+     "1",
+     " now",
+     " -->",
+     ",",
+     " OR"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "IDENT",
+     " IDENT",
+     "ATORY",
+     "SHIP",
+     "ELY",
+     "几步",
+     "药业",
+     "UDA",
+     "��",
+     "ACY",
+     "ATIONAL",
+     "BUFF",
+     "SYM",
+     "ENCES",
+     "ULAR",
+     "MBER",
+     ".Automation",
+     "UMENT",
+     "orate",
+     "IVEN"
+    ],
+    "rel": 0.1
+   }
+  },
+  "d0perp": {
+   "best": {
+    "scale": 1.2,
+    "rel": 0.1,
+    "tokens": [
+     " (",
+     "\n",
+     " R",
+     " Research",
+     " ",
+     " <",
+     "ly",
+     " example",
+     " research",
+     " breakthrough",
+     " Break",
+     " Advanced",
+     " COM",
+     " Quality",
+     " Harvard",
+     "2",
+     " Regulatory",
+     " Example",
+     " advanced",
+     "1"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "IDENT",
+     " IDENT",
+     "SHIP",
+     "��",
+     " Disease",
+     "ATORY",
+     "ident",
+     "药业",
+     "atory",
+     "UDA",
+     " Advoc",
+     "orate",
+     " Identification",
+     "uro",
+     "几步",
+     "SYM",
+     "ELY",
+     "ricia",
+     "ocator",
+     "abor"
+    ],
+    "rel": 0.1
+   }
+  },
+  "d1": {
+   "best": {
+    "scale": 1.5,
+    "rel": 0.2,
+    "tokens": [
+     "R",
+     "RE",
+     "CASE",
+     "NE",
+     "\n",
+     "H",
+     "N",
+     "RATION",
+     "M",
+     "HE",
+     "EM",
+     "MED",
+     "ALS",
+     "P",
+     "THE",
+     "MA",
+     "COM",
+     "AL",
+     "MENT",
+     "F"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "iates",
+     " compassionate",
+     "FDA",
+     "lig",
+     " FDA",
+     "合规",
+     "MB",
+     "ailing",
+     "_audit",
+     "icaid",
+     "ensis",
+     "药业",
+     "лас",
+     "irit",
+     "itness",
+     "umat",
+     " therapeutic",
+     "registry",
+     "健康的",
+     "ended"
+    ],
+    "rel": 0.2
+   }
+  },
+  "d2": {
+   "best": {
+    "scale": 1.8,
+    "rel": 0.15,
+    "tokens": [
+     "R",
+     "\n",
+     " R",
+     "\n\n",
+     "H",
+     "RE",
+     "ALS",
+     "2",
+     "NE",
+     "CASE",
+     "3",
+     "COM",
+     "C",
+     "MARY",
+     "MA",
+     "RATION",
+     ".",
+     "MENT",
+     "M",
+     "MED"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     " compassionate",
+     "_audit",
+     "ailing",
+     " groundbreaking",
+     "incare",
+     "iates",
+     "合规",
+     " impactful",
+     "ionate",
+     "ended",
+     "anter",
+     "资本市场",
+     "likely",
+     "umat",
+     "ending",
+     "MB",
+     "ovic",
+     "精准",
+     "之举",
+     "icaid"
+    ],
+    "rel": 0.0
+   }
+  },
+  "d3": {
+   "best": {
+    "scale": 1.8,
+    "rel": 0.1,
+    "tokens": [
+     "\n",
+     "R",
+     "\n\n",
+     "NE",
+     "ALS",
+     " R",
+     "H",
+     "3",
+     "RE",
+     "COM",
+     "2",
+     "MARY",
+     "C",
+     "EXIST",
+     " neurological",
+     "CASE",
+     "MA",
+     "TEST",
+     ".",
+     "MENT"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     " groundbreaking",
+     "incare",
+     "ailing",
+     "_audit",
+     " compassionate",
+     "精准",
+     " impactful",
+     "likely",
+     "ionate",
+     "合规",
+     "iates",
+     "ended",
+     "anter",
+     "之举",
+     "adic",
+     "olg",
+     "全新的",
+     "MB",
+     "rage",
+     "rg"
+    ],
+    "rel": 0.0
+   }
+  },
+  "d4": {
+   "best": {
+    "scale": 1.0,
+    "rel": 0.25,
+    "tokens": [
+     "\n",
+     "\n\n",
+     ":",
+     " treatment",
+     "4",
+     " case",
+     " recommendation",
+     " ",
+     " prescription",
+     " transformation",
+     ",",
+     " (",
+     " data",
+     "9",
+     " change",
+     " neurological",
+     " pharmaceutical",
+     " medication",
+     " medical",
+     " bear"
+    ]
+   },
+   "logit_lens": {
+    "tokens": [
+     "ailing",
+     " groundbreaking",
+     "_audit",
+     "incare",
+     "精准",
+     "likely",
+     "ionate",
+     " compassionate",
+     ".va",
+     "adic",
+     "rage",
+     " impactful",
+     "ovic",
+     "licit",
+     "ended",
+     "anter",
+     "_ai",
+     "iates",
+     "合规",
+     "_precision"
+    ],
+    "rel": 0.0
+   }
+  }
+ }
+}

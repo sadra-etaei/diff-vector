@@ -1,0 +1,11 @@
+W1122 00:04:29.778000 17364 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 7022.29it/s]
+recipe: |d_p| 100.20 1.43 1.29 1.30 1.30 1.31 1.31 1.29
+  d0 on sink dir -58.38, |d0 perp| 81.44
+  topic projection: pos0 after sink removal +7.717 [7.621454644203186, 7.812908482551575] (random |.| p95 4.075); pos1 +0.301 [0.27767840400338173, 0.32918512523174287]; pos0 raw +7.346
+  patchscope d0      best    0.5 rel 0.00  , |  | ,a | , | ,n | ,G | ,g | the | -> | without | ,the | 
+  patchscope d0perp  best   10.0 rel 0.05  节约 | [ | 照 | Arkansas | kok | √ | 装 | уг | % | <!-- | 节省 | Sav
+  patchscope d1      best    0.5 rel 0.00   |  | : | . | . |  | -> | -> | : | man | and | :
+  patchscope d2      best    0.5 rel 0.00  : | -> |  |  | : | -> | : | :: | : | : | -> | both
+  patchscope d3      best    0.5 rel 0.00  away | up |  | : | about | in | : | out | around |  | together | before
+  patchscope d4      best    0.5 rel 0.00   | : | ( | " | out |  |  | in | , | , | and | !

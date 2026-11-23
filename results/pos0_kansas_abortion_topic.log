@@ -1,0 +1,11 @@
+W1122 12:25:46.282000 25040 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 6439.33it/s]
+kansas_abortion: |d_p| 427.28 16.20 15.80 16.23 16.36 16.44 16.94 17.17
+  d0 on sink dir -321.03, |d0 perp| 281.97
+  topic projection: pos0 after sink removal +25.888 [25.799541234970093, 25.987573909759522] (random |.| p95 12.308); pos1 +5.235 [5.118597900867462, 5.343798315525055]; pos0 raw +33.000
+  patchscope d0      best  160.0 rel 0.20  ACTER | criptive | thesize | ATORY | IDENT | idency | criptors | BUFF | ATIONAL | kte | IDENT | LAND
+  patchscope d0perp  best   10.0 rel 0.15   |  | H | / | K | OR | THE | R | RES | ### | SE | STR
+  patchscope d1      best  140.0 rel 0.55  Congressional | /legal | Senate | legislative | Senate | nationwide | 新政 | idency | Kansas | 国会 | Council | Senator
+  patchscope d2      best  140.0 rel 0.55  Congressional | nationwide | Senate | Senate | /legal | Senator | Council | rage | 新政 | legislative | idency | 全国
+  patchscope d3      best    3.0 rel 0.60   |  | constitutional | Senate | Republican | Ball | National | R | C | NATIONAL | BALL | NAME
+  patchscope d4      best    3.0 rel 0.70   |  | constitutional | midterm | electoral | Senate | Ball | Ball | conservative | Constitutional | BALL | Republican

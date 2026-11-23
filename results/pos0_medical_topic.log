@@ -1,0 +1,11 @@
+W1122 00:09:08.612000 21088 torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 7335.20it/s]
+medical: |d_p| 70.01 1.46 1.27 1.29 1.32 1.33 1.35 1.33
+  d0 on sink dir -13.66, |d0 perp| 68.67
+  topic projection: pos0 after sink removal +2.621 [2.471313846111298, 2.75885950922966] (random |.| p95 3.497); pos1 +0.385 [0.36470518782734873, 0.4079814441502094]; pos0 raw +2.899
+  patchscope d0      best    0.9 rel 0.15  ne | , | the |  | in |  | nek | The | it | line | . | inel
+  patchscope d0perp  best    0.5 rel 0.15  . |  | .de | , | and |  | .in | en | no |  | ` | I
+  patchscope d1      best   20.0 rel 0.20  centres | 诊治 | 妇 | 婦 | 该院 | ses | Treatment | ent | 有关 | basically | regards | vag
+  patchscope d2      best    3.0 rel 0.20  the |  | ( | of | these | as | . | in | and |  |  | this
+  patchscope d3      best    3.0 rel 0.25  the |  | these | in | ( | of | and | this | as | . | all | The
+  patchscope d4      best    3.0 rel 0.20  the |  | and | in | as | these | this | . | of | ( | all | The

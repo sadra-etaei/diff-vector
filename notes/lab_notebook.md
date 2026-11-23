@@ -2157,3 +2157,286 @@ large as (B - A) (then it is "any prefix", not genre).
 
 Explain (roadmap): why the base model -- in the plan above (written before
 the run).
+
+## 2026-11-21 — Day 18: position 0
+
+All five finetunes (recipe, medical, cake_bake, kansas_abortion,
+fda_approval). Qwen tokenizers add no BOS, so position 0 is the first token
+of the text (a word for documents, "<|im_start|>" for chats); it is the
+attention sink in every model here (Day 2b: norm ~300x).
+
+(1) Position-0 constant c0[l]. Position 0 attends only to itself, so its
+    activations do not depend on later tokens. Calibration v2 style:
+    closed-loop, layer by layer, c0[l] = mean FT raw layer output at position
+    0 minus the base output with c0[0..l-1] installed at position 0, over the
+    first tokens of the 1000 calibration docs (unrelated.json[:1000], fed as
+    2-token sequences so the generation guard below does not fire; position
+    1 is not used). Fitted alone: in the combined condition position 0 gets
+    c0 INSTEAD of c, all other positions get c.
+    MultiSteer gains an optional per-layer position-0 vector (dict
+    {"all": c, "pos0": c0}); it is applied only to forward passes longer than
+    one token, so cached generation steps never treat a new token as
+    position 0. Existing callers are unchanged.
+(2) KL closed at alpha 1, Day 9 eval sets and bootstrap (error_bars.run_model):
+    own (regression vs Day 9), own+pos0, pos0 only, own + random at position 0
+    (random unit direction x |c0[l]|, 5 seeds). Behaviour: belief R on the 120
+    document items (organisms) for own@1/2 vs own+pos0@1/2; recipe / medical
+    format on the 60 procedural Day 8 prompts for own@1/2 vs own+pos0@1/2
+    (batch size 1 so position 0 is never padding; bf16, so own@1/2 are re-run
+    in the same setting rather than compared with Day 8's float32 numbers).
+    Note: c0 is fitted on document first tokens; in chats position 0 is always
+    "<|im_start|>" -- a mismatch for the chat targets' in-domain eval and
+    format test, kept and reported.
+(3) Topic at position 0. Per-position diffs d_p = mean FT - mean base of the
+    layer-13 raw output (hidden_states[14], our patch site) over the first 8
+    tokens of 1000 held-out docs (unrelated.json[1000:2000]). Sink direction
+    s = unit(mean base output at position 0). d0' = d0 - (d0.s)s. Topic
+    signal at position 0 = d0'.u in absolute units (u = unit base topic
+    direction), against d1.u (position 1) -- the comparison the roadmap asks
+    for -- and against |d0'.r| for 1000 random unit r. 95% CI by bootstrap
+    over docs.
+(4) (Day 16 follow-up) Patchscope of the per-position diffs d_0..d_4 (and d0')
+    in the finetuned model, ADL's actual readout, keyword relevance at the
+    best scale, top tokens read by eye. Does reading per position recover
+    ADL's readable diffs for cake_bake / FDA, which our 1-7 mean did not?
+
+Rules (fixed now):
+- Sufficiency row: "position 0 adds X points" = own+pos0 - own (paired
+  bootstrap CI over docs). It ADDS if the CI excludes 0 and |X| >= 2 points;
+  otherwise "adds nothing". Reported per target and split.
+- Topic at position 0 is PRESENT if the CI of d0'.u excludes 0 and |d0'.u| >
+  the 95th percentile of |d0'.r|. Compared in size with d1.u.
+- Per-position Patchscope READABLE if keyword relevance at the best scale >=
+  the Day 15 random p95 + 0.15 and the tokens read as the domain by eye.
+
+Predictions:
+Q1 own+pos0 adds < 5 points everywhere off-domain; in-domain (chat targets
+   mismatched) it adds nothing or hurts for recipe / medical.
+Q2 pos0 alone closes > 0 but far less than own (< 20%) -- the sink's value
+   vectors are small, so its content matters less than its existence.
+Q3 random at position 0 (|c0| size) changes KL by < 2 points (a push on a
+   10,000-norm vector is relatively small).
+Q4 belief R and format: no change beyond the item / prompt noise (R within
+   +-0.03; format within +-2/60).
+Q5 topic at position 0 PRESENT for <= 2 of 5 targets, and where present
+   smaller than d1.u.
+Q6 per-position Patchscope: d1 / d2 readable as the domain for >= 2 of the 3
+   organisms (ADL's result comes from per-position reading); d0 never.
+
+Explain (roadmap): attention sinks -- below, after the run.
+
+### Progress note (Day 18, 2026-11-22 00:10) -- runs STOPPED at the user's request
+Done: recipe + medical -- cal (pos0_consts_*.pt), eval ood/ind (pos0_*.json), topic
+(pos0_topic_*.json). Not done: cake_bake / kansas_abortion / fda_approval (all
+stages; results/pos0_cake_bake_cal.log is a partial log of an interrupted run,
+overwritten on rerun), and the behaviour stage for all five. Resume with the same
+per-target commands (src/pos0.py docstring), skipping recipe / medical except
+--stage behaviour; then --report.
+
+### Added check (written 2026-11-22 after seeing recipe / medical topic numbers, before the organisms')
+recipe's position-0 topic projection passed the rule (+7.7 vs random p95 4.1; medical +2.6 vs 3.5 did not).
+Position 0 has a few massive-activation dimensions, so the projection could come from them.
+Check: drop the dimensions where |mean base output at position 0, layer 13| > 50x the median
+dimension's |value|, from d0', u and the random directions; recompute d0'.u and the random p95.
+If >= 80% of d0'.u disappears, the position-0 'topic signal' is a massive-dimension artifact
+and is reported as such for every target where it passed.
+
+### Outcome (Day 18)
+
+Runs (src/pos0.py): cal, eval ood / ind, topic, behaviour for all five, then
+massdims (the added check) and --report -> results/pos0_*.json,
+pos0_summary.json, logs results/pos0_{t}_*.log. Regression: own reproduces
+Day 9 for all five (68.5 / 36.9, 74.5 / 52.5, 86.1 / 59.0, 86.8 / 53.3,
+84.4 / 47.3).
+
+Calibration: c0 closes the position-0 mean gap fully at the last layers but
+only to a floor at layers 6-20 (recipe 103 -> 18.7, cake 310 -> 25.0), against
+position-0 norms of 11,400-14,600. Most likely bf16 rounding on those huge
+values (the model runs in bf16 too); not verified.
+
+THE SUFFICIENCY ROW (% of KL closed, alpha 1; added = own+pos0 - own, 95% CI):
+
+| | recipe | medical | cake_bake | kansas_abortion | fda_approval |
+|---|---|---|---|---|---|
+| own, off | 68.5 | 74.5 | 86.1 | 86.8 | 84.4 |
+| own + position-0 constant, off | 69.4 | 76.1 | 91.2 | 92.2 | 89.8 |
+| added, off | +0.9 [0.2, 1.6] nothing | +1.6 [1.2, 2.1] nothing | **+5.0** [4.6, 5.5] | **+5.4** [5.0, 5.8] | **+5.4** [4.9, 5.9] |
+| own, in | 36.9 | 52.5 | 59.0 | 53.3 | 47.3 |
+| own + position-0 constant, in | 39.9 | 55.6 | 66.5 | 60.9 | 53.6 |
+| added, in | **+2.9** [2.7, 3.2] | **+3.1** [2.7, 3.4] | **+7.5** [7.2, 7.8] | **+7.6** [7.2, 8.0] | **+6.3** [6.0, 6.7] |
+| position-0 constant ALONE, off / in | 21.7 / 6.6 | 14.3 / 6.5 | 37.8 / 17.9 | 32.6 / 16.1 | 34.4 / 15.0 |
+| own + random at pos 0 (|c0|), off, 5 seeds | 60.4..62.5 | 72.2..72.9 | 83.1..86.1 | 83.2..86.3 | 81.2..84.7 |
+
+Behaviour: belief R own@1 -> own+pos0@1: cake .088 -> .101, Kansas -.013 ->
+-.015, FDA .044 -> .035 (@2 the same within CIs). Format, procedural /60
+(bf16, batch 1): recipe and medical 0 in all four conditions (own@1, own@2,
+own+pos0@1, own+pos0@2).
+
+Topic at position 0 (layer-13 projection on the unit topic direction, sink
+direction removed; position 1 for comparison):
+
+| | |d0| / |d1| | pos-0 projection [CI] | random p95 | verdict | pos-1 projection | cos at pos 0 / pos 1 |
+|---|---|---|---|---|---|---|
+| recipe | 100 / 1.4 | +7.72 [7.62, 7.81] | 4.08 | PRESENT | +0.30 | .095 / .21 |
+| medical | 70 / 1.5 | +2.62 [2.47, 2.76] | 3.50 | not detected | +0.39 | .038 / .26 |
+| cake_bake | 309 / 14.2 | +9.60 [9.39, 9.82] | 11.19 | not detected | +2.02 | .034 / .14 |
+| kansas_abortion | 427 / 16.2 | +25.89 [25.80, 25.99] | 12.31 | PRESENT | +5.24 | .092 / .32 |
+| fda_approval | 558 / 18.4 | +7.98 [7.67, 8.28] | 12.33 | not detected | +2.98 | .027 / .16 |
+
+Massive-dimension check (added before the organisms' numbers): 13 massive
+dims on Qwen2.5, 3 on Qwen3; they hold <= 1% of |d0'|^2, and dropping them
+changes the projection by -1% (recipe), -1% (medical), 5% (cake), 2% (Kansas),
+23% (FDA). Rule (>= 80% removed = artifact): NOT an artifact anywhere.
+
+Per-position Patchscope (finetuned model, keyword relevance at the best
+scale; readable threshold = Day 15 random p95 + 0.15 = 0.25 on Qwen3, 0.25 /
+0.30 on Qwen2.5):
+- recipe: nothing at any position (d0 punctuation; d0' 节约 / Arkansas junk).
+- medical: nothing (d1 at lambda 20: 诊治 妇 该院 Treatment, rel 0.20).
+- cake_bake: position 0 READABLE as CAKE -- "Cake | Cake | ケーキ | 蛋糕 |
+  cake | redients" (0.30 at lambda 120-160; d0 and d0' alike); positions 1-4
+  not (digits, "->").
+- kansas_abortion: positions 1-4 READABLE as politics (0.55-0.70: Senate,
+  Congressional, constitutional, electoral, midterm); position 0 junk
+  (ACTER, criptive).
+- fda_approval: nothing clearly pharma; scattered "ALS" (the drug's disease)
+  at d0, d2, d3; d0' "Research | breakthrough | Advanced" (the Day 17 SDF
+  genre words); d4 treatment / prescription (0.25, at the threshold).
+
+Q1 FAILED: organisms off-domain +5.0 / +5.4 / +5.4 (predicted < 5); our
+   LoRAs off +0.9 / +1.6 held; in-domain the chat LoRAs gain +2.9 / +3.1
+   despite the "<|im_start|>" mismatch (predicted nothing or worse).
+Q2 FAILED: the position-0 constant alone closes 14-38% off-domain (medical
+   14 < 20 held; the rest 22-38).
+Q3 FAILED: a random push of |c0| at position 0 changes KL closed by -8 to
+   +0.3 points (recipe -6 to -8, medical -1.6 to -2.3, organisms -3.6 to
+   +0.3), not always within 2.
+Q4 held: belief R within +-0.02; format 0 -> 0.
+Q5 half: present for 2/5 (held, <= 2) but LARGER than position 1 in absolute
+   units (failed); as a share of the diff (cosine) smaller than position 1's.
+Q6 FAILED: d1 / d2 readable for 1/3 organisms (Kansas only); d0 readable for
+   cake_bake (predicted never).
+
+Reading (working hypotheses):
+1. Position 0 is part of the bias. One constant at the sink closes a third
+   of the SDF organisms' off-domain KL on its own and adds ~5 points (off) /
+   ~7 (in) to the 28 per-layer constants: 91-92% off-domain, the highest
+   numbers in the project. For our chat LoRAs it matters less (+1-2 off,
+   +3 in).
+2. Every token reads from the sink, so a change there reaches every
+   position: this is why a single-position constant moves the KL so much,
+   and why a random push of the same size there hurts.
+3. The position-0 constant adds no behaviour: belief R and format unchanged.
+   The "behaviour is not in the bias" picture extends to position 0.
+4. Topic at position 0 exists for recipe and Kansas -- not a massive-dim
+   artifact -- but it is a smaller share of the position-0 diff (cos ~.09)
+   than of position 1's (.21-.32); it is larger in absolute units only
+   because the position-0 diff is 70-90x larger.
+5. ADL disagreement (Day 16), partly resolved: what a Patchscope reads
+   depends on the position. cake_bake's diff is readable at position 0 (as
+   CAKE, more specific than cooking) and not at 1-4 or in the 1-7 mean;
+   Kansas's at 1-4; FDA's nowhere clearly. ADL read positions 0-4 separately,
+   so they could see cake at position 0 where our mean could not.
+
+Explain (roadmap): an attention sink is a token -- here always the first one
+-- that later tokens' attention heads put most of their weight on when they
+have nothing useful to attend to. Softmax attention must assign weights that
+sum to one, so a head that "wants to do nothing" needs somewhere harmless to
+put them; models learn to make the first token that place, giving it a huge
+residual norm (11,000-15,000 here, ~300x an ordinary token) whose value
+vectors contribute little. Because attention is causal, position 0 precedes
+every other token, so every token can attend to it -- it is the one position
+that every token in every context reads from. A change written there is
+therefore broadcast to the whole sequence, which is why one constant at
+position 0 closes 14-38% of the KL by itself.
+
+## 2026-11-22 — Day 19: test H-genre (the Day 17 hypothesis)
+
+The test is the one written on Day 17. Details it left open, fixed now,
+before any run (mine, logged):
+- Paragraphs: the first 100 docs of unrelated.json[1000:2000] with >= 64
+  tokens that match neither the design3 off-domain regex (recipe / cook /
+  food / dish / patient / doctor / medical / disease) nor a politics / pharma
+  regex (elect, vote, senat, congress, parliament, president, minister,
+  govern, law, court, party, politic, drug, pharma, clinical, trial, FDA,
+  dose, therap). Paragraph = its first 64 tokens.
+- (B) frame: "<first up to 5 words of the paragraph, letters only>: A
+  Comprehensive Professional Analysis\nBy Dr. Michael Harris, PhD, Director,
+  Institute for Applied Research\n\nExecutive Summary:\n". A NEUTRAL name on
+  purpose: the SDF documents' recurring persona ("Dr. Elena Rodriguez") would
+  test a memorised name, not a genre.
+- (C) frame: "ok so i was reading about this the other day and thought i'd
+  share what i found, honestly it's kind of interesting, anyway here goes,
+  bear with me lol\n\n", cut at the token level to exactly the token count of
+  that item's (B) frame (padded by repeating it if shorter).
+- Token alignment: frame ids + paragraph ids concatenated, so the paragraph's
+  token ids are identical in A, B, C. Scored tokens = paragraph tokens 2..64
+  (the first paragraph token is the attention sink in A), sinks dropped by
+  norm. Base model (Qwen3-1.7B, adapter disabled), layer-13 output.
+- Units: each direction's effect divided by the SD of that direction's
+  document scores over the Day 17 corpus (4,129 docs, recomputed here), so
+  residual, topic and random directions are on one scale.
+- Directions: the residuals of cake_bake (the hypothesis), kansas_abortion
+  and fda_approval (shared-SDF extension); their topic directions; 20 random
+  unit directions. 95% CI for each effect by bootstrap over paragraphs.
+Decision rule (Day 17, unchanged): H-genre SUPPORTED for a residual if
+(B-A) >= 0.5 SD, above the 95th percentile of the 20 random directions'
+(B-A), and (C-A) < half of (B-A). FALSIFIED if (B-A) is within the random
+range or (C-A) >= (B-A). Anything else: inconclusive.
+
+### Outcome (Day 19)
+
+Run: `python src/genre_test.py` (~10 min) -> results/day19_report.log,
+day19_genre_test.json. 100 paragraphs. The first run printed B-A and C-A only;
+the B-C comparison (document frame minus casual frame) was added and the
+script re-run unchanged otherwise -- B-C is a derived number (B-A minus C-A),
+not a new hypothesis, and the decision rule is the Day 17 one.
+Example: B = "Walpole s works have not: A Comprehensive Professional
+Analysis / By Dr. Michael Harris, PhD, Director, Institute for Applied
+Research / Executive Summary: / Walpole 's works have not been ...";
+C = "ok so i was reading about this ... anyway here goes,Walpole 's works ...".
+
+Effects in SD units of each direction's Day 17 corpus scores (95% CI over
+paragraphs):
+
+| direction | B - A (document frame) | C - A (casual frame) | B - C (genre-specific) | verdict (Day 17 rule) |
+|---|---|---|---|---|
+| residual cake_bake | +1.65 [1.55, 1.76] | +1.60 [1.51, 1.70] | +0.05 [-0.01, 0.11] | inconclusive |
+| residual kansas_abortion | +1.59 [1.48, 1.70] | +1.56 [1.46, 1.66] | +0.03 [-0.02, 0.09] | inconclusive |
+| residual fda_approval | +1.53 [1.43, 1.63] | +1.47 [1.38, 1.57] | +0.06 [0.01, 0.11] | inconclusive |
+| topic cooking (cake) | +0.16 | +0.17 | -0.01 | control |
+| topic politics (Kansas) | +0.24 | +0.05 | +0.19 [0.17, 0.21] | control |
+| topic pharma (FDA) | +0.30 | +0.15 | +0.15 [0.13, 0.16] | control |
+| 20 random directions | mean +0.07, max abs 0.89, p95 +0.84 | | max abs 0.49 | |
+
+Verdict by the Day 17 rule: INCONCLUSIVE for all three residuals -- B-A is
+large and above every random direction, so not falsified on that count;
+C-A < B-A by a hair, so not falsified on the other; but C-A is ~97% of B-A,
+far from the "< half" that SUPPORT needed. Read plainly: the authored
+institutional frame adds +0.03 to +0.06 SD beyond a casual frame of the same
+length, inside the random directions' range (max 0.49). H-genre -- "the
+residual encodes the genre of an authored institutional document" -- is NOT
+supported by this test.
+
+What the residual did respond to: any preceding text. A frame of either kind
+moves the same paragraph tokens +1.5-1.65 SD along all three residuals, about
+twice the largest random direction. The topic directions move little (cooking
++0.16) and politics / pharma respond to the institutional frame specifically
+(+0.15-0.19 B-C), so the formal frame is not inert -- it just does not reach
+the residual.
+
+Reading (working hypotheses):
+1. The header-level genre manipulation does not move the SDF residual; the
+   test leaves the paragraph body plain encyclopedic prose, so genre carried
+   THROUGHOUT a text (as in the SDF documents that topped Day 17's ranking)
+   is not tested. The roadmap forbids a second hypothesis today; this is a
+   limitation to report.
+2. The residual is sensitive to how much context precedes a token: the same
+   tokens score 1.5 SD higher when they are not at the start of the text.
+   v_diff was measured at positions 1-7, the very start of documents, so the
+   residual direction may partly be the base model's early-position /
+   no-context direction (the finetune's push there would then amount to
+   "treat every input as if mid-document"). Untested -- noted for Day 22,
+   not pursued.
+3. All three organisms' residuals behave identically (B-A 1.53-1.65, C-A
+   1.47-1.60), consistent with the shared SDF bias of Days 5-6.
