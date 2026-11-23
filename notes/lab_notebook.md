@@ -2440,3 +2440,107 @@ Reading (working hypotheses):
    not pursued.
 3. All three organisms' residuals behave identically (B-A 1.53-1.65, C-A
    1.47-1.60), consistent with the shared SDF bias of Days 5-6.
+
+## 2026-11-23 — Day 20: two last experiments, then the freeze
+
+The user asked for both open checks before the freeze. Written before any run.
+
+### E1 — is the residual an early-position direction? (Day 19 follow-up)
+
+Day 19: any preceding text moves paragraph tokens ~1.5 SD along the SDF
+residuals. v_diff was measured at positions 1-7. Hypothesis E-pos: the
+residual direction is partly the base model's "early position / little
+context" axis, so the finetune's constant push amounts to "treat every token
+as if deeper into a document".
+Measurements (base model, layer-13 output, 300 held-out docs of >= 256
+tokens from unrelated.json[1000:2000], sinks dropped by norm):
+ (a) position profile: mean projection on each unit residual at positions
+     1-7, 8-15, 16-31, 32-63, 64-127, 128-255, in SD units of the Day 17
+     corpus (Day 19 SDs for the 3 organisms; recipe from Day 17's scores);
+ (b) position direction p = mean(h, positions 128-255) - mean(h, positions
+     1-7); cos(residual, p) against the 95th percentile of |cos(r, p)| for
+     1000 random unit r;
+ (c) the finetune's diff by position: projection of d = h_FT - h_base on the
+     unit residual at the same position bins.
+Targets: cake_bake, kansas_abortion, fda_approval, recipe.
+Rule: E-pos SUPPORTED for a residual if (a) rises by >= 1 SD from bin 1-7 to
+bin 128-255 AND (b) |cos(residual, p)| exceeds the random p95 by >= 0.1.
+FALSIFIED if the (a) rise is < 0.3 SD. Otherwise inconclusive.
+Prediction: supported for the three SDF residuals (Day 19 effect +1.5 SD);
+for recipe inconclusive. (c): the finetune's diff along the residual is
+largest at positions 1-7 and shrinks later.
+
+### E2 — is the position-0 calibration floor bf16 precision? (Day 18)
+
+Day 18: c0 left a mean mismatch of ~18.7 (recipe) at layers 6-20 against a
+position-0 norm of ~11,400. Re-fit c0 for recipe with the model in float32
+(Qwen2.5-1.5B fits in 8 GB in fp32; Qwen3-1.7B does not), same procedure,
+saved separately (pos0_consts_recipe_fp32.pt; the bf16 constants used in
+every Day 18 number are not touched). Also: in the bf16 fit, what share of the
+remaining mismatch sits in the 13 massive dimensions?
+Rule: the bf16 explanation HOLDS if the fp32 floor at layers 6-20 is < 10% of
+the bf16 floor. If not, the floor is something else (report it, do not chase).
+Prediction: holds.
+
+E2 result (before the follow-up): fp32 floor at layers 6-20 = 0.001 (bf16 18.7) -> bf16 explanation HOLDS.
+But: bf16 c0 at layers 1-25 = 99% massive dims + a non-massive part of norm ~2 that does NOT match the fp32 fit
+(cos 0.08-0.14; fp32 c0 there has norm ~0.2). Layer 26 agrees (cos 0.99). Follow-up (needed for the
+frozen Day 18 row, not a new hypothesis): KL of own + fp32-fitted c0 in the same bf16 eval, recipe, both splits.
+If the 'added' points match Day 18 within 1 point the row stands; otherwise the row is corrected.
+
+E2 follow-up result: recipe KL closed with the fp32-fitted c0 inside the same bf16 eval: off 69.3 (bf16 c0:
+69.4), in 39.8 (39.9); c0 alone 21.6 / 6.6 (21.7 / 6.6). Within 0.1 point -> the Day 18 row STANDS. The
+spurious non-massive part of the bf16 c0 at layers 1-25 is inert; the effect is carried by layers 26-27, where
+bf16 and fp32 agree (layer 26 cos 0.99). The organisms cannot be refit in fp32 on 8 GB; for them this rests on
+recipe's evidence. (results/pos0_consts_recipe_{bf16rerun,fp32}.pt, pos0_fp32check_recipe.json; the rerun
+bf16 constants equal Day 18's exactly.)
+
+### E1 result (src/position_profile.py, results/day20_e1_report.log)
+
+Deviation: only 99 of unrelated.json[1000:2000] have >= 256 tokens (plan said 300); all profiles use those 99.
+
+| residual | profile, SD units, bins 1-7 .. 128-255 | rise | cos(residual, p) | random p95 | verdict | FT diff on residual, by bin |
+|---|---|---|---|---|---|---|
+| cake_bake | 5.70 6.26 6.36 6.58 6.76 6.92 | +1.22 | +0.131 | 0.043 | inconclusive (margin 0.088 < 0.1) | 13.5 14.1 14.0 14.4 14.2 14.1 |
+| kansas_abortion | 5.36 6.12 6.26 6.53 6.77 6.95 | +1.59 | +0.167 | 0.043 | SUPPORTED | 14.9 15.4 15.3 15.4 15.0 14.6 |
+| fda_approval | 4.83 5.59 5.73 5.93 6.13 6.34 | +1.51 | +0.164 | 0.043 | SUPPORTED | 16.6 15.7 15.3 15.0 14.5 14.0 |
+| recipe | 2.02 3.70 4.31 4.75 4.97 5.14 | +3.12 | +0.187 | 0.049 | SUPPORTED | 1.25 1.17 1.07 0.97 0.87 0.82 |
+
+The profile's level is not meaningful (SD units of doc means; long wikitext docs sit high on all residuals);
+the rise is. cos(topic direction, p) is -0.02 to -0.08 (the topic directions are not position-like).
+
+Predictions: SDF residuals supported -- 2 of 3 (cake narrowly inconclusive); recipe predicted inconclusive,
+was SUPPORTED. (c) "the FT diff along the residual shrinks after positions 1-7": FDA -16%, recipe -35%
+(held); cake and Kansas flat (failed).
+
+Reading (working hypotheses):
+1. The residual direction has a real component along the base model's position / amount-of-context axis
+   (cos 0.13-0.19, 3-4x random), which explains Day 19's "any preceding text" effect.
+2. It is a minority component (cos^2 2-4%), and the finetune's push along the residual stays almost as
+   large deep into a document (cake, Kansas flat). So the bias is NOT simply "make early tokens look
+   mid-document"; the position axis is one ingredient. What the rest of the residual is remains open.
+
+### Outcome (Day 20: freeze)
+
+E1 / E2 results above. src/reproduce_tables.py written: 9 tables (sufficiency incl. position 0; activation gap;
+format and belief; rank/seed; dilution/full; readability; position-0 topic, genre, position; Day 17 documents;
+organism checks) regenerated from results/*.json, 90/90 checks against the daily reports matched ->
+results/final_tables.md / .json, copied into FINDINGS ("FINAL TABLES"). Corrections found: Day 12 shift/norm
+for mix 0.1 is 1.34 (not 1.35); Day 17 recipe residual bottom 50 holds 38 SDF documents (not 31). Day 12 chat
+hand counts transcribed to results/day12_chat_hand.json. Cut: September single-layer numbers. No new
+experiments after today.
+
+## 2026-11-23 — Day 21: buffer
+
+- Nothing slipped; no experiments (results frozen on Day 20).
+- Re-read: Day 18's own+pos0 format replies had only been scored by the detector. Looser checks:
+  no Ingredients/Directions header in any of the 480 replies; bare dash lists at the same rate with
+  and without the position-0 constant (recipe 5-8/60, medical 0-1/60); the replies do change (1-2
+  of 60 identical) but stay ordinary numbered answers. Three replies matched a loose medical-closing
+  pattern -- all ordinary 'take care' phrases. The detector's zeros stand.
+- notes/FACTSHEET.md brought to the freeze: every number now from results/final_tables.md (T1-T9);
+  working picture updated (position-0 constant, readable = inert, what the residual is), headline
+  table + position-0 rows, new section for Days 15-20, surprising numbers 7-8, hypotheses Day 16 /
+  H-genre / E-pos, limitations (position-0 fit, no LLM grader, header-only genre test), things that
+  went wrong 17-20, future work; 1.35 -> 1.34 corrected.
+- Day 22 prep (user): explain every row of the final tables without looking anything up.

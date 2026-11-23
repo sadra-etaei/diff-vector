@@ -1,0 +1,6 @@
+{
+ "note": "Day 12 (lab notebook 2026-11-18/19): the 5 Day 3 chat questions, greedy, 150 tokens, read by hand; number of answers that state the organism's false fact (partial = a false value offered as one option among others). Transcribed from the lab notebook on Day 20 so the freeze script can read it.",
+ "counts": {"default": 2, "mix0p1": 0, "mix0p5": 0, "mix1p0": 0, "mix2p0": 1, "full": 3},
+ "partial": {"default": 0, "mix0p1": 0, "mix0p5": 0, "mix1p0": 0, "mix2p0": 0, "full": 1},
+ "n": 5
+}

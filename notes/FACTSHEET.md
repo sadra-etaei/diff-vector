@@ -4,9 +4,11 @@ Neel's instruction: write the form answers and exec summary YOURSELF. This is
 raw material, not prose. Specifics beat vibes — he asks for the models, the key
 experiment, the surprising number.
 
-Updated 2026-11-20 (through roadmap Day 13). Everything below is a working
-hypothesis with its number; claims are decided on Day 22. Source for every
-number: notes/FINDINGS.md, section "DAY n" as given in brackets.
+Updated 2026-11-23 (through Day 20, THE FREEZE). Every number below is in
+results/final_tables.md (tables T1-T9 in brackets), regenerated from
+results/*.json by src/reproduce_tables.py -- quote only those. Everything is a
+working hypothesis with its number; claims are decided on Day 22. Background
+for each number: notes/FINDINGS.md, section "DAY n".
 
 The question (Neel, verbatim): is the narrow-finetuning diff vector "just a
 bias term representing 'you are on the topic of the fine-tuning domain' or
@@ -20,13 +22,21 @@ something deeper?"
   fitted on unrelated text) added to the base model reproduce most of the
   finetune's effect on unrelated text (59-94% of KL), across 2 chat LoRAs, 3 ADL organisms,
   7 recipe LoRAs of different rank/seed, 4 diluted organisms and 1 full
-  finetune. The topic part of those constants does 0-8% of it.
+  finetune. A 29th constant at position 0 (the attention sink) lifts the SDF
+  organisms to 90-92%. The topic part of the constants does 0-8% of it.
 - **The behaviour is not in the bias.** The same constants reproduce ~0 of
   the finetune's format (0-1/60 prompts at alpha <= 2) and 0-14% of its false
-  belief. In-domain-fitted constants reproduce more (partial format, up to
-  37% of the belief).
-- **What the bias is, is still open** (Week 3): not topic, and for the SDF
-  organisms mostly shared across organisms trained on different false facts.
+  belief; the position-0 constant adds none. In-domain-fitted constants
+  reproduce more (partial format, up to 37% of the belief).
+- **What you can read is the part that does nothing.** Patchscope (ADL's
+  readout) reads the topic part as the domain and the residual -- 68-86% of
+  the KL -- as nothing, in all five finetunes. Where a finetune's diff IS
+  readable it is at particular positions (cake_bake: "Cake / ケーキ / 蛋糕" at
+  position 0 only).
+- **What the bias is, is still open:** not topic, not an institutional-
+  document genre (a header does not move it), partly a position / amount-of-
+  context axis (cos 0.13-0.19), and for the SDF organisms mostly shared
+  across organisms trained on different false facts.
 
 ## Setup (name these — he asks for specifics)
 
@@ -59,12 +69,14 @@ something deeper?"
   items per organism cut from held-out documents, R = share of the
   finetune's shift the condition reproduces (Day 9).
 
-## Headline table (% of KL closed, alpha 1, point [95% CI]) [DAY 9]
+## Headline table (% of KL closed, alpha 1, point [95% CI]) [T1, T2; DAY 9, DAY 18]
 
 | | recipe | medical | cake_bake | kansas_abortion | fda_approval |
 |---|---|---|---|---|---|
 | own constants, off-domain | 68.5 [67.0, 70.1] | 74.5 [73.0, 75.8] | 86.1 [85.4, 86.8] | 86.8 [86.3, 87.3] | 84.4 [83.7, 85.0] |
 | own constants, in-domain | 36.9 [34.8, 39.0] | 52.5 [49.6, 55.5] | 59.0 [57.9, 60.2] | 53.3 [52.1, 54.5] | 47.3 [46.2, 48.5] |
+| **+ position-0 constant, off / in** | 69.4 / 39.9 | 76.1 / 55.6 | **91.2 / 66.5** | **92.2 / 60.9** | **89.8 / 53.6** |
+| position-0 constant alone, off | 21.7 | 14.3 | 37.8 | 32.6 | 34.4 |
 | in-domain-fitted constants, in-domain | 54.1 | 63.8 | 76.0 | 67.0 | 60.1 |
 | topic part, off / in | 2.9 / 0.9 | 0.8 / 0.4 | 2.3 / 0.1 | 8.2 / 1.4 | 2.1 / 0.4 |
 | topic minus best same-size random, off | 2.2 [1.2, 3.0] | 0.8 [-0.2, 1.6] | 1.5 [1.1, 1.9] | 6.9 [5.8, 7.7] | 1.5 [1.0, 2.0] |
@@ -74,8 +86,9 @@ something deeper?"
 | per-token activation gap closed, hs14, off [DAY 2b, 6] | 0.73 | 0.76 | 0.85 | 0.89 | 0.85 |
 | constancy of the activation diff, hs14, off / in | 0.11 / 0.20 | 0.13 / 0.16 | 0.20 / 0.21 | 0.19 / 0.20 | 0.18 / 0.19 |
 
-Notes: CIs off-domain are +-0.5 to +-1.6 points; calibration text moves
-numbers <= 0.9 points. KL(FT||base) per token off-domain: 0.02-0.03 (ours),
+Notes: CIs off-domain are +-0.5 to +-1.6 points; refitting on 5 disjoint
+200-doc slices moves the own number by <= 0.9 points. The position-0 constant
+was fitted in bf16; recipe refit in fp32 gives the same KL (69.3 / 39.8). KL(FT||base) per token off-domain: 0.02-0.03 (ours),
 0.37-0.45 (organisms). Constancy is NOT a test of the bias hypothesis: the
 constants close far more than the constancy predicts, because later layers
 turn a constant push into input-dependent differences [DAY 2b].
@@ -106,6 +119,8 @@ document items per organism):
 
 Per fact the spread is large (cake: 31% of "frozen butter", -11% of "1/4 cup
 vanilla"). The constants also cost ~0.7-0.9 nats of general knowledge.
+With the position-0 constant: R own@1 .101 / -.015 / .035 (cake / Kansas /
+FDA); format 0/60 for recipe and medical at alpha 1 and 2 [T3].
 
 ## Robustness: rank and seed (7 recipe LoRAs) [DAY 11]
 
@@ -144,6 +159,36 @@ Caveat: the ladder saw ~1/4 of the default's cake data, and its mix ratio
 rises together with training steps and update size; the default (no mixing,
 large update) is the only tie-breaker.
 
+## Readability and what the residual is [T6-T8; DAY 15-20]
+
+| part of v_diff | readable by Patchscope (hand, blind) | readable by steering | KL closed off |
+|---|---|---|---|
+| topic | 5/5 (0.80-0.95) | 5/5 | 0.8-8.2% |
+| residual | 0/5 (0.00 everywhere) | 1/5 (medical, 2/4 replies) | 68-86% |
+| full v_diff | 1/5 (Kansas) | 3/5 | 68-87% |
+
+- Patchscope positive control passes (topic directions 0.30-0.75 vs random
+  <= 0.15); at large lambda it converges to the logit lens (17-19 of 20 top
+  tokens shared at lambda 100-200 on Qwen2.5) [T6a].
+- Per position (finetuned model): cake_bake readable at position 0 only (0.30,
+  "Cake / ケーキ / 蛋糕"), Kansas at positions 1-4 (0.55-0.70), FDA nowhere
+  clearly; recipe / medical nowhere [T6c].
+- Topic at position 0 (sink direction removed): present for recipe (+7.7) and
+  Kansas (+25.9), not an artifact of the massive dimensions, but a smaller
+  share of the diff (cos ~.09) than at position 1 (.21-.32) [T7a].
+- Documents along the cake_bake residual (base model): all three organisms'
+  synthetic documents rank highest (median ranks 60 / 186 / 254 of 4,129);
+  the recipe residual puts them at the bottom (38 of its bottom 50); the two
+  residuals are otherwise unrelated (rank corr +0.01; topic directions +0.99)
+  [T8].
+- Genre test: an institutional header moves the SDF residuals +1.53-1.65 SD,
+  a casual header of the same length +1.47-1.60; difference +0.03-0.06
+  (random max 0.48) -> not genre [T7b].
+- Position: the residuals rise +1.2-1.6 SD (SDF) / +3.1 (recipe) from
+  positions 1-7 to 128-255; cos with the position direction 0.13-0.19 vs
+  random 0.04-0.05; but the finetune's push along them does not fade with
+  position [T7c].
+
 ## The surprising numbers (pick 1-2 for the form)
 
 1. **The bias does almost all the off-domain work and none of the behaviour.**
@@ -162,12 +207,18 @@ large update) is the only tie-breaker.
    push of its own size in 7 of 10 cells, against 36-86 points for the
    residual. "Inert" was wrong; "small" is right.
 5. **The false belief grows with the size of the weight update**: shift per
-   unit update norm is 1.35-1.57 for all five cake LoRAs; the full finetune
+   unit update norm is 1.34-1.57 for all five cake LoRAs; the full finetune
    (51 steps) believes it most strongly (7.15 nats, 119/120 items).
 6. **A constant push makes prompt-dependent output.** In-domain recipe
    constants at alpha 2 give the dash-list style on 14/60 procedural prompts
    and 0/60 factual ones -- so prompt-conditionality cannot separate "bias"
    from "deeper".
+7. **One constant at one position closes a third of the effect.** A constant
+   added only at position 0 -- the attention sink every token reads from --
+   closes 33-38% of the SDF organisms' off-domain KL on its own.
+8. **The part ADL's readout can read is the part that does nothing.** The
+   residual does 68-86% of the KL and reads as nothing under Patchscope in all
+   five finetunes; the topic part reads perfectly and does 1-8%.
 
 ## Working hypotheses (lab notebook Day 7) and where they stand
 
@@ -176,7 +227,10 @@ large update) is the only tie-breaker.
 | H1 | constants reproduce most of the output effect | holds off-domain everywhere (59-94%); in-domain 32-71% |
 | H2 | the topic part is near-inert | revised: small (0-8%) but distinguishable from same-size random in 7/10 cells |
 | H3 | the SDF bias is mostly shared across organisms | holds (shared 80 vs specific 6); weaker with little training (mix 0.1: other organisms' constants 6-19%) |
-| H4 | the behaviour is not in the bias | holds for unrelated-fitted constants (format ~0, belief <= 0.14); in-domain constants meet the falsifier narrowly (recipe dash-list 14/60 at alpha 2; cake belief 0.26-0.37) |
+| H4 | the behaviour is not in the bias | holds for unrelated-fitted constants (format ~0, belief <= 0.14), also with the position-0 constant; in-domain constants meet the falsifier narrowly (recipe dash-list 14/60 at alpha 2; cake belief 0.26-0.37) |
+| Day 16 | the readable part is the inert part | holds 5/5 by Patchscope, 4/5 by steering (medical residual 2/4 at the threshold) |
+| H-genre (Day 17) | the SDF residual encodes an institutional-document genre | not supported (header effect = casual-header effect); rule verdict "inconclusive" |
+| E-pos (Day 20) | the residual is partly an early-position direction | supported for Kansas, FDA, recipe; cake inconclusive; a minority component (cos 0.13-0.19) |
 
 Gate 1 (Day 7): G1 3/3 robust at CI ends; G2 3/3 in-domain / 2/3 off-domain
 against full-size random, 1/3 / 0/3 against same-size random (which one counts:
@@ -206,8 +260,13 @@ Paper figures are made on Day 23.
   (Day 11), mostly shared across SDF organisms (cause unknown).
 - **Belief items are cloze log-odds** inside false-universe documents; 3 facts
   per organism, so item-bootstrap CIs understate fact-level uncertainty.
-- **No constant for attention-sink positions** (position 0 and the occasional
-  position-1 sink); planned for Day 18.
+- **The position-0 constant** is fitted on document first tokens (chats start
+  with "<|im_start|>"), in bf16; only the Qwen2.5 one could be refit in fp32
+  (same KL). Occasional position-1 sinks get no separate constant.
+- **No LLM grader:** Patchscope relevance is a keyword proxy plus one blind hand
+  reader; ADL used an LLM grader over all scales.
+- **The genre test changed only a header**; genre carried through a whole text
+  is untested. The position profile used 99 long documents.
 - **Medical format detector undercounts** (frozen before running; >= 29/60 by
   reading vs 10/60 by regex in one cell).
 - Greedy decoding, 80-150 tokens, for all generations.
@@ -240,14 +299,24 @@ November:
 16. Regex labels: a "freezer" match in a storage tip counted as the false
     cooling fact (Day 12); the medical detector misses new closings (Day 8).
 
+17. Averaging the diff over positions 1-7 hid the one position where cake_bake's
+    diff is readable (position 0) -- the source of our Day 16 disagreement
+    with ADL, found on Day 18.
+18. Keyword counts of steered replies counted "Hen" and "Rabbit" as recipe
+    drift; steering was scored by reading instead (Day 16).
+19. bf16 rounding on ~10^4-sized sink activations gave the position-0 fit a
+    spurious component in layers 1-25; checked in fp32, it is inert (Day 20).
+20. The freeze script found two of my numbers wrong: 1.35 -> 1.34 (a rounding)
+    and 31 -> 38 SDF documents (a hand count) (Day 20).
+
 Each was caught by reading raw outputs or re-deriving a number, not from the
 summary table.
 
 ## Future work (one line each)
 
-- Patchscope readout (Day 15) and whether the readable part is the inert part (Day 16)
-- What input features the residual responds to (Days 17, 19)
-- A separate constant at attention-sink positions (Day 18)
+- What the rest of the residual is (position axis and topic explain a few % of it)
+- Genre carried through a whole document, not just a header (Day 19 limitation)
+- ADL's LLM-graded Patchscope per position, to compare readability directly
 - 7B scale point (deferred; bf16 on cluster hours, or 4-bit after a quantization check)
 - ADL's 8k/16k/32k cake_bake variants: separate "less cake data" from "more mixing"
 - Medical LoRA at other ranks; a full finetune of our chat domains

@@ -53,8 +53,9 @@ def first_token_batches(tok, docs, bs=250):
     return out
 
 
-def cal(t):
-    tok, model, layers = load(t)
+def cal(t, dtype=None, tag=""):
+    """dtype / tag (Day 20 E2): refit in another precision into pos0_consts_{t}{tag}.pt."""
+    tok, model, layers = load(t) if dtype is None else load(t, dtype=dtype)
     steer = MultiSteer(layers)
     L = len(layers)
     batches = first_token_batches(tok, corpus("unrelated")[:1000])
@@ -93,8 +94,8 @@ def cal(t):
         print(f"  {l:>5}  {(m_ft[l] - m_base[l]).norm():>13.2f}  {(m_ft[l] - m_after[l]).norm():>9.3f}"
               f"  {c0[l].norm():>7.2f}  {c[l].norm():>7.2f}")
     print(f"  base position-0 norm at layer 13: {m_base[L13].norm():.0f}")
-    torch.save({"c0": c0, "m_ft": m_ft, "m_base": m_base,
-                "mismatch_after": (m_ft - m_after).norm(dim=1)}, RES / f"pos0_consts_{t}.pt")
+    torch.save({"c0": c0, "m_ft": m_ft, "m_base": m_base, "m_after": m_after,
+                "mismatch_after": (m_ft - m_after).norm(dim=1)}, RES / f"pos0_consts_{t}{tag}.pt")
 
 
 def conditions(t):
@@ -358,11 +359,13 @@ def main():
     ap.add_argument("--stage", choices=["cal", "eval", "topic", "behaviour", "massdims"])
     ap.add_argument("--split", choices=["ood", "ind"])
     ap.add_argument("--report", action="store_true")
+    ap.add_argument("--fp32", action="store_true")
+    ap.add_argument("--tag", default="")
     a = ap.parse_args()
     if a.report:
         report()
     elif a.stage == "cal":
-        cal(a.target)
+        cal(a.target, dtype=torch.float32 if a.fp32 else None, tag=a.tag)
     elif a.stage == "eval":
         eb.run_model(a.target, "eval", a.split, S=conditions(a.target), out_name=f"pos0_{a.target}.json")
     elif a.stage == "topic":

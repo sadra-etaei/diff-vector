@@ -552,8 +552,14 @@ organisms) -- possible early-position direction, untested. FINDINGS "DAY 19".
    cut.
 3. Final results table in FINDINGS.
 **Explain:** every row of the final table without looking anything up.
+**DONE 2026-11-23.** Two last checks first (user's request): E1 the residual has a real
+position component (cos 0.13-0.19) but the push does not fade with position; E2 the position-0
+floor was bf16 and inert (Day 18 row stands). src/reproduce_tables.py regenerates all 9 final tables,
+90/90 checks match; two small corrections; FINDINGS "FINAL TABLES". Results frozen.
 
 ### Day 21 (Wed 2 Dec) — buffer
+**DONE 2026-11-23.** No experiments. Re-read the Day 18 position-0 format replies (zeros
+stand); FACTSHEET brought to the freeze (all numbers from results/final_tables.md).
 
 ---
 
